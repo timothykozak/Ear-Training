@@ -1,0 +1,225 @@
+// PBStatusWindow.ts
+
+class PBStatusWindow {
+    static theStatusWindows: PBStatusWindow[] = []; // All of the SWs in order of creation
+    static theZOrder: PBStatusWindow[] = [];  // The SWs in increasing z order of display.
+
+    windowDiv: HTMLDivElement;
+    titleDiv: HTMLDivElement;  // The draggable part
+    titleTextDiv: HTMLDivElement;
+    titleText: Text;  // The title in the draggable part
+    closeDiv: HTMLDivElement;  // The close button
+    closeText: Text;
+    clientDiv: HTMLDivElement; // Client area for text
+
+    constructor(public title: string) {
+        this.createElements(title);
+        this.setElementIDs();
+        this.appendChildren();
+        this.setStyles();
+        this.addEventHandlers();
+        PBStatusWindow.theStatusWindows.push(this);
+        PBStatusWindow.zSort(this);
+    }
+
+    static zSort(lastSW: PBStatusWindow) {
+        // With elements, higher zIndex values are displayed on top of lower values.
+        // Sort the SWs so that lastSW has the highest zIndex.
+        // This can be used when a SW is created, or it is clicked.
+        let i = 0;
+        const initialZ = 100;
+
+        let theSW: any;
+        for (theSW in PBStatusWindow.theZOrder) {
+            if (theSW === lastSW)
+                PBStatusWindow.theZOrder.splice(i, 1);
+            else
+                PBStatusWindow.theZOrder[i].windowDiv.style.zIndex = String(initialZ + i);
+            i++;
+        }
+        PBStatusWindow.theZOrder.push(lastSW);
+        lastSW.windowDiv.style.zIndex = String(initialZ + i);
+    };
+
+    static setElementStyle(theElement: HTMLDivElement, theStyle: any) {
+        // theStyle is an object with keys of CSS styles and associated values.
+        // Don't forget that CSS styles with a '-' (kebab case) are changed to camel case
+        // with the dash removed.  e.g. z-index -> zIndex
+        let keyNames = Object.keys(theStyle);
+        let i: any;
+        for (i in keyNames) {
+            theElement.style[keyNames[i] as any] = theStyle[keyNames[i]];
+        }
+    };
+
+    static getObjectByID(theId: string) {
+        // the ID is of the form #PBSW.divType, where # is the index into theStatusWindow array
+        let theSW: PBStatusWindow = undefined;
+        let theSWStr = /\d+PBSW/.exec(theId);
+        if (theSWStr) {
+            let theIndex = parseInt(theSWStr[0]);
+            if (theIndex < PBStatusWindow.theStatusWindows.length)
+                theSW = PBStatusWindow.theStatusWindows[theIndex];
+        }
+        return(theSW);
+    };
+
+    static bringToFront(theID: string) {
+        // Bring the SW associated with this ID to the front of the other SWs
+        let theSW = PBStatusWindow.getObjectByID(theID);
+        if (theSW)
+            PBStatusWindow.zSort(theSW);
+    };
+
+    createElements(title: string) {
+        // Append all of the created elements to form the SW
+        this.windowDiv = document.createElement("div"); // This is the main div of the floating window.  All others are children of this.
+        this.titleDiv = document.createElement("div");  // The draggable part
+        this.titleTextDiv = document.createElement("div");
+        this.titleText = document.createTextNode(title);  // The title in the draggable part
+        this.closeDiv = document.createElement("div");  // The close button
+        this.closeText = document.createTextNode('X');
+        this.clientDiv = document.createElement("div"); // Client area for text
+    };
+
+    setElementIDs() {
+        // Give each element of the window an ID that can be used to retrieve the object from theStatusWindow array
+        let str = PBStatusWindow.theStatusWindows.length + 'PBSW.';
+        this.windowDiv.id = str + 'windowDiv';
+        this.titleDiv.id = str + 'titleDiv';
+        this.titleTextDiv.id = str + 'windowDiv';
+        this.closeDiv.id = str + 'closeDiv';
+        this.clientDiv.id = str + 'clientDiv';
+    };
+
+    appendChildren() {
+        // Append all of the children to form the SW
+        document.body.appendChild(this.windowDiv);
+        this.windowDiv.appendChild(this.titleDiv);
+        this.titleDiv.appendChild(this.titleTextDiv);
+        this.titleDiv.appendChild(this.closeDiv);
+        this.titleTextDiv.appendChild(this.titleText);
+        this.closeDiv.appendChild(this.closeText);
+        this.windowDiv.appendChild(this.clientDiv);
+    };
+
+    setStyles() {
+        // Use CSS to style all of the HTML elements.
+        // For some reason, styling the text elements breaks the drag.
+        // Have also seen some strange responses to reasonable values.
+        PBStatusWindow.setElementStyle(this.windowDiv,
+            {
+                position: "absolute",
+                left: '1050px',
+                top: '160px',
+                width: '400px',
+                minWidth: '100px',
+                height: '400px',
+                minHeight: '100px',
+                backgroundColor: '#dde3eb',
+                border: '2px solid #000000',
+                resize: 'both',
+                overflow: 'hidden',
+                webkitUserSelect: 'none',   /* Safari 3.1+ */
+                mozUserSelect: 'none',      /* Firefox 2+ */
+                msUserSelect: 'none',       /* IE 10+ */
+                userSelect: 'none',         /* Standard syntax */
+                paddingTop: '21px',
+                paddingBottom: '20px',
+                cursor: 'default',
+                fontSize: '16px',
+                fontFamily: 'Arial'
+            }
+        );
+        PBStatusWindow.setElementStyle(this.titleDiv,
+            {
+                position: 'absolute',
+                left: '0px',
+                top: '0px',
+                height: "20px",
+                width: '100%',
+                borderBottom: '1px solid #000000',
+                textAlign: 'center'
+            }
+        );
+        PBStatusWindow.setElementStyle(this.closeDiv,
+            {
+                position: "absolute",
+                top: '0px',
+                right: '0px',
+                width: '20px',
+                height: '20px',
+                borderLeft: '1px solid #000000',
+                backgroundColor: '#cccccc'
+            }
+        );
+        PBStatusWindow.setElementStyle(this.clientDiv,
+            {
+                width: '100%',
+                height: '100%',
+                overflow: 'auto',
+                backgroundColor: '#ffffff',
+                userSelect: 'none',
+                borderBottomStyle: 'solid',
+                borderWidth: '1px'
+            }
+        );
+    };
+
+    writeMsg(theMsg: string) {
+        this.clientDiv.innerHTML = theMsg + "<br/>" + this.clientDiv.innerHTML;
+    };
+
+    writeErr(theErr: string) {
+        this.clientDiv.innerHTML = "<span style=\"color:red\">" + theErr + "</span><br/>" + this.clientDiv.innerHTML;
+    };
+
+    addEventHandlers() {
+        this.titleDiv.addEventListener('mousedown', PBStatusWindow.beginDrag, false);     // For dragging
+        this.closeDiv.addEventListener('click', PBStatusWindow.closeOnClick, false);      // For closing
+        this.clientDiv.addEventListener('click', PBStatusWindow.clientOnClick, false);    // For bringing to front
+        this.windowDiv.addEventListener('click', PBStatusWindow.windowOnClick, false);    // For bringing to front
+    };
+
+    static closeOnClick(event: MouseEvent) {
+        let theWindowDiv: HTMLDivElement = (event.target as HTMLDivElement).parentNode.parentNode as HTMLDivElement;  // The windowDiv is the grandparent of the closeDiv
+        theWindowDiv.style.display = 'none';
+    };
+
+    static clientOnClick(event: MouseEvent) {
+        PBStatusWindow.bringToFront((event.target as HTMLDivElement).id);
+    };
+
+    static windowOnClick(event: MouseEvent) {
+        PBStatusWindow.bringToFront((event.target as HTMLDivElement).id);
+    };
+
+    static beginDrag(event: MouseEvent){
+        // Invoked when the mouse is clicked on the titleDiv element.
+        let elementToDrag = (event.target as HTMLDivElement).parentNode.parentNode as HTMLDivElement;    // Remember the element
+        let deltaX = event.clientX - parseInt(elementToDrag.style.left);    // Remember the starting location
+        let deltaY = event.clientY - parseInt(elementToDrag.style.top);
+        PBStatusWindow.bringToFront(elementToDrag.id);    // The top SW
+        document.addEventListener("mousemove", moveHandler, true);
+        document.addEventListener("mouseup", upHandler, true);
+        event.stopPropagation();    // The message ends here
+        event.preventDefault();
+
+        function moveHandler(e: MouseEvent){
+            // Still dragging
+            elementToDrag.style.left = (e.clientX - deltaX) + "px";
+            elementToDrag.style.top = (e.clientY - deltaY) + "px";
+            e.stopPropagation();
+        }
+
+        function upHandler(e: MouseEvent){
+            // All done.  Clean up.
+            document.removeEventListener("mouseup", upHandler, true);
+            document.removeEventListener("mousemove", moveHandler, true);
+            e.stopPropagation();
+        }
+    };
+}
+
+
+export {PBStatusWindow};

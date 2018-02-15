@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="9552ca4f-9888-4de2-a6e0-b8b1ee945c43" name="one.purplebutter.com" url="http://purplebutter.com">
+        <fileTransfer host="purplebutter.com" port="21" rootFolder="/public_html/SubDomains/one">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" />
+          </advancedOptions>
+          <option name="port" value="21" />
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
