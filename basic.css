@@ -1,0 +1,7 @@
+/*  basic.css
+*/
+
+@font-face {    /* Used by the font loader */
+    font-family:"Aruvarb";
+    src:url("assets/fonts/Aruvarb.ttf") format("truetype");
+}
