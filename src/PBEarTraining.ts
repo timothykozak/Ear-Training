@@ -1,6 +1,7 @@
 //
 // pbEarTraining.js
 //
+// TODO: Create a single canvas here.  Tell the classes which part it can use.
 
 import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBSounds} from "./PBSounds.js";
@@ -23,25 +24,44 @@ class PBEarTraining {
     pianoKeyboard: PBPianoKeyboard;
     tester: PBTester;
 
-    constructor() {
+    constructor(public webFont: any) {
         if (this.checkForWebAudio()) {
-            this.statusWindow.writeMsg("Web Audio is available.");
-            document.addEventListener("PBInstrumentLoaded", () => {this.soundsAvailable = true;}, false);
-            this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
-            this.notation = new PBNotation(this.notationCanvas);
-            this.notation.redraw();
-            this.sequencer = new PBSequencer(this.notation);
-            this.pianoKeyboard = new PBPianoKeyboard(this.statusWindow, this.pianoCanvas, this.notation, this.sequencer);
-            this.tester = new PBTester(this.sequencer);
-            this.characterInput = new PBCharacterInput(this.sequencer, this.tester);
+            this.checkForWebFont();
         }
     }
+
+    initClass() {
+        document.addEventListener("PBInstrumentLoaded", () => {this.soundsAvailable = true;}, false);
+        this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
+        this.notation = new PBNotation(this.notationCanvas);
+        this.notation.redraw();
+        this.sequencer = new PBSequencer(this.notation);
+        this.pianoKeyboard = new PBPianoKeyboard(this.statusWindow, this.pianoCanvas, this.notation, this.sequencer);
+        this.tester = new PBTester(this.sequencer);
+        this.characterInput = new PBCharacterInput(this.sequencer, this.tester);
+    }
+
+    checkForWebFont() {
+        this.webFont.load({
+            custom: { families: ['Aruvarb'] },
+            timeout:5000,
+            fontactive: (familyName: string) => {
+                this.statusWindow.writeMsg(familyName + " font available.");
+                this.initClass();
+            },
+            fontinactive: (familyName: string) => {
+                this.statusWindow.writeMsg(familyName + " font is not available.");
+            }
+        } as WebFont.Config);
+    }
+
 
     checkForWebAudio() {
         // Need to make sure that the WebAudio API is available
 
         try {   // Check if WebAudio API is available.
             this.audioContext = new AudioContext();
+            this.statusWindow.writeMsg("Web Audio is available.");
             return (true);
         } catch (e) {
             this.statusWindow.writeErr("Web Audio API is not supported in this browser");
