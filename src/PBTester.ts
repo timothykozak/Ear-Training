@@ -2,6 +2,7 @@
 // PBTester.ts
 //
 // This class actually runs the tests.
+//
 
 import {PBSequencer} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
@@ -22,19 +23,21 @@ class PBTester {
     static TEST_ALL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
     private _degreesToTest: Array<number> = PBTester.TEST_I_IV_V;
+    testRunning: boolean = false;
+    degreeBeingTested: number;
     results: ResultItem[];
 
     constructor(public sequencer: PBSequencer) {
 
     }
 
-    set degreesToTest(theDegrees: Array<number>) {
-        for (let i = 0; i < theDegrees.length; i++) {
-            if ((theDegrees[i] > PBTester.DEGREE_MAX) || (theDegrees[i] < PBTester.DEGREE_MIN))
-                theDegrees.splice(i, 1);
-        }
+    set degreesToTest(theDegrees: Array<number>) { // Clean it up before using
+        theDegrees.forEach((item: number, index: number) => {
+            if ((item > PBTester.DEGREE_MAX) || (item < PBTester.DEGREE_MIN))
+                theDegrees.splice(index, 1); // Remove invalid degrees
+        });
         if (theDegrees.length == 0)
-            this._degreesToTest = PBTester.TEST_ALL;
+            this._degreesToTest = PBTester.TEST_ALL;    // None at all.  Use default.
         else
             this._degreesToTest = theDegrees;
     }
@@ -43,11 +46,32 @@ class PBTester {
         return(this._degreesToTest);
     }
 
-    startTest(theDegree: number) {
-        if (!this.sequencer.sequenceRunning) {
-            this.sequencer.cadencePlusNote(theDegree + PBSounds.MIDI_MIDDLE_C);
-            this.sequencer.startSequence();
+    pickNextNoteToTest(): number {
+        let theResult = -1; // Returns the degree being tested, or -1 for failure.
+        if (!this.sequencer.sequenceRunning && this.testRunning) {
+            let length = this._degreesToTest.length;
+            if (length > 0) {
+                let index = Math.floor(Math.random() * length);
+                theResult = this._degreesToTest[index];
+                this.degreeBeingTested = theResult;
+                this._degreesToTest.splice(index, 1);
+                this.sequencer.cadencePlusNote(theResult + PBSounds.MIDI_MIDDLE_C);
+                this.sequencer.startSequence();
+            } else {
+                this.testRunning = false;
+            }
         }
+        return(theResult);
+    }
+
+    startTest(): boolean {
+        let theResult = false;
+        if (!this.sequencer.sequenceRunning && !this.testRunning) {
+            this.testRunning = true;
+            if (this.pickNextNoteToTest() >= PBSounds.MIDI_LOW)
+                theResult = true; // Test has actually started
+        }
+        return(theResult);
     }
 }
 
