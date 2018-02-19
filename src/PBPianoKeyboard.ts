@@ -6,23 +6,16 @@
 // Watches the sequencer to reflect the notes being played.
 // The keyboard is used to answer tested note.
 
-// TODO: Hit regions not supported on tablet
+// TODO: Show the notes being played during the sequence
 
 import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBNotation} from "./PBNotation.js";
 import {PBSequencer, SequenceItem} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
 
-interface RegionOptions { // For context2D.addHitRegion
-    id: string,
-    path: Path2D,
-    control: HTMLElement    // Required by context2D.addHitRegion even if always set to null.
-}
-
 interface KeyRegion {
-    options: RegionOptions,
+    path: Path2D,
     playing: boolean,
-    hover: boolean,
     notPlayingFillStyle: string,
     innerPath: Path2D
 }
@@ -44,8 +37,7 @@ class PBPianoKeyboard {
 
     context2D: CanvasRenderingContext2D;
     scale: number = 3;
-    mouseOverRegion: string;
-    mouseOver: boolean = false;
+    hoverKey: number = -1;
 
     constructor(public statusWnd: PBStatusWindow, public canvas: HTMLCanvasElement,
                 public notation: PBNotation, public sequencer: PBSequencer) {
@@ -64,40 +56,51 @@ class PBPianoKeyboard {
     onSequencer(event: CustomEvent) {
         let theItem: SequenceItem = event.detail;
         if (theItem.state) {
-            if (this.mouseOver) {}
+            if (this.hoverKey != -1) {}
         }
+    }
+
+    checkForHover(event: MouseEvent) : number {
+        // Returns the key over which the mouse is hovering, or -1 for none
+        let x = event.offsetX;
+        let y = event.offsetY;
+        for (let index = 0; index < this.keyRegions.length; index++) {
+            if (this.context2D.isPointInPath(this.keyRegions[index].path, x, y)) {
+                this.statusWnd.writeMsg("Mouseover: key " + index);
+                return (index);
+            }
+        }
+        return(-1);
     }
 
     onMouseLeave(event: MouseEvent) {
-        this.statusWnd.writeMsg(event.type + " event: x " + event.x + " y " + event.y + "  region: " + event.region);
-        if (this.mouseOver) {
-            if (event.region) {}
+        this.statusWnd.writeMsg(event.type + " event: x " + event.offsetX + " y " + event.offsetY);
+        if (this.hoverKey != -1) {
+            this.fillRegion(this.hoverKey, false);
         }
-        this.mouseOver = false;
+        this.hoverKey = -1;
     }
 
     onMouseMove(event: MouseEvent) {
-        this.statusWnd.writeMsg(event.type + " event: x " + event.x + " y " + event.y + "  region: " + event.region);
-        if (event.region) { // Hovering
-            if (this.mouseOver) { // Previously hovering
-                if (!(event.region == this.mouseOverRegion)) {    // Changed regions
-                    this.fillRegion(this.mouseOverRegion, false);
+        let hoverKey = this.checkForHover(event);
+        this.statusWnd.writeMsg(event.type + " event: x " + event.offsetX + " y " + event.offsetY + "  hoverKey: " + hoverKey);
+        if (hoverKey != -1) { // Hovering
+            if (this.hoverKey != -1) { // Previously hovering
+                if (!(hoverKey == this.hoverKey)) {    // Changed regions
+                    this.fillRegion(this.hoverKey, false);
                 }
             }
-            this.fillRegion(event.region, true);
-            this.mouseOver = true;
-            this.mouseOverRegion = event.region;
+            this.fillRegion(hoverKey, true);
         } else { // Not hovering
-            if (this.mouseOver) {  // Remove old hover
-                this.fillRegion(this.mouseOverRegion, false);
+            if (this.hoverKey != -1) {  // Remove old hover
+                this.fillRegion(this.hoverKey, false);
             }
-            this.mouseOver = false;
-            this.mouseOverRegion = null;
         }
+        this.hoverKey = hoverKey;
     }
 
     onClick(event: MouseEvent) {
-        this.statusWnd.writeMsg(event.type + " event: x " + event.x + " y " + event.y + "  region: " + event.region);
+        this.statusWnd.writeMsg(event.type + " event: x " + event.offsetX + " y " + event.offsetY + "  region: " + event.region);
         if (event.region) {
             let index = parseInt(event.region);
             this.statusWnd.writeMsg("Piano: Clicked region " + index);
@@ -105,13 +108,12 @@ class PBPianoKeyboard {
         }
     }
 
-    fillRegion(id: string, hover: boolean) {
-        let i = parseInt(id);
+    fillRegion(i: number, hover: boolean) {
         if (i >= 0) { // Valid region
             let theKeyRegion = this.keyRegions[i];
             this.context2D.fillStyle = (hover) ? PBPianoKeyboard.HOVER_FILL_STYLE : theKeyRegion.notPlayingFillStyle;
-            this.context2D.fill(theKeyRegion.options.path);
-            this.context2D.stroke(theKeyRegion.options.path);
+            this.context2D.fill(theKeyRegion.path);
+            this.context2D.stroke(theKeyRegion.path);
         }
     }
 
@@ -180,9 +182,7 @@ class PBPianoKeyboard {
                 theInnerPath = this.buildBlackKeyPath(orgX, orgY, index, 2);
                 theFillStyle = PBPianoKeyboard.BLACK_KEY_FILL_STYLE;
             }
-            let theOptions: RegionOptions = {path: thePath, id: index.toString(), control: null};
-            this.keyRegions[index] = {options: theOptions, playing: false, hover: false, notPlayingFillStyle: theFillStyle, innerPath: theInnerPath};
-            this.context2D.addHitRegion(this.keyRegions[index].options);
+            this.keyRegions[index] = {path: thePath, playing: false, notPlayingFillStyle: theFillStyle, innerPath: theInnerPath};
         });
     };
 
@@ -199,10 +199,10 @@ class PBPianoKeyboard {
     drawAKey(white: boolean, index: number) {
         let theKeyRegion = this.keyRegions[index];
         if (white) {
-            this.context2D.stroke(theKeyRegion.options.path);
+            this.context2D.stroke(theKeyRegion.path);
         }
         else {
-            this.context2D.fill(theKeyRegion.options.path);
+            this.context2D.fill(theKeyRegion.path);
         }
     }
 
