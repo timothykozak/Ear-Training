@@ -4,8 +4,11 @@
 // This class downloads INSTRUMENT_FILE_NAME, which has information on all sounds on the server
 // An instrument has notes B3 through C5 inclusive.  These are separate files that are downloaded.
 // This class listens to the sequencer and plays the sequenced notes.
+//
+// TODO: Combine the individual notes to form the chord
 
 import {PBStatusWindow} from "./PBStatusWindow.js";
+import {PBConst} from "./PBConst.js";
 
 interface Sound {
     playing: boolean,
@@ -35,7 +38,7 @@ class PBSounds {
     soundsRequested = 0;
 
     constructor(public msgWindow: PBStatusWindow, public context: AudioContext) {
-        document.addEventListener('sequencer', (event: CustomEvent) => {this.onSequencer(event)}, false);
+        document.addEventListener(PBConst.events.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event)}, false);
         this.buildSoundsArray();
         this.loadInstrumentsJSON();
     }
@@ -70,7 +73,7 @@ class PBSounds {
         this.soundsRequested++;
         if (this.soundsRequested > (PBSounds.MIDI_HIGH - PBSounds.MIDI_LOW)) {  // All download requests are finished.
             this.allSoundsLoaded = true;
-            document.dispatchEvent(new Event("PBInstrumentLoaded"));
+            document.dispatchEvent(new Event(PBConst.events.soundsInstrumentLoaded));
             this.msgWindow.writeMsg("Instrument loaded.");
         }
     }
