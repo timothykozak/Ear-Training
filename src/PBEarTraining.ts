@@ -10,6 +10,7 @@ import {PBNotation} from "./PBNotation.js";
 import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
 import {PBCharacterInput} from "./PBCharacterInput.js";
 import {PBTester} from "./PBTester.js";
+import {PBConst} from "./PBConst.js";
 
 class PBEarTraining {
     pianoCanvas: HTMLCanvasElement = document.getElementById("pianoCanvas") as HTMLCanvasElement;
@@ -31,7 +32,7 @@ class PBEarTraining {
     }
 
     initClass() {
-        document.addEventListener("PBInstrumentLoaded", () => {this.soundsAvailable = true;}, false);
+        document.addEventListener(PBConst.events.soundsInstrumentLoaded, () => {this.soundsAvailable = true;}, false);
         this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
         this.notation = new PBNotation(this.notationCanvas);
         this.notation.redraw();
