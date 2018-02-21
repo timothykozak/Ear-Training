@@ -1,4 +1,9 @@
 // PBStatusWindow.ts
+//
+// TODO: Support clearing the window
+// TODO: Support hiding and showing the window
+
+import {PBConst} from "./PBConst.js";
 
 class PBStatusWindow {
     static theStatusWindows: PBStatusWindow[] = []; // All of the SWs in order of creation
@@ -175,10 +180,10 @@ class PBStatusWindow {
     };
 
     addEventHandlers() {
-        this.titleDiv.addEventListener('mousedown', PBStatusWindow.beginDrag, false);     // For dragging
-        this.closeDiv.addEventListener('click', PBStatusWindow.closeOnClick, false);      // For closing
-        this.clientDiv.addEventListener('click', PBStatusWindow.clientOnClick, false);    // For bringing to front
-        this.windowDiv.addEventListener('click', PBStatusWindow.windowOnClick, false);    // For bringing to front
+        this.titleDiv.addEventListener(PBConst.events.mouseDown, PBStatusWindow.beginDrag, false);     // For dragging
+        this.closeDiv.addEventListener(PBConst.events.mouseClick, PBStatusWindow.closeOnClick, false);      // For closing
+        this.clientDiv.addEventListener(PBConst.events.mouseClick, PBStatusWindow.clientOnClick, false);    // For bringing to front
+        this.windowDiv.addEventListener(PBConst.events.mouseClick, PBStatusWindow.windowOnClick, false);    // For bringing to front
     };
 
     static closeOnClick(event: MouseEvent) {
@@ -200,8 +205,8 @@ class PBStatusWindow {
         let deltaX = event.clientX - parseInt(elementToDrag.style.left);    // Remember the starting location
         let deltaY = event.clientY - parseInt(elementToDrag.style.top);
         PBStatusWindow.bringToFront(elementToDrag.id);    // The top SW
-        document.addEventListener("mousemove", moveHandler, true);
-        document.addEventListener("mouseup", upHandler, true);
+        document.addEventListener(PBConst.events.mouseMove, moveHandler, true);
+        document.addEventListener(PBConst.events.mouseUp, upHandler, true);
         event.stopPropagation();    // The message ends here
         event.preventDefault();
 
@@ -214,8 +219,8 @@ class PBStatusWindow {
 
         function upHandler(e: MouseEvent){
             // All done.  Clean up.
-            document.removeEventListener("mouseup", upHandler, true);
-            document.removeEventListener("mousemove", moveHandler, true);
+            document.removeEventListener(PBConst.events.mouseUp, upHandler, true);
+            document.removeEventListener(PBConst.events.mouseMove, moveHandler, true);
             e.stopPropagation();
         }
     };
