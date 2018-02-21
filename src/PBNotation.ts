@@ -4,9 +4,13 @@
 // This module handles the musical notation.  It is passed an HTMLCanvasElement
 // on which it draws out the treble staff in the key of C Major.
 
-// TODO: Make canvas resizable; use all of canvas;
+// TODO: Make canvas resizable & use all of canvas;
+// TODO: Handle the chords in place of individual notes
 
 import {SequenceItem} from "./PBSequencer.js";
+import {PBConst} from "./PBConst.js";
+import {PBSequencer, NoteType} from "./PBSequencer.js";
+import {PBSounds} from "./PBSounds.js";
 
 interface GlyphItem {
     value: string,
@@ -25,7 +29,7 @@ export default class PBNotation {
     static ORG_Y = 250; // y coord of the origin
     static ORG_WIDTH = 20;  // The width of the origin cross
 
-    static GLYPHS = {
+    static GLYPHS = {   // To view the characters of the Aruvarb font, use http://torinak.com/font/lsfont.html
         brace:              {value: '\u{0e000}', rem: 3.0},
         beginBar:           {value: '\u{0e030}', rem: 1.0},
         endBar:             {value: '\u{0e032}', rem: 1.0},
@@ -43,17 +47,32 @@ export default class PBNotation {
         sharp:              {value: '\u{0e262}', rem: 1.0},
         flat:               {value: '\u{0e260}', rem: 1.0}
     };
+    static xByNoteType = [2, 3, 4, 5, 7, 9, 11];  // Units are noteWidth
 
     context: CanvasRenderingContext2D;
-    fontSize: number;
+    fontSize: number;   // In pixels
     noteWidth: number;
     noteHeight: number;
     grandStaff: boolean = false;
 
     constructor(public canvas: HTMLCanvasElement) {
         this.context = this.canvas.getContext("2d");    // The 2d context of the canvas
-        this.updateFontSize(100);
-        document.addEventListener('sequencer', (event: CustomEvent) => {this.onSequencer(event);}, false)
+        this.updateFontSize(100);   // Set the default font size
+        document.addEventListener(PBConst.events.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event);}, false);
+        document.addEventListener(PBConst.events.keyboardHover, (event: CustomEvent) => {this.onHover(event);}, false);
+    }
+
+    onHover(event: CustomEvent) {
+        this.drawHoverNote(event.detail, 0);
+    }
+
+    drawHoverNote(note: number, color: number) {
+        let x = PBNotation.ORG_X + PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth;
+        let y = PBNotation.ORG_Y;
+        this.context.clearRect(x - this.noteWidth, y + (this.noteHeight * 2), this.noteWidth * 3, -(this.noteHeight * 8));
+        this.drawGlyph(x - this.noteWidth, y, PBNotation.GLYPHS.staff5Lines, 'left', 'middle', 'black', 3);
+        if (note != -1)
+            this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(note + PBSounds.MIDI_MIDDLE_C -2), 'gray');
     }
 
     updateFontSize(newSize: number) {
@@ -63,6 +82,7 @@ export default class PBNotation {
     }
 
     static midiToQualifiedNote(midi: number) : QualifiedNote {
+        // A qualified note is the degree plus accidentals
         let i = midi % 12;
         let theDegree = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7];
         let isSharped = [false, true, false, true, false, false, true, false, true, false, true, false];
@@ -72,7 +92,7 @@ export default class PBNotation {
     onSequencer (event: CustomEvent) {
         let theItem: SequenceItem = event.detail;
         if (theItem.state) {
-            let x = PBNotation.ORG_X  + ((2 + theItem.time / 4) * this.noteWidth);
+            let x = PBNotation.ORG_X  + (PBNotation.xByNoteType[theItem.noteType] * this.noteWidth);
             this.drawNote(x, theItem.note);
         }
     }
@@ -106,7 +126,7 @@ export default class PBNotation {
         this.context.textAlign = align;
         this.context.textBaseline = baseline;
         let string = glyph.value;
-        while (repeat > 1) {
+        while (repeat > 1) {    // Primarily used for drawing the staff
             string += glyph.value;
             repeat--;
         }
@@ -141,14 +161,15 @@ export default class PBNotation {
         this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(theMidi));
     }
 
-    drawQualifiedNote(x: number, qNote: QualifiedNote) {
+    drawQualifiedNote(x: number, qNote: QualifiedNote, color: string = 'black') {
+        // Draw the note, along with accidentals and ledger line
         // ORG_Y is E4 and not C4
         let y = PBNotation.ORG_Y + (qNote.degree - 2) * this.noteHeight / -2;
-        this.drawGlyph(x, y, PBNotation.GLYPHS.quarterNoteUp, 'left', 'middle', 'black');
+        this.drawGlyph(x, y, PBNotation.GLYPHS.quarterNoteUp, 'left', 'middle', color);
         if (qNote.degree == 0)  // Need a ledger line
-            this.drawGlyph(x - this.noteWidth / 4, y + this.noteHeight * 2, PBNotation.GLYPHS.ledgerLine, 'left', 'middle', 'black');
+            this.drawGlyph(x - this.noteWidth / 4, y + this.noteHeight * 2, PBNotation.GLYPHS.ledgerLine, 'left', 'middle', color);
         if (qNote.sharped)
-            this.drawGlyph(x + this.noteWidth, y, PBNotation.GLYPHS.sharp, 'left', 'middle', 'black');
+            this.drawGlyph(x + this.noteWidth, y, PBNotation.GLYPHS.sharp, 'left', 'middle', color);
     }
 
     redraw() {
