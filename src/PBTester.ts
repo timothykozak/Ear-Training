@@ -6,6 +6,7 @@
 
 import {PBSequencer} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
+import {PBConst} from "./PBConst.js";
 
 interface ResultItem {
     numTests: number,
@@ -25,10 +26,23 @@ class PBTester {
     private _degreesToTest: Array<number> = PBTester.TEST_I_IV_V;
     testRunning: boolean = false;
     degreeBeingTested: number;
+    waitingForAnswer: boolean;
     results: ResultItem[];
 
     constructor(public sequencer: PBSequencer) {
+        document.addEventListener(PBConst.events.sequencerNotePlayed, (event: CustomEvent) => {this.onNotePlayed(event);}, false);
+        document.addEventListener(PBConst.events.sequencerTestNotePlayed, (event: CustomEvent) => {this.onTestNotePlayed(event);}, false);
+    }
 
+    onTestNotePlayed(event: CustomEvent) {
+        this.waitingForAnswer = true;
+    }
+
+    onNotePlayed(event: CustomEvent) {
+        if (this.waitingForAnswer) {
+            this.waitingForAnswer = false;
+            document.dispatchEvent(new CustomEvent(PBConst.events.testerNoteAnswered, {detail: {}}));
+        }
     }
 
     set degreesToTest(theDegrees: Array<number>) { // Clean it up before using
@@ -48,24 +62,26 @@ class PBTester {
 
     pickNextNoteToTest(): number {
         let theResult = -1; // Returns the degree being tested, or -1 for failure.
-        if (!this.sequencer.sequenceRunning && this.testRunning) {
+        if (!this.sequencer.sequenceRunning && this.testRunning) {  // Still running the test
             let length = this._degreesToTest.length;
             if (length > 0) {
-                let index = Math.floor(Math.random() * length);
+                let index = Math.floor(Math.random() * length); // Select a random note to test
                 theResult = this._degreesToTest[index];
                 this.degreeBeingTested = theResult;
-                this._degreesToTest.splice(index, 1);
+                this._degreesToTest.splice(index, 1);   // Remove the note being tested
                 this.sequencer.cadencePlusNote(theResult + PBSounds.MIDI_MIDDLE_C);
                 this.sequencer.startSequence();
+                this.waitingForAnswer = false;
             } else {
                 this.testRunning = false;
+                document.dispatchEvent(new CustomEvent(PBConst.events.testerFinished, {detail: {}}));
             }
         }
         return(theResult);
     }
 
     startTest(): boolean {
-        let theResult = false;
+        let theResult = false;  // Return false if problem starting test
         if (!this.sequencer.sequenceRunning && !this.testRunning) {
             this.testRunning = true;
             if (this.pickNextNoteToTest() >= PBSounds.MIDI_LOW)
