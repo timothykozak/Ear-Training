@@ -1,0 +1,11 @@
+Directions for using WebFont.load
+         https://github.com/typekit/webfontloader
+
+Free icon fonts:
+    https://speckyboy.com/free-icon-fonts/
+
+This project on GitHub
+    https://github.com/timothykozak/Ear-Training
+
+List glyphs in font
+    http://torinak.com/font/lsfont.html
