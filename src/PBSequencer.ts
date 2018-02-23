@@ -7,17 +7,7 @@
 
 import {PBSounds} from "./PBSounds.js";
 import {PBNotation} from "./PBNotation.js";
-import {PBConst} from "./PBConst.js";
-
-enum NoteType {  // For notation positioning
-    Cadence1,
-    Cadence2,
-    Cadence3,
-    Cadence4,
-    Testing,
-    Answer,
-    Immediate
-}
+import {PBConst, NoteType} from "./PBConst.js";
 
 interface SequenceItem {
     note: number,   // A MIDI note
@@ -43,9 +33,9 @@ class PBSequencer {
         if (this.sequenceRunning) {
             this.sequence.forEach((item) => {
                 if (item.time == this.ticks) {
-                    document.dispatchEvent(new CustomEvent(PBConst.events.sequencerNotePlayed, {detail: item}));
+                    document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerNotePlayed, {detail: item}));
                     if (item.noteType == NoteType.Testing) {
-                        document.dispatchEvent(new CustomEvent(PBConst.events.sequencerTestNotePlayed, {detail: item}));
+                        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerTestNotePlayed, {detail: item}));
                     }
                 }
             });
@@ -56,7 +46,7 @@ class PBSequencer {
     }
 
     playNote(theMidi: number) { // Play a note right now
-        document.dispatchEvent(new CustomEvent(PBConst.events.sequencerNotePlayed, {detail: {note: theMidi, state: true, time: this.ticks, noteType: NoteType.Immediate} as SequenceItem}))
+        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerNotePlayed, {detail: {note: theMidi, state: true, time: this.ticks, noteType: NoteType.Immediate} as SequenceItem}))
     }
 
     startSequence() {
