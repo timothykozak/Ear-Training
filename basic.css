@@ -5,3 +5,8 @@
     font-family:"Aruvarb";
     src:url("assets/fonts/Aruvarb.ttf") format("truetype");
 }
+
+@font-face {
+    font-family:"ionicons";
+    src:url("assets/fonts/ionicons.ttf") format("truetype");
+}
