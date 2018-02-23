@@ -13,7 +13,7 @@ class PBCharacterInput {
     theNote: number = 0;
 
     constructor(public sequencer: PBSequencer, public tester: PBTester) {
-        document.addEventListener(PBConst.events.keyPress, (event: KeyboardEvent) => {this.onCharacterInput(event);}, false)
+        document.addEventListener(PBConst.EVENTS.keyPress, (event: KeyboardEvent) => {this.onCharacterInput(event);}, false)
     }
 
     onCharacterInput(event: KeyboardEvent) {
