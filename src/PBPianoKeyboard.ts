@@ -44,10 +44,10 @@ class PBPianoKeyboard {
                 public notation: PBNotation, public sequencer: PBSequencer) {
         if (canvas) {
             this.context2D = this.canvas.getContext("2d");
-            this.canvas.addEventListener(PBConst.events.mouseClick, (event: MouseEvent) => {this.onClick(event);});
-            this.canvas.addEventListener(PBConst.events.mouseLeave, (event: MouseEvent) => {this.onMouseLeave(event);});
-            this.canvas.addEventListener(PBConst.events.mouseMove, (event: MouseEvent) => {this.onMouseMove(event);});
-            document.addEventListener(PBConst.events.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencerNotePlayed(event);}, false);
+            this.canvas.addEventListener(PBConst.EVENTS.mouseClick, (event: MouseEvent) => {this.onClick(event);});
+            this.canvas.addEventListener(PBConst.EVENTS.mouseLeave, (event: MouseEvent) => {this.onMouseLeave(event);});
+            this.canvas.addEventListener(PBConst.EVENTS.mouseMove, (event: MouseEvent) => {this.onMouseMove(event);});
+            document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencerNotePlayed(event);}, false);
             this.buildKeyboardRegions();
             this.drawKeyboard();
         }
@@ -62,7 +62,7 @@ class PBPianoKeyboard {
     }
 
     static dispatchHoverEvent(theHoverKey: number) {
-        document.dispatchEvent(new CustomEvent(PBConst.events.keyboardHover, {detail: theHoverKey})); // No longer hovering
+        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.keyboardHover, {detail: theHoverKey})); // No longer hovering
     }
 
     checkForHover(event: MouseEvent) : number {
