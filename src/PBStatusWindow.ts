@@ -180,10 +180,10 @@ class PBStatusWindow {
     };
 
     addEventHandlers() {
-        this.titleDiv.addEventListener(PBConst.events.mouseDown, PBStatusWindow.beginDrag, false);     // For dragging
-        this.closeDiv.addEventListener(PBConst.events.mouseClick, PBStatusWindow.closeOnClick, false);      // For closing
-        this.clientDiv.addEventListener(PBConst.events.mouseClick, PBStatusWindow.clientOnClick, false);    // For bringing to front
-        this.windowDiv.addEventListener(PBConst.events.mouseClick, PBStatusWindow.windowOnClick, false);    // For bringing to front
+        this.titleDiv.addEventListener(PBConst.EVENTS.mouseDown, PBStatusWindow.beginDrag, false);     // For dragging
+        this.closeDiv.addEventListener(PBConst.EVENTS.mouseClick, PBStatusWindow.closeOnClick, false);      // For closing
+        this.clientDiv.addEventListener(PBConst.EVENTS.mouseClick, PBStatusWindow.clientOnClick, false);    // For bringing to front
+        this.windowDiv.addEventListener(PBConst.EVENTS.mouseClick, PBStatusWindow.windowOnClick, false);    // For bringing to front
     };
 
     static closeOnClick(event: MouseEvent) {
@@ -205,8 +205,8 @@ class PBStatusWindow {
         let deltaX = event.clientX - parseInt(elementToDrag.style.left);    // Remember the starting location
         let deltaY = event.clientY - parseInt(elementToDrag.style.top);
         PBStatusWindow.bringToFront(elementToDrag.id);    // The top SW
-        document.addEventListener(PBConst.events.mouseMove, moveHandler, true);
-        document.addEventListener(PBConst.events.mouseUp, upHandler, true);
+        document.addEventListener(PBConst.EVENTS.mouseMove, moveHandler, true);
+        document.addEventListener(PBConst.EVENTS.mouseUp, upHandler, true);
         event.stopPropagation();    // The message ends here
         event.preventDefault();
 
@@ -219,8 +219,8 @@ class PBStatusWindow {
 
         function upHandler(e: MouseEvent){
             // All done.  Clean up.
-            document.removeEventListener(PBConst.events.mouseUp, upHandler, true);
-            document.removeEventListener(PBConst.events.mouseMove, moveHandler, true);
+            document.removeEventListener(PBConst.EVENTS.mouseUp, upHandler, true);
+            document.removeEventListener(PBConst.EVENTS.mouseMove, moveHandler, true);
             e.stopPropagation();
         }
     };
