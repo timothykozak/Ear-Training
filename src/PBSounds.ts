@@ -38,7 +38,7 @@ class PBSounds {
     soundsRequested = 0;
 
     constructor(public msgWindow: PBStatusWindow, public context: AudioContext) {
-        document.addEventListener(PBConst.events.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event)}, false);
+        document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event)}, false);
         this.buildSoundsArray();
         this.loadInstrumentsJSON();
     }
@@ -73,7 +73,7 @@ class PBSounds {
         this.soundsRequested++;
         if (this.soundsRequested > (PBSounds.MIDI_HIGH - PBSounds.MIDI_LOW)) {  // All download requests are finished.
             this.allSoundsLoaded = true;
-            document.dispatchEvent(new Event(PBConst.events.soundsInstrumentLoaded));
+            document.dispatchEvent(new Event(PBConst.EVENTS.soundsInstrumentLoaded));
             this.msgWindow.writeMsg("Instrument loaded.");
         }
     }
