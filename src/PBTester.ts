@@ -30,8 +30,8 @@ class PBTester {
     results: ResultItem[];
 
     constructor(public sequencer: PBSequencer) {
-        document.addEventListener(PBConst.events.sequencerNotePlayed, (event: CustomEvent) => {this.onNotePlayed(event);}, false);
-        document.addEventListener(PBConst.events.sequencerTestNotePlayed, (event: CustomEvent) => {this.onTestNotePlayed(event);}, false);
+        document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onNotePlayed(event);}, false);
+        document.addEventListener(PBConst.EVENTS.sequencerTestNotePlayed, (event: CustomEvent) => {this.onTestNotePlayed(event);}, false);
     }
 
     onTestNotePlayed(event: CustomEvent) {
@@ -41,7 +41,8 @@ class PBTester {
     onNotePlayed(event: CustomEvent) {
         if (this.waitingForAnswer) {
             this.waitingForAnswer = false;
-            document.dispatchEvent(new CustomEvent(PBConst.events.testerNoteAnswered, {detail: {}}));
+            let correctAnswer = (event.detail.note == (this.degreeBeingTested + PBSounds.MIDI_MIDDLE_C));
+            document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerNoteAnswered, {detail: {correct: correctAnswer}}));
         }
     }
 
@@ -74,7 +75,7 @@ class PBTester {
                 this.waitingForAnswer = false;
             } else {
                 this.testRunning = false;
-                document.dispatchEvent(new CustomEvent(PBConst.events.testerFinished, {detail: {}}));
+                document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerFinished, {detail: {}}));
             }
         }
         return(theResult);
