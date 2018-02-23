@@ -32,7 +32,7 @@ class PBEarTraining {
     }
 
     initClass() {
-        document.addEventListener(PBConst.events.soundsInstrumentLoaded, () => {this.soundsAvailable = true;}, false);
+        document.addEventListener(PBConst.EVENTS.soundsInstrumentLoaded, () => {this.soundsAvailable = true;}, false);
         this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
         this.notation = new PBNotation(this.notationCanvas);
         this.notation.redraw();
@@ -44,14 +44,16 @@ class PBEarTraining {
 
     checkForWebFont() {
         this.webFont.load({
-            custom: { families: ['Aruvarb'] },
+            custom: { families: ['Aruvarb', 'ionicons'] },
             timeout:5000,
             fontactive: (familyName: string) => {
                 this.statusWindow.writeMsg(familyName + " font available.");
-                this.initClass();
             },
             fontinactive: (familyName: string) => {
                 this.statusWindow.writeMsg(familyName + " font is not available.");
+            },
+            active: () => {
+                this.initClass();
             }
         } as WebFont.Config);
     }
