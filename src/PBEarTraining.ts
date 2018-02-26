@@ -6,24 +6,20 @@
 import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBSounds} from "./PBSounds.js";
 import {PBSequencer} from "./PBSequencer.js";
-import {PBNotation} from "./PBNotation.js";
-import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
 import {PBCharacterInput} from "./PBCharacterInput.js";
 import {PBTester} from "./PBTester.js";
 import {PBConst} from "./PBConst.js";
+import {PBUI} from "./PBUI.js";
 
 class PBEarTraining {
-    pianoCanvas: HTMLCanvasElement = document.getElementById("pianoCanvas") as HTMLCanvasElement;
-    notationCanvas: HTMLCanvasElement = document.getElementById("notationCanvas") as HTMLCanvasElement;
     soundsAvailable = false;
     audioContext: AudioContext;
     statusWindow = new PBStatusWindow('Status');
     characterInput: PBCharacterInput;
     sequencer: PBSequencer;
     soundModule: PBSounds;
-    notation: PBNotation;
-    pianoKeyboard: PBPianoKeyboard;
     tester: PBTester;
+    ui: PBUI;
 
     constructor(public webFont: any) {
         if (this.checkForWebAudio()) {
@@ -34,12 +30,10 @@ class PBEarTraining {
     initClass() {
         document.addEventListener(PBConst.EVENTS.soundsInstrumentLoaded, () => {this.soundsAvailable = true;}, false);
         this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
-        this.notation = new PBNotation(this.notationCanvas);
-        this.notation.redraw();
-        this.sequencer = new PBSequencer(this.notation);
-        this.pianoKeyboard = new PBPianoKeyboard(this.statusWindow, this.pianoCanvas, this.notation, this.sequencer);
+        this.sequencer = new PBSequencer();
         this.tester = new PBTester(this.sequencer);
         this.characterInput = new PBCharacterInput(this.sequencer, this.tester);
+        this.ui = new PBUI(this.statusWindow, this.sequencer);
     }
 
     checkForWebFont() {
