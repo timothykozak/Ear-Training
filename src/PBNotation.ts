@@ -40,6 +40,8 @@ export default class PBNotation {
     constructor(public canvas: HTMLCanvasElement) {
         this.context = this.canvas.getContext("2d");    // The 2d context of the canvas
         this.updateFontSize(100);   // Set the default font size
+        this.redraw();
+        document.addEventListener(PBConst.EVENTS.sequencerCadenceStarted, (event: CustomEvent) => {this.onCadenceStarted(event);}, false);
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event);}, false);
         document.addEventListener(PBConst.EVENTS.keyboardHover, (event: CustomEvent) => {this.onHover(event);}, false);
         document.addEventListener(PBConst.EVENTS.testerNoteAnswered, (event: CustomEvent) => {this.onAnswered(event);}, false);
@@ -52,6 +54,10 @@ export default class PBNotation {
             this.drawGlyph(x, y, PBConst.GLYPHS.checkMark, 'left', 'middle', 'green', 1, "ionicons");
         else
           this.drawGlyph(x, y, PBConst.GLYPHS.xMark, 'left', 'middle', 'red', 1, "ionicons");
+    }
+
+    onCadenceStarted(event: CustomEvent) {
+        this.redraw();
     }
 
     onHover(event: CustomEvent) {
