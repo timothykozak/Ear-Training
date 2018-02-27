@@ -12,7 +12,8 @@ import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBNotation} from "./PBNotation.js";
 import {PBSequencer, SequenceItem} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
-import {PBConst} from "./PBConst.js"
+import {PBConst} from "./PBConst.js";
+import {ClippingRect} from "./PBUI.js";
 
 interface KeyRegion {
     path: Path2D,
@@ -36,13 +37,11 @@ class PBPianoKeyboard {
     static X_OFFSET = [3, 0, 0, -3, 0, 3, 0, 0, -3, 0, 0, 0, 3, 0, 0, -3];   // Most of the black keys are not centered
     keyRegions: KeyRegion[];
 
-    context2D: CanvasRenderingContext2D;
     scale: number = 3;
     hoverKey: number = -1;
 
-    constructor(public statusWnd: PBStatusWindow, public canvas: HTMLCanvasElement, public sequencer: PBSequencer) {
+    constructor(public canvas: HTMLCanvasElement, public context: CanvasRenderingContext2D, public clippingRect: ClippingRect, public statusWnd: PBStatusWindow, public sequencer: PBSequencer) {
         if (canvas) {
-            this.context2D = this.canvas.getContext("2d");
             this.canvas.addEventListener(PBConst.EVENTS.mouseClick, (event: MouseEvent) => {this.onClick(event);});
             this.canvas.addEventListener(PBConst.EVENTS.mouseLeave, (event: MouseEvent) => {this.onMouseLeave(event);});
             this.canvas.addEventListener(PBConst.EVENTS.mouseMove, (event: MouseEvent) => {this.onMouseMove(event);});
@@ -70,7 +69,7 @@ class PBPianoKeyboard {
         let y = event.offsetY;
         let theResult = -1;
         for (let index = 0; index < this.keyRegions.length; index++) {
-            if (this.context2D.isPointInPath(this.keyRegions[index].path, x, y)) {
+            if (this.context.isPointInPath(this.keyRegions[index].path, x, y)) {
                 this.statusWnd.writeMsg("Mouseover: key " + index);
                 theResult = index;
             }
@@ -119,14 +118,14 @@ class PBPianoKeyboard {
     fillRegion(i: number, hover: boolean) {
         if (i >= 0) { // Valid region
             let theKeyRegion = this.keyRegions[i];
-            this.context2D.fillStyle = (hover) ? PBPianoKeyboard.HOVER_FILL_STYLE : theKeyRegion.notPlayingFillStyle;
-            this.context2D.fill(theKeyRegion.path);
-            this.context2D.stroke(theKeyRegion.path);
+            this.context.fillStyle = (hover) ? PBPianoKeyboard.HOVER_FILL_STYLE : theKeyRegion.notPlayingFillStyle;
+            this.context.fill(theKeyRegion.path);
+            this.context.stroke(theKeyRegion.path);
         }
     }
 
     clearCanvas () {
-        this.context2D.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
     }
 
     updateScale() {
@@ -173,8 +172,8 @@ class PBPianoKeyboard {
 
     buildKeyboardRegions() {
         this.keyRegions = [];   // Toss old regions
-        let orgX = Math.floor(this.scale * PBPianoKeyboard.BLACK_WIDTH / 2);    // Round down to whole pixel, and take into account scaling
-        let orgY = 0;
+        let orgX = this.clippingRect.x + Math.floor(this.scale * PBPianoKeyboard.BLACK_WIDTH / 2);    // Round down to whole pixel, and take into account scaling
+        let orgY = this.clippingRect.y;
         let thePath: Path2D = null;
         let theInnerPath: Path2D = null;
         let theFillStyle: string = null;
@@ -197,10 +196,10 @@ class PBPianoKeyboard {
     drawAKey(white: boolean, index: number) {
         let theKeyRegion = this.keyRegions[index];
         if (white) {
-            this.context2D.stroke(theKeyRegion.path);
+            this.context.stroke(theKeyRegion.path);
         }
         else {
-            this.context2D.fill(theKeyRegion.path);
+            this.context.fill(theKeyRegion.path);
         }
     }
 
