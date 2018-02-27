@@ -40,8 +40,7 @@ class PBPianoKeyboard {
     scale: number = 3;
     hoverKey: number = -1;
 
-    constructor(public statusWnd: PBStatusWindow, public canvas: HTMLCanvasElement,
-                public notation: PBNotation, public sequencer: PBSequencer) {
+    constructor(public statusWnd: PBStatusWindow, public canvas: HTMLCanvasElement, public sequencer: PBSequencer) {
         if (canvas) {
             this.context2D = this.canvas.getContext("2d");
             this.canvas.addEventListener(PBConst.EVENTS.mouseClick, (event: MouseEvent) => {this.onClick(event);});
@@ -111,7 +110,7 @@ class PBPianoKeyboard {
     onClick(event: MouseEvent) {
         let hoverKey = this.checkForHover(event);
         this.statusWnd.writeMsg(event.type + " event: x " + event.offsetX + " y " + event.offsetY + "  hoverKey: " + hoverKey);
-        if (hoverKey) {
+        if (hoverKey != -1) {
             this.statusWnd.writeMsg("Piano: Clicked region " + hoverKey);
             this.sequencer.playNote(hoverKey + PBSounds.MIDI_MIDDLE_C - 2)
         }
