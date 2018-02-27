@@ -129,15 +129,17 @@ class PBSounds {
     }
 
     playSound(midiNote: number) {
-        let sound = this.sounds[midiNote];
-        if (sound.available) {
-            if (sound.playing) {    // Can only start once, need a new BufferSource
-                sound.source = this.context.createBufferSource();
-                sound.source.buffer = sound.buffer;
-                sound.source.connect(this.context.destination);
+        if ((midiNote >= PBSounds.MIDI_LOW) && (midiNote <= PBSounds.MIDI_HIGH)) {
+            let sound = this.sounds[midiNote];
+            if (sound.available) {
+                if (sound.playing) {    // Can only start once, need a new BufferSource
+                    sound.source = this.context.createBufferSource();
+                    sound.source.buffer = sound.buffer;
+                    sound.source.connect(this.context.destination);
+                }
+                sound.source.start();
+                sound.playing = true;
             }
-            sound.source.start();
-            sound.playing = true;
         }
     }
 }
