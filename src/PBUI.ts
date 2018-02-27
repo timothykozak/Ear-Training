@@ -18,8 +18,7 @@ class PBUI {
         this.pianoCanvas = document.getElementById("pianoCanvas") as HTMLCanvasElement;
         this.notationCanvas = document.getElementById("notationCanvas") as HTMLCanvasElement;
         this.notation = new PBNotation(this.notationCanvas);
-        this.notation.redraw();
-        this.pianoKeyboard = new PBPianoKeyboard(this.statusWindow, this.pianoCanvas, this.notation, this.sequencer);
+        this.pianoKeyboard = new PBPianoKeyboard(this.statusWindow, this.pianoCanvas, this.sequencer);
     }
 }
 
