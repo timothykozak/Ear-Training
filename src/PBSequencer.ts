@@ -6,7 +6,6 @@
 // TODO: Use the note types, and handle the chordal notes
 
 import {PBSounds} from "./PBSounds.js";
-import {PBNotation} from "./PBNotation.js";
 import {PBConst, NoteType} from "./PBConst.js";
 
 interface SequenceItem {
@@ -21,8 +20,9 @@ class PBSequencer {
     ticks = 0;
     sequenceRunning = false;
     ticksBetweenChords = 5;
+    noteBeingTested: number;
 
-    constructor(public notation: PBNotation) {
+    constructor() {
         this.sequence = [];
         this.ticks = 0;
         this.sequenceRunning = false;
@@ -52,7 +52,7 @@ class PBSequencer {
     startSequence() {
         this.ticks = 0;
         this.sequenceRunning = true;
-        this.notation.redraw();
+        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerCadenceStarted, {detail: this.noteBeingTested}));
     }
 
     addNoteToSequence(theNote: number, theState: boolean, theTimeInc = 0, theNoteType: NoteType) { // Tack to end of sequence.  To do a chord, don't increment the time
@@ -78,6 +78,7 @@ class PBSequencer {
     }
 
     cadencePlusNote(theNote: number) {
+        this.noteBeingTested = theNote;
         this.cadenceSequence();
         this.addNoteToSequence(theNote, true, this.ticksBetweenChords * 4, NoteType.Testing);
     }
