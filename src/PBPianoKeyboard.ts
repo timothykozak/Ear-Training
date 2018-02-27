@@ -125,11 +125,16 @@ class PBPianoKeyboard {
     }
 
     clearCanvas () {
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.context.clearRect(this.clippingRect.x, this.clippingRect.y, this.clippingRect.width, this.clippingRect.height);
     }
 
     updateScale() {
         this.scale = 3;
+    }
+
+    resize(theClippingRect: ClippingRect) {
+        this.clippingRect = theClippingRect;
+        this.drawKeyboard();
     }
 
     buildBlackKeyPath(orgX: number, orgY: number, index: number, inset: number = 0): Path2D {
@@ -194,6 +199,7 @@ class PBPianoKeyboard {
     };
 
     drawAKey(white: boolean, index: number) {
+        this.context.strokeStyle = "#000";
         let theKeyRegion = this.keyRegions[index];
         if (white) {
             this.context.stroke(theKeyRegion.path);
