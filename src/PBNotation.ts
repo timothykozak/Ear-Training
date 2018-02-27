@@ -39,7 +39,7 @@ export default class PBNotation {
     grandStaff: boolean = false;
 
     constructor(public context: CanvasRenderingContext2D, public clippingRect: ClippingRect) {
-        this.resize();
+        this.resize(this.clippingRect);
         document.addEventListener(PBConst.EVENTS.sequencerCadenceStarted, (event: CustomEvent) => {this.onCadenceStarted(event);}, false);
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event);}, false);
         document.addEventListener(PBConst.EVENTS.keyboardHover, (event: CustomEvent) => {this.onHover(event);}, false);
@@ -72,7 +72,8 @@ export default class PBNotation {
             this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(note + PBSounds.MIDI_MIDDLE_C -2), 'gray');
     }
     
-    resize() {
+    resize(theClippingRect: ClippingRect) {
+        this.clippingRect = theClippingRect;
         this.updateFontSize(100);   // Set the default font size
         this.orgX = this.clippingRect.x + PBNotation.ORG_X_IN_NOTE_WIDTHS * this.noteWidth;
         this.orgY = this.clippingRect.y + PBNotation.ORG_Y_IN_NOTE_HEIGHTS * this.noteHeight;
