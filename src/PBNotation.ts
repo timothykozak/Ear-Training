@@ -4,13 +4,13 @@
 // This module handles the musical notation.  It is passed an HTMLCanvasElement
 // on which it draws out the treble staff in the key of C Major.
 
-// TODO: Make canvas resizable & use all of canvas;
 // TODO: Handle the chords in place of individual notes
 
 import {SequenceItem} from "./PBSequencer.js";
 import {PBConst} from "./PBConst.js";
 import {PBSequencer, NoteType} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
+import {ClippingRect} from "./PBUI";
 
 interface GlyphItem {
     value: string,
@@ -24,23 +24,22 @@ interface QualifiedNote {
 }
 
 export default class PBNotation {
-
-    static ORG_X = 50;  // x coord of the origin
-    static ORG_Y = 250; // y coord of the origin
+    static ORG_X_IN_NOTE_WIDTHS = 1.0;
+    static ORG_Y_IN_NOTE_HEIGHTS = 6.0;
     static ORG_WIDTH = 20;  // The width of the origin cross
+
+    orgX = 50;  // x coord of the origin
+    orgY = 250; // y coord of the origin
 
     static xByNoteType = [2, 3, 4, 5, 7, 9, 11];  // Units are noteWidth
 
-    context: CanvasRenderingContext2D;
     fontSize: number;   // In pixels
     noteWidth: number;
     noteHeight: number;
     grandStaff: boolean = false;
 
-    constructor(public canvas: HTMLCanvasElement) {
-        this.context = this.canvas.getContext("2d");    // The 2d context of the canvas
-        this.updateFontSize(100);   // Set the default font size
-        this.redraw();
+    constructor(public context: CanvasRenderingContext2D, public clippingRect: ClippingRect) {
+        this.resize();
         document.addEventListener(PBConst.EVENTS.sequencerCadenceStarted, (event: CustomEvent) => {this.onCadenceStarted(event);}, false);
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event);}, false);
         document.addEventListener(PBConst.EVENTS.keyboardHover, (event: CustomEvent) => {this.onHover(event);}, false);
@@ -48,8 +47,8 @@ export default class PBNotation {
     }
 
     onAnswered(event: CustomEvent) {
-        let x = PBNotation.ORG_X + (PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth);
-        let y = 120;
+        let x = this.orgX + (PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth);
+        let y = this.orgY - this.noteHeight * 5;
         if (event.detail.correct)
             this.drawGlyph(x, y, PBConst.GLYPHS.checkMark, 'left', 'middle', 'green', 1, "ionicons");
         else
@@ -65,12 +64,19 @@ export default class PBNotation {
     }
 
     drawHoverNote(note: number, color: number) {
-        let x = PBNotation.ORG_X + PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth;
-        let y = PBNotation.ORG_Y;
+        let x = this.orgX + PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth;
+        let y = this.orgY;
         this.context.clearRect(x - this.noteWidth, y + (this.noteHeight * 2), this.noteWidth * 3, -(this.noteHeight * 8));
         this.drawGlyph(x - this.noteWidth, y, PBConst.GLYPHS.staff5Lines, 'left', 'middle', 'black', 3);
         if (note != -1)
             this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(note + PBSounds.MIDI_MIDDLE_C -2), 'gray');
+    }
+    
+    resize() {
+        this.updateFontSize(100);   // Set the default font size
+        this.orgX = this.clippingRect.x + PBNotation.ORG_X_IN_NOTE_WIDTHS * this.noteWidth;
+        this.orgY = this.clippingRect.y + PBNotation.ORG_Y_IN_NOTE_HEIGHTS * this.noteHeight;
+        this.redraw();
     }
 
     updateFontSize(newSize: number) {
@@ -90,14 +96,14 @@ export default class PBNotation {
     onSequencer (event: CustomEvent) {
         let theItem: SequenceItem = event.detail;
         if (theItem.state) {
-            let x = PBNotation.ORG_X  + (PBNotation.xByNoteType[theItem.noteType] * this.noteWidth);
+            let x = this.orgX  + (PBNotation.xByNoteType[theItem.noteType] * this.noteWidth);
             this.drawNote(x, theItem.note);
         }
     }
 
     clearCanvas() {
         this.context.fillStyle = "white";
-        this.context.fillRect(0, 0, this.canvas.clientWidth, this.canvas.clientHeight);
+        this.context.fillRect(this.clippingRect.x, this.clippingRect.y, this.clippingRect.width, this.clippingRect.height);
     }
 
     drawLine(startX: number,  startY: number,  endX: number,  endY: number,  width: number,  color: string,  cap: string) {
@@ -112,8 +118,8 @@ export default class PBNotation {
     }
 
     drawOrg() {
-        this.drawLine(PBNotation.ORG_X - PBNotation.ORG_WIDTH, PBNotation.ORG_Y, PBNotation.ORG_X + PBNotation.ORG_WIDTH, PBNotation.ORG_Y, 1, 'red', 'butt');
-        this.drawLine(PBNotation.ORG_X, PBNotation.ORG_Y - PBNotation.ORG_WIDTH, PBNotation.ORG_X, PBNotation.ORG_Y + PBNotation.ORG_WIDTH, 1, 'red', 'butt');
+        this.drawLine(this.orgX - PBNotation.ORG_WIDTH, this.orgY, this.orgX + PBNotation.ORG_WIDTH, this.orgY, 1, 'red', 'butt');
+        this.drawLine(this.orgX, this.orgY - PBNotation.ORG_WIDTH, this.orgX, this.orgY + PBNotation.ORG_WIDTH, 1, 'red', 'butt');
     }
 
     drawGlyph(x: number, y: number, glyph: GlyphItem, align: string, baseline: string, color: string, repeat: number = 1, font: string = 'aruvarb') {
@@ -135,23 +141,23 @@ export default class PBNotation {
     drawStaff() {
         // Draw the empty staff with clefs and terminations
         this.drawOrg();
-        let staffY = PBNotation.ORG_Y;
+        let staffY = this.orgY;
         let ng = PBConst.GLYPHS;
-        let lengthInNotes = this.canvas.width / this.noteWidth - 1;
+        let lengthInNotes = this.clippingRect.width / this.noteWidth - 1;
 
-        this.drawGlyph(PBNotation.ORG_X, staffY, ng.staff5Lines, 'left', 'middle', 'black', lengthInNotes);    // Draw treble staff
-        this.drawGlyph(PBNotation.ORG_X, staffY, ng.beginBar, 'left', 'middle', 'black');
-        this.drawGlyph(PBNotation.ORG_X + (this.noteWidth / 4), staffY - this.noteHeight, ng.gClef, 'left', 'middle', 'black');
-        this.drawGlyph(PBNotation.ORG_X + (this.noteWidth * lengthInNotes), staffY, ng.endBar, 'right', 'middle', 'black');
+        this.drawGlyph(this.orgX, staffY, ng.staff5Lines, 'left', 'middle', 'black', lengthInNotes);    // Draw treble staff
+        this.drawGlyph(this.orgX, staffY, ng.beginBar, 'left', 'middle', 'black');
+        this.drawGlyph(this.orgX + (this.noteWidth / 4), staffY - this.noteHeight, ng.gClef, 'left', 'middle', 'black');
+        this.drawGlyph(this.orgX + (this.noteWidth * lengthInNotes), staffY, ng.endBar, 'right', 'middle', 'black');
 
         if (this.grandStaff) {
             staffY += (this.noteHeight * 8);
-            this.drawGlyph(PBNotation.ORG_X, staffY, ng.staff5Lines, 'left', 'middle', 'black', lengthInNotes);    // Draw bass staff
-            this.drawGlyph(PBNotation.ORG_X, staffY, ng.beginBar, 'left', 'middle', 'black');
-            this.drawGlyph(PBNotation.ORG_X + (this.noteWidth / 4), staffY - (3 * this.noteHeight), ng.fClef, 'left', 'middle', 'black');
-            this.drawGlyph(PBNotation.ORG_X + (this.noteWidth * lengthInNotes), staffY, ng.endBar, 'right', 'middle', 'black');
+            this.drawGlyph(this.orgX, staffY, ng.staff5Lines, 'left', 'middle', 'black', lengthInNotes);    // Draw bass staff
+            this.drawGlyph(this.orgX, staffY, ng.beginBar, 'left', 'middle', 'black');
+            this.drawGlyph(this.orgX + (this.noteWidth / 4), staffY - (3 * this.noteHeight), ng.fClef, 'left', 'middle', 'black');
+            this.drawGlyph(this.orgX + (this.noteWidth * lengthInNotes), staffY, ng.endBar, 'right', 'middle', 'black');
 
-            this.drawGlyph(PBNotation.ORG_X, staffY, ng.brace, 'right', 'middle', 'black');  // Draw the combining brace
+            this.drawGlyph(this.orgX, staffY, ng.brace, 'right', 'middle', 'black');  // Draw the combining brace
         }
     }
 
@@ -162,7 +168,7 @@ export default class PBNotation {
     drawQualifiedNote(x: number, qNote: QualifiedNote, color: string = 'black') {
         // Draw the note, along with accidentals and ledger line
         // ORG_Y is E4 and not C4
-        let y = PBNotation.ORG_Y + (qNote.degree - 2) * this.noteHeight / -2;
+        let y = this.orgY + (qNote.degree - 2) * this.noteHeight / -2;
         this.drawGlyph(x, y, PBConst.GLYPHS.quarterNoteUp, 'left', 'middle', color);
         if (qNote.degree == 0)  // Need a ledger line
             this.drawGlyph(x - this.noteWidth / 4, y + this.noteHeight * 2, PBConst.GLYPHS.ledgerLine, 'left', 'middle', color);
