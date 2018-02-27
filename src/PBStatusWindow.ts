@@ -110,8 +110,7 @@ class PBStatusWindow {
 
     setStyles() {
         // Use CSS to style all of the HTML elements.
-        // For some reason, styling the text elements breaks the drag.
-        // Have also seen some strange responses to reasonable values.
+        // Have seen some strange responses to reasonable values.
         PBStatusWindow.setElementStyle(this.windowDiv,
             {
                 position: "absolute",
