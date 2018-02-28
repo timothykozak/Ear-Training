@@ -10,7 +10,7 @@ import {SequenceItem} from "./PBSequencer.js";
 import {PBConst} from "./PBConst.js";
 import {PBSequencer, NoteType} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
-import {ClippingRect} from "./PBUI";
+import {ClippingRect} from "./PBUI.js";
 
 interface GlyphItem {
     value: string,
@@ -26,12 +26,16 @@ interface QualifiedNote {
 export default class PBNotation {
     static ORG_X_IN_NOTE_WIDTHS = 1.0;
     static ORG_Y_IN_NOTE_HEIGHTS = 6.0;
-    static ORG_WIDTH = 20;  // The width of the origin cross
+    static FONT_SIZE_IN_NOTE_WIDTHS = 2;
+    static NOTE_HEIGHT_IN_NOTE_WIDTHS = 0.5;
+    static STAFF_WIDTH_IN_NOTE_WIDTHS = 13;
+    static STAFF_HEIGHT_IN_NOTE_WIDTHS = 4;
+    static ORG_WIDTH = 20;  // The width of the origin cross in pixels
 
     orgX = 50;  // x coord of the origin
     orgY = 250; // y coord of the origin
 
-    static xByNoteType = [2, 3, 4, 5, 7, 9, 11];  // Units are noteWidth
+    static xByNoteType = [2, 3, 4, 5, 7, 9, 10];  // Units are noteWidth
 
     fontSize: number;   // In pixels
     noteWidth: number;
@@ -74,16 +78,18 @@ export default class PBNotation {
     
     resize(theClippingRect: ClippingRect) {
         this.clippingRect = theClippingRect;
-        this.updateFontSize(100);   // Set the default font size
+        let noteWidthByClippingWidth = Math.floor(theClippingRect.width / PBNotation.STAFF_WIDTH_IN_NOTE_WIDTHS);
+        let noteWidthByClippingHeight = Math.floor(theClippingRect.height / PBNotation.STAFF_HEIGHT_IN_NOTE_WIDTHS);
+        this.updateNoteWidth(Math.min(noteWidthByClippingHeight, noteWidthByClippingWidth));
         this.orgX = this.clippingRect.x + PBNotation.ORG_X_IN_NOTE_WIDTHS * this.noteWidth;
         this.orgY = this.clippingRect.y + PBNotation.ORG_Y_IN_NOTE_HEIGHTS * this.noteHeight;
         this.redraw();
     }
 
-    updateFontSize(newSize: number) {
-        this.fontSize = newSize;
-        this.noteWidth = this.fontSize / 2;
-        this.noteHeight = this.fontSize / 4;
+    updateNoteWidth(newSize: number) {
+        this.noteWidth = newSize;
+        this.fontSize = this.noteWidth * PBNotation.FONT_SIZE_IN_NOTE_WIDTHS;
+        this.noteHeight = this.noteWidth * PBNotation.NOTE_HEIGHT_IN_NOTE_WIDTHS;
     }
 
     static midiToQualifiedNote(midi: number) : QualifiedNote {
@@ -144,7 +150,7 @@ export default class PBNotation {
         this.drawOrg();
         let staffY = this.orgY;
         let ng = PBConst.GLYPHS;
-        let lengthInNotes = this.clippingRect.width / this.noteWidth - 1;
+        let lengthInNotes = PBNotation.STAFF_WIDTH_IN_NOTE_WIDTHS - 1;
 
         this.drawGlyph(this.orgX, staffY, ng.staff5Lines, 'left', 'middle', 'black', lengthInNotes);    // Draw treble staff
         this.drawGlyph(this.orgX, staffY, ng.beginBar, 'left', 'middle', 'black');
