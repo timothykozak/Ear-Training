@@ -31,6 +31,8 @@ class PBPianoKeyboard {
     static BLACK_KEY_FILL_STYLE = 'black';
     static WHITE_KEY_FILL_STYLE = 'white';
     static HOVER_FILL_STYLE = 'darkgray';
+    static SCALE_PER_WIDTH = 0.0043;
+    static SCALE_PER_HEIGHT = 0.0065;
 
     // These arrays start on A#3 (MIDI 58) and end on C#5 (MIDI 73)
     static WHITE_KEYS = [false, true, true, false, true, false, true, true, false, true, false, true, false, true, true, false];
@@ -46,8 +48,7 @@ class PBPianoKeyboard {
             this.canvas.addEventListener(PBConst.EVENTS.mouseLeave, (event: MouseEvent) => {this.onMouseLeave(event);});
             this.canvas.addEventListener(PBConst.EVENTS.mouseMove, (event: MouseEvent) => {this.onMouseMove(event);});
             document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencerNotePlayed(event);}, false);
-            this.buildKeyboardRegions();
-            this.drawKeyboard();
+            this.resize(this.clippingRect);
         }
 
     }
@@ -128,12 +129,15 @@ class PBPianoKeyboard {
         this.context.clearRect(this.clippingRect.x, this.clippingRect.y, this.clippingRect.width, this.clippingRect.height);
     }
 
-    updateScale() {
-        this.scale = 3;
+    updateScale(theScale: number) {
+        this.scale = theScale;
     }
 
     resize(theClippingRect: ClippingRect) {
         this.clippingRect = theClippingRect;
+        let scaleByWidth = this.clippingRect.width * PBPianoKeyboard.SCALE_PER_WIDTH;
+        let scaleByHeight = this.clippingRect.height * PBPianoKeyboard.SCALE_PER_HEIGHT;
+        this.updateScale(Math.min(scaleByHeight, scaleByWidth));
         this.drawKeyboard();
     }
 
@@ -201,17 +205,14 @@ class PBPianoKeyboard {
     drawAKey(white: boolean, index: number) {
         this.context.strokeStyle = "#000";
         let theKeyRegion = this.keyRegions[index];
-        if (white) {
-            this.context.stroke(theKeyRegion.path);
-        }
-        else {
+        this.context.stroke(theKeyRegion.path);
+        if (!white) {
             this.context.fill(theKeyRegion.path);
         }
     }
 
     drawKeyboard () {
         this.clearCanvas();
-        this.updateScale();
         this.buildKeyboardRegions();
         PBPianoKeyboard.WHITE_KEYS.forEach( (white, index) => { this.drawAKey(white, index);});
     }
