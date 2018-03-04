@@ -125,7 +125,7 @@ class PBPianoKeyboard {
         }
     }
 
-    clearCanvas () {
+    clearClippingRect () {
         this.context.clearRect(this.clippingRect.x, this.clippingRect.y, this.clippingRect.width, this.clippingRect.height);
     }
 
@@ -212,7 +212,7 @@ class PBPianoKeyboard {
     }
 
     drawKeyboard () {
-        this.clearCanvas();
+        this.clearClippingRect();
         this.buildKeyboardRegions();
         PBPianoKeyboard.WHITE_KEYS.forEach( (white, index) => { this.drawAKey(white, index);});
     }
