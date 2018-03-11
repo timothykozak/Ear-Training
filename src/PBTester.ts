@@ -39,7 +39,7 @@ class PBTester {
     }
 
     onNotePlayed(event: CustomEvent) {
-        if (this.waitingForAnswer) {
+        if (this.waitingForAnswer && event.detail.state) {  // Make sure to disregard the note off of the degreeBeingTested note
             this.waitingForAnswer = false;
             let correctAnswer = (event.detail.note == (this.degreeBeingTested + PBSounds.MIDI_MIDDLE_C));
             document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerNoteAnswered, {detail: {correct: correctAnswer}}));
