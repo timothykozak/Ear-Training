@@ -31,7 +31,7 @@ class PBUI {
     pianoClippingRect: ClippingRect;
 
     constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer) {
-        this.buildBodyHTML();
+        PBUI.buildBodyHTML();
         this.canvas = document.getElementById("theCanvas") as HTMLCanvasElement;
         this.context = this.canvas.getContext("2d");
         this.onResizeFinished();    // The initial sizing
@@ -44,27 +44,37 @@ class PBUI {
         };
     }
 
-    buildBodyHTML() {
-        document.body.innerHTML = `
-        <canvas id="theCanvas" style="border-style: dotted; position: absolute;"></canvas>
-        <div class="transportDiv">
-        <ul class="transportList">
-        <li class="transportListItem"><a class="transportListLink" href="#lessthan">&#xf3cf</a></li>
-        <li class="transportListItem"><a onclick="window.pbEarTraining.tester.startTest();" class="transportListLink" href="#start">&#xf488</a></li>
-        <li class="transportListItem"><a class="transportListLink" href="#pause">&#xf478</a></li>
-        <li class="transportListItem"><a class="transportListLink" href="#greaterthan">&#xf3d1</a></li>
-        </ul>
-        </div>
+    static buildCanvasHTML(): string {
+        return (`<canvas id="theCanvas" style="border-style: dotted; position: absolute;"></canvas>`);
+    }
 
-        <div class="menuDiv">
-        <ul class="menuList">
-        <li><a href="#hamburger">&#xf20d</a></li>
-        <li><a href="#gear">&#xf2f7</a></li>
-        <li><a href="#home">&#xf384</a></li>
-        <li><a href="#graph">&#xf2b5</a></li>
-        <li><a href="#questionmark">&#xf444</a></li>
-        </ul>
-        </div>`;
+    static buildTransportHTML(): string {
+        return(`<div class="transportDiv">
+            <ul>
+                <li>&#xf3cf</li>
+                <li onclick="window.pbEarTraining.tester.startTest();">&#xf488</li>
+                <li>&#xf478</li>
+                <li>&#xf3d1</li>
+            </ul>
+        </div>        `);
+    }
+
+    static buildMenuHTML(): string {
+        return(`        <div class="menuDiv">
+            <ul
+                <li></li>
+                <li>&#xf20d</li>
+                <li>&#xf2f7</li>
+                <li>&#xf384</li>
+                <li>&#xf2b5</li>
+                <li>&#xf444</li>
+            </ul>
+        </div>
+        `);
+    }
+
+    static buildBodyHTML() {
+        document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML());
     }
 
     onResizeFinished() { // Called during a resize and in the constructor
