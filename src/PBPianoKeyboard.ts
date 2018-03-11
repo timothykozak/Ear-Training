@@ -31,8 +31,8 @@ class PBPianoKeyboard {
     static BLACK_KEY_FILL_STYLE = 'black';
     static WHITE_KEY_FILL_STYLE = 'white';
     static HOVER_FILL_STYLE = 'darkgray';
-    static SCALE_PER_WIDTH = 0.0043;
-    static SCALE_PER_HEIGHT = 0.0065;
+    static SCALE_PER_WIDTH = 0.0043;    // For determining best scale based on canvas width...
+    static SCALE_PER_HEIGHT = 0.0065;   // and height
 
     // These arrays start on A#3 (MIDI 58) and end on C#5 (MIDI 73)
     static WHITE_KEYS = [false, true, true, false, true, false, true, true, false, true, false, true, false, true, true, false];
@@ -44,10 +44,18 @@ class PBPianoKeyboard {
 
     constructor(public canvas: HTMLCanvasElement, public context: CanvasRenderingContext2D, public clippingRect: ClippingRect, public statusWnd: PBStatusWindow, public sequencer: PBSequencer) {
         if (canvas) {
-            this.canvas.addEventListener(PBConst.EVENTS.mouseClick, (event: MouseEvent) => {this.onClick(event);});
-            this.canvas.addEventListener(PBConst.EVENTS.mouseLeave, (event: MouseEvent) => {this.onMouseLeave(event);});
-            this.canvas.addEventListener(PBConst.EVENTS.mouseMove, (event: MouseEvent) => {this.onMouseMove(event);});
-            document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencerNotePlayed(event);}, false);
+            this.canvas.addEventListener(PBConst.EVENTS.mouseClick, (event: MouseEvent) => {
+                this.onClick(event);
+            });
+            this.canvas.addEventListener(PBConst.EVENTS.mouseLeave, (event: MouseEvent) => {
+                this.onMouseLeave(event);
+            });
+            this.canvas.addEventListener(PBConst.EVENTS.mouseMove, (event: MouseEvent) => {
+                this.onMouseMove(event);
+            });
+            document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {
+                this.onSequencerNotePlayed(event);
+            }, false);
             this.resize(this.clippingRect);
         }
 
@@ -55,8 +63,12 @@ class PBPianoKeyboard {
 
     onSequencerNotePlayed(event: CustomEvent) {
         let theItem: SequenceItem = event.detail;
-        if (theItem.state) {
-            if (this.hoverKey != -1) {}
+        let theKey = theItem.note - PBSounds.MIDI_MIDDLE_C + 2;
+        if (theItem.state) {    // Turn on
+            // if (this.hoverKey != -1) {}
+            this.fillRegion(theKey, true);
+        } else {    //Turn off
+            this.fillRegion(theKey, false);
         }
     }
 
@@ -64,7 +76,7 @@ class PBPianoKeyboard {
         document.dispatchEvent(new CustomEvent(PBConst.EVENTS.keyboardHover, {detail: theHoverKey})); // No longer hovering
     }
 
-    checkForHover(event: MouseEvent) : number {
+    checkForHover(event: MouseEvent): number {
         // Returns the key over which the mouse is hovering, or -1 for none
         let x = event.offsetX;
         let y = event.offsetY;
@@ -75,7 +87,7 @@ class PBPianoKeyboard {
                 theResult = index;
             }
         }
-        return(theResult);
+        return (theResult);
     }
 
     onMouseLeave(event: MouseEvent) {
@@ -119,13 +131,14 @@ class PBPianoKeyboard {
     fillRegion(i: number, hover: boolean) {
         if (i >= 0) { // Valid region
             let theKeyRegion = this.keyRegions[i];
+            this.context.strokeStyle = "#000";
             this.context.fillStyle = (hover) ? PBPianoKeyboard.HOVER_FILL_STYLE : theKeyRegion.notPlayingFillStyle;
             this.context.fill(theKeyRegion.path);
             this.context.stroke(theKeyRegion.path);
         }
     }
 
-    clearClippingRect () {
+    clearClippingRect() {
         this.context.clearRect(this.clippingRect.x, this.clippingRect.y, this.clippingRect.width, this.clippingRect.height);
     }
 
@@ -134,6 +147,7 @@ class PBPianoKeyboard {
     }
 
     resize(theClippingRect: ClippingRect) {
+        // Calculate the scale based on the height and the width, selecting the minimum that fits.
         this.clippingRect = theClippingRect;
         let scaleByWidth = this.clippingRect.width * PBPianoKeyboard.SCALE_PER_WIDTH;
         let scaleByHeight = this.clippingRect.height * PBPianoKeyboard.SCALE_PER_HEIGHT;
@@ -148,35 +162,35 @@ class PBPianoKeyboard {
         let width = Math.floor(this.scale * (PBPianoKeyboard.BLACK_WIDTH - (inset * 2)));
         let height = Math.floor(this.scale * (PBPianoKeyboard.BLACK_LENGTH - (inset * 2)));
         keyPath.rect(x, orgY + inset * this.scale, width, height);
-        return(keyPath);
+        return (keyPath);
     }
 
     buildWhiteKeyPath(orgX: number, orgY: number, index: number): Path2D {
         // The white key is a rectangle with a notch from a black key
-        // on at least one side.
+        // on at least one side.  Math.floor is used to avoid fractional pixels.
         let keyPath = new Path2D();
-        let leftNotch = 0;
+        let leftNotch = 0;  // Determine left notch, if any
         if (!PBPianoKeyboard.WHITE_KEYS[index - 1])
             leftNotch = Math.abs(Math.floor(this.scale * (PBPianoKeyboard.X_OFFSET[index - 1] + (PBPianoKeyboard.BLACK_WIDTH / 2))));   // There is always key before and after a white key.
-        let rightNotch = 0;
+        let rightNotch = 0; // Determine right notch, if any
         if (!PBPianoKeyboard.WHITE_KEYS[index + 1])
-            rightNotch = Math.abs(Math.floor(this.scale * (PBPianoKeyboard.X_OFFSET[index + 1] -  (PBPianoKeyboard.BLACK_WIDTH / 2))));
+            rightNotch = Math.abs(Math.floor(this.scale * (PBPianoKeyboard.X_OFFSET[index + 1] - (PBPianoKeyboard.BLACK_WIDTH / 2))));
         let notchLength = Math.floor(this.scale * PBPianoKeyboard.BLACK_LENGTH);
         let width = Math.floor(this.scale * PBPianoKeyboard.WHITE_WIDTH);
-        let wideLength = Math.floor(this.scale * (PBPianoKeyboard.WHITE_LENGTH - PBPianoKeyboard.BLACK_LENGTH));
+        let unNotchedLength = Math.floor(this.scale * (PBPianoKeyboard.WHITE_LENGTH - PBPianoKeyboard.BLACK_LENGTH));    // Length of the key that is not notched
         let x = orgX + leftNotch;
         let y = orgY;
 
-        keyPath.moveTo(x, y);
+        keyPath.moveTo(x, y);   // Build the path
         keyPath.lineTo(x, y += notchLength);
         keyPath.lineTo(x -= leftNotch, y);
-        keyPath.lineTo(x, y += wideLength);
+        keyPath.lineTo(x, y += unNotchedLength);
         keyPath.lineTo(x += width, y);
-        keyPath.lineTo(x, y -= wideLength);
+        keyPath.lineTo(x, y -= unNotchedLength);
         keyPath.lineTo(x -= rightNotch, y);
         keyPath.lineTo(x, orgY);
         keyPath.closePath();
-        return(keyPath);
+        return (keyPath);
     }
 
     buildKeyboardRegions() {
@@ -187,7 +201,7 @@ class PBPianoKeyboard {
         let theInnerPath: Path2D = null;
         let theFillStyle: string = null;
 
-        PBPianoKeyboard.WHITE_KEYS.forEach( (white, index) => { //
+        PBPianoKeyboard.WHITE_KEYS.forEach((white, index) => { //
             if (white) {
                 thePath = this.buildWhiteKeyPath(orgX, orgY, index);
                 theInnerPath = null;
@@ -198,7 +212,12 @@ class PBPianoKeyboard {
                 theInnerPath = this.buildBlackKeyPath(orgX, orgY, index, 2);
                 theFillStyle = PBPianoKeyboard.BLACK_KEY_FILL_STYLE;
             }
-            this.keyRegions[index] = {path: thePath, playing: false, notPlayingFillStyle: theFillStyle, innerPath: theInnerPath};
+            this.keyRegions[index] = {
+                path: thePath,
+                playing: false,
+                notPlayingFillStyle: theFillStyle,
+                innerPath: theInnerPath
+            };
         });
     };
 
@@ -211,10 +230,12 @@ class PBPianoKeyboard {
         }
     }
 
-    drawKeyboard () {
+    drawKeyboard() {
         this.clearClippingRect();
         this.buildKeyboardRegions();
-        PBPianoKeyboard.WHITE_KEYS.forEach( (white, index) => { this.drawAKey(white, index);});
+        PBPianoKeyboard.WHITE_KEYS.forEach((white, index) => {
+            this.drawAKey(white, index);
+        });
     }
 }
 
