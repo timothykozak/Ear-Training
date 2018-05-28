@@ -1,7 +1,6 @@
 //
 // pbEarTraining.js
 //
-// TODO: Create a single canvas here.  Tell the classes which part it can use.
 
 import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBSounds} from "./PBSounds.js";
@@ -27,16 +26,19 @@ class PBEarTraining {
         }
     }
 
-    initClass() {
-        document.addEventListener(PBConst.EVENTS.soundsInstrumentLoaded, () => {this.soundsAvailable = true;}, false);
-        this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
-        this.sequencer = new PBSequencer();
-        this.tester = new PBTester(this.sequencer);
-        this.characterInput = new PBCharacterInput(this.sequencer, this.tester);
-        this.ui = new PBUI(this.statusWindow, this.sequencer);
+    checkForWebAudio() {
+        try {   // Check if WebAudio API is available.
+            this.audioContext = new AudioContext();
+            this.statusWindow.writeMsg("Web Audio is available.");
+            return (true);
+        } catch (e) {
+            this.statusWindow.writeErr("Web Audio API is not supported in this browser");
+            return (false);
+        }
     }
 
     checkForWebFont() {
+        // Need to load the external fonts
         this.webFont.load({
             custom: { families: ['Aruvarb', 'ionicons'] },
             timeout:5000,
@@ -47,23 +49,19 @@ class PBEarTraining {
                 this.statusWindow.writeMsg(familyName + " font is not available.");
             },
             active: () => {
-                this.initClass();
+                this.initClass();   // The fonts are active, start everything
             }
         } as WebFont.Config);
     }
 
-
-    checkForWebAudio() {
-        // Need to make sure that the WebAudio API is available
-
-        try {   // Check if WebAudio API is available.
-            this.audioContext = new AudioContext();
-            this.statusWindow.writeMsg("Web Audio is available.");
-            return (true);
-        } catch (e) {
-            this.statusWindow.writeErr("Web Audio API is not supported in this browser");
-            return (false);
-        }
+    initClass() {
+        // Ready to roll.  Start everything.
+        document.addEventListener(PBConst.EVENTS.soundsInstrumentLoaded, () => {this.soundsAvailable = true;}, false);
+        this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
+        this.sequencer = new PBSequencer();
+        this.tester = new PBTester(this.sequencer);
+        this.characterInput = new PBCharacterInput(this.sequencer, this.tester);
+        this.ui = new PBUI(this.statusWindow, this.sequencer);
     }
 }
 
