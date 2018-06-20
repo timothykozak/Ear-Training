@@ -55,7 +55,7 @@ class PBEarTraining {
     }
 
     initClass() {
-        // Ready to roll.  Start everything.
+        // Ready to roll.  Start everything in the proper order.
         document.addEventListener(PBConst.EVENTS.soundsInstrumentLoaded, () => {this.soundsAvailable = true;}, false);
         this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
         this.sequencer = new PBSequencer();
