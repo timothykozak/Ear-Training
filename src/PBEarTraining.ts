@@ -13,7 +13,7 @@ import {PBUI} from "./PBUI.js";
 class PBEarTraining {
     soundsAvailable = false;
     audioContext: AudioContext;
-    statusWindow = new PBStatusWindow('Status');
+    statusWindow = new PBStatusWindow('Status Messages');
     characterInput: PBCharacterInput;
     sequencer: PBSequencer;
     soundModule: PBSounds;
