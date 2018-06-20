@@ -28,6 +28,7 @@ div.menuDiv ul {
     font-size: 40px;
     text-align: center;
     user-select: none;
+    -moz-user-select: none;
 }
 
 div.menuDiv li {
@@ -58,6 +59,7 @@ div.transportDiv ul {
     text-align: center;
     vertical-align: middle;
     user-select: none;
+    -moz-user-select: none;
 }
 
 div.transportDiv li {
