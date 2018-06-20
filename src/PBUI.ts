@@ -9,14 +9,14 @@ import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
 
 interface ClippingRect {
-    x: number,
+    x: number, // Of the upper left corner
     y: number,
     width: number,
     height: number
 }
 
 class PBUI {
-    static NOTATION_FRACTION_OF_CANVAS = 0.33;
+    static NOTATION_FRACTION_OF_CANVAS = 0.33; // Fraction of the canvas to be used by notation
     static MENU_WIDTH = 50; // In pixels, the menu is on the left
     static PLAYER_HEIGHT = 50; // The transport is on the bottom
     static SCROLL_BAR_WIDTH = 35; // Have to assume that it is there
@@ -26,7 +26,7 @@ class PBUI {
     context: CanvasRenderingContext2D;
     notation: PBNotation;
     pianoKeyboard: PBPianoKeyboard;
-    resizingTimer: number = -1;
+    resizingTimer: number = -1; // Handle to the timer to use for delaying the redraw on resize
     notationClippingRect: ClippingRect;
     pianoClippingRect: ClippingRect;
 
@@ -61,8 +61,7 @@ class PBUI {
 
     static buildMenuHTML(): string {
         return(`        <div class="menuDiv">
-            <ul
-                <li></li>
+            <ul>
                 <li>&#xf20d</li>
                 <li>&#xf2f7</li>
                 <li>&#xf384</li>
@@ -77,7 +76,8 @@ class PBUI {
         document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML());
     }
 
-    onResizeFinished() { // Called during a resize and in the constructor
+    onResizeFinished() {
+        // Called during a resize and in the constructor
         this.canvas.width = window.innerWidth - PBUI.MENU_WIDTH - PBUI.SCROLL_BAR_WIDTH;    // Resize the canvas
         this.canvas.height = window.innerHeight - PBUI.PLAYER_HEIGHT - PBUI.SCROLL_BAR_WIDTH;
         this.canvas.style.left = PBUI.MENU_WIDTH + "px";    // Position the canvas
@@ -87,7 +87,7 @@ class PBUI {
         this.notationClippingRect = PBUI.buildClippingRect(0, 0, this.canvas.width, notationHeight);
         this.pianoClippingRect = PBUI.buildClippingRect(0, notationHeight, this.canvas.width, this.canvas.height - notationHeight);
 
-        if (!this.notation) { // In the constructor
+        if (!this.notation) { // In the constructor.  Need to instantiate the classes.
             this.notation = new PBNotation(this.context, this.notationClippingRect);
             this.pianoKeyboard = new PBPianoKeyboard(this.canvas, this.context, this.pianoClippingRect, this.statusWindow, this.sequencer);
         } else { // Regular resize
