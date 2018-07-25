@@ -85,8 +85,8 @@ class PBUI {
         this.canvas.style.top = "0px";
 
         let notationHeight = Math.floor(this.canvas.height * PBUI.NOTATION_FRACTION_OF_CANVAS); // Resize the Rects
-        this.notationRect = PBUI.buildRect(0, 0, this.canvas.width, notationHeight);
-        this.pianoRect = PBUI.buildRect(0, notationHeight + PBUI.GUTTER, this.canvas.width, this.canvas.height - notationHeight - PBUI.GUTTER);
+        this.notationRect = PBUI.buildMyRect(0, 0, this.canvas.width, notationHeight);
+        this.pianoRect = PBUI.buildMyRect(0, notationHeight + PBUI.GUTTER, this.canvas.width, this.canvas.height - notationHeight - PBUI.GUTTER);
 
         if (!this.notation) { // In the constructor.  Need to instantiate the classes.
             this.notation = new PBNotation(this.context, this.notationRect);
@@ -97,7 +97,7 @@ class PBUI {
         }
     }
 
-    static buildRect(theX: number, theY: number, theWidth: number, theHeight: number): MyRect {
+    static buildMyRect(theX: number, theY: number, theWidth: number, theHeight: number): MyRect {
         return({x: theX, y: theY, width: theWidth, height: theHeight});
     }
 }
