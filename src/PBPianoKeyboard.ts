@@ -15,7 +15,7 @@ import {ClippingRect} from "./PBUI.js";
 interface KeyRegion {
     path: Path2D,
     playing: boolean,
-    notPlayingFillStyle: string,
+    fillStyle: string,
 }
 
 class PBPianoKeyboard {
@@ -54,7 +54,6 @@ class PBPianoKeyboard {
             }, false);
             this.resize(this.clippingRect);
         }
-
     }
 
     onSequencerNotePlayed(event: CustomEvent) {
@@ -123,9 +122,9 @@ class PBPianoKeyboard {
 
     fillRegion(i: number, hover: boolean) {
         if (i >= 0) { // Valid region
-            let theKeyRegion = this.keyRegions[i];
             this.context.strokeStyle = "#000";
-            this.context.fillStyle = (hover) ? PBPianoKeyboard.HOVER_FILL_STYLE : theKeyRegion.notPlayingFillStyle;
+            let theKeyRegion = this.keyRegions[i];
+            this.context.fillStyle = (hover) ? PBPianoKeyboard.HOVER_FILL_STYLE : theKeyRegion.fillStyle;
             this.context.fill(theKeyRegion.path);
             this.context.stroke(theKeyRegion.path);
         }
@@ -205,7 +204,7 @@ class PBPianoKeyboard {
             this.keyRegions[index] = {
                 path: thePath,
                 playing: false,
-                notPlayingFillStyle: theFillStyle,
+                fillStyle: theFillStyle,
             };
         });
     };
