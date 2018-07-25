@@ -10,7 +10,7 @@ import {SequenceItem} from "./PBSequencer.js";
 import {PBConst} from "./PBConst.js";
 import {PBSequencer, NoteType} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
-import {MyRect} from "./PBUI.js";
+import {PBUI, MyRect} from "./PBUI.js";
 
 interface GlyphItem {
     value: string,
@@ -43,8 +43,7 @@ export default class PBNotation {
     noteHeight: number;
     grandStaff: boolean = false;
 
-    showOrigin: boolean = true;
-    showContextRect: boolean = true;
+    showHelpers: boolean = true;    // The origin and various rectangles
 
     constructor(public context: CanvasRenderingContext2D, public contextRect: MyRect) {
         this.resize(this.contextRect);
@@ -73,14 +72,21 @@ export default class PBNotation {
 
     drawHoverNote(note: number, color: number) {
         let x = this.orgX + PBNotation.xByNoteType[NoteType.Immediate] * this.noteWidth;
-        let rectX = x - this.noteWidth * 0.4;
         let y = this.orgY;
-        //this.context.clearRect(x - this.noteWidth, y + (this.noteHeight * 2), this.noteWidth * 3, -(this.noteHeight * 8));
-        this.context.clearRect(rectX, 0, this.noteWidth * PBNotation.QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS, this.contextRect.height);
-        this.drawRect(rectX, 0, this.noteWidth * PBNotation.QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS, this.contextRect.height, 1, 'red', 'butt');
+        let hoverRect = PBUI.buildMyRect(x - this.noteWidth * 0.5, 0, this.noteWidth * PBNotation.QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS, this.contextRect.height);
+
+        this.context.save();    // Save current clipping path, and update with hover clipping pat
+        this.context.beginPath();
+        this.context.rect(hoverRect.x, hoverRect.y, hoverRect.width, hoverRect.height);
+        this.context.clip();
+
+        this.context.clearRect(hoverRect.x, hoverRect.y, hoverRect.width, hoverRect.height);
+        if (this.showHelpers)
+            this.drawRect(hoverRect.x, hoverRect.y, hoverRect.width, hoverRect.height, 1, 'red', 'butt');
         this.drawGlyph(x - this.noteWidth, y, PBConst.GLYPHS.staff5Lines, 'left', 'middle', 'black', 3);
         if (note != -1)
             this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(note + PBSounds.MIDI_MIDDLE_C -2), 'gray');
+        this.context.restore(); // Restore old clipping path
     }
     
     resize(theContextRect: MyRect) {
@@ -140,14 +146,14 @@ export default class PBNotation {
     }
 
     drawOrg() {
-        if (this.showOrigin) {
+        if (this.showHelpers) {
             this.drawLine(this.orgX - PBNotation.ORG_WIDTH, this.orgY, this.orgX + PBNotation.ORG_WIDTH, this.orgY, 1, 'red', 'butt');
             this.drawLine(this.orgX, this.orgY - PBNotation.ORG_WIDTH, this.orgX, this.orgY + PBNotation.ORG_WIDTH, 1, 'red', 'butt');
         }
     }
 
     drawContextRect() {
-        if (this.showContextRect) {
+        if (this.showHelpers) {
             this.drawRect(this.contextRect.x, this.contextRect.y, this.contextRect.width, this.contextRect.height, 1, 'red', 'butt');
         }
     }
