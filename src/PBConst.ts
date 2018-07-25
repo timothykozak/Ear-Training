@@ -58,6 +58,19 @@ class PBConst {
         gitHub:             {value: '\u{0f233}', rem: 0.3},
         hamburger:          {value: '\u{0f20d}', rem: 0.3}
     };
+
+    static MIDI = {
+        // On a piano keyboard, 21 is A0, 108 is C8 and 60 is C4 (middle C)
+        LOW: {
+            SOUND: 59,
+            KEYBOARD: 58
+                },
+        HIGH: {
+            SOUND: 72,
+            KEYBOARD: 74
+        },
+        MIDDLE_C: 60
+    };
 }
 
 enum NoteType {  // For notation positioning
