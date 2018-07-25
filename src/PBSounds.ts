@@ -26,9 +26,6 @@ interface Instrument {
 class PBSounds {
     static INSTRUMENT_FILE_NAME = "instruments.txt";
     static BASE_URL = "assets/sounds/";    // This directory contains instruments.txt, and the subdirectories contain all the sounds files.
-    static MIDI_LOW = 59;  // On a piano keyboard, 21 is A0, 108 is C8 and 60 is C4 (middle C)
-    static MIDI_MIDDLE_C = 60;
-    static MIDI_HIGH = 72;
     static MIDI_FILE_REG_EXP = /\d{1,3}\.mp3/;    // Used to separate a valid MIDI file name from the BASE_URL
 
     sounds: Array<Sound>;
@@ -50,7 +47,7 @@ class PBSounds {
 
     buildSoundsArray() {
         this.sounds = [];    // Index into array is the MIDI note number
-        for (let i = PBSounds.MIDI_LOW; i <= PBSounds.MIDI_HIGH; i++) {
+        for (let i = PBConst.MIDI.LOW.SOUND; i <= PBConst.MIDI.HIGH.SOUND; i++) {
             this.sounds[i]= {
                 available: false,
                 buffer: null,
@@ -71,7 +68,7 @@ class PBSounds {
 
     updateSoundsRequested() {
         this.soundsRequested++;
-        if (this.soundsRequested > (PBSounds.MIDI_HIGH - PBSounds.MIDI_LOW)) {  // All download requests are finished.
+        if (this.soundsRequested > (PBConst.MIDI.HIGH.SOUND - PBConst.MIDI.LOW.SOUND)) {  // All download requests are finished.
             this.allSoundsLoaded = true;
             document.dispatchEvent(new Event(PBConst.EVENTS.soundsInstrumentLoaded));
             this.msgWindow.writeMsg("Instrument loaded.");
@@ -123,13 +120,13 @@ class PBSounds {
         this.clearOutSoundsArray();
         this.soundsAvailable = 0;
         this.soundsRequested = 0;
-        for (let i = PBSounds.MIDI_LOW; i <= PBSounds.MIDI_HIGH; i++) {    // Get the entire range
+        for (let i = PBConst.MIDI.LOW.SOUND; i <= PBConst.MIDI.HIGH.SOUND; i++) {    // Get the entire range
             this.loadASound(instrument.url + i + ".mp3");
         }
     }
 
     playSound(midiNote: number) {
-        if ((midiNote >= PBSounds.MIDI_LOW) && (midiNote <= PBSounds.MIDI_HIGH)) {
+        if ((midiNote >= PBConst.MIDI.LOW.SOUND) && (midiNote <= PBConst.MIDI.HIGH.SOUND)) {
             let sound = this.sounds[midiNote];
             if (sound.available) {
                 if (sound.playing) {    // Can only start once, need a new BufferSource
