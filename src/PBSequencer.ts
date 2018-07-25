@@ -16,9 +16,9 @@ interface SequenceItem {
 }
 
 class PBSequencer {
-    static I_CHORD = [PBSounds.MIDI_MIDDLE_C, PBSounds.MIDI_MIDDLE_C + 4, PBSounds.MIDI_MIDDLE_C + 7];
-    static IV_CHORD = [PBSounds.MIDI_MIDDLE_C + 5, PBSounds.MIDI_MIDDLE_C + 9, PBSounds.MIDI_MIDDLE_C];
-    static V_CHORD = [PBSounds.MIDI_MIDDLE_C + 7, PBSounds.MIDI_MIDDLE_C - 1, PBSounds.MIDI_MIDDLE_C + 2];
+    static I_CHORD = [PBConst.MIDI.MIDDLE_C, PBConst.MIDI.MIDDLE_C + 4, PBConst.MIDI.MIDDLE_C + 7];
+    static IV_CHORD = [PBConst.MIDI.MIDDLE_C + 5, PBConst.MIDI.MIDDLE_C + 9, PBConst.MIDI.MIDDLE_C];
+    static V_CHORD = [PBConst.MIDI.MIDDLE_C + 7, PBConst.MIDI.MIDDLE_C - 1, PBConst.MIDI.MIDDLE_C + 2];
 
     sequence: SequenceItem[] = [];
     ticks = 0;
