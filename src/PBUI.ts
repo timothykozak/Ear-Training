@@ -17,6 +17,7 @@ interface ClippingRect {
 
 class PBUI {
     static NOTATION_FRACTION_OF_CANVAS = 0.33; // Fraction of the canvas to be used by notation
+    static GUTTER = 10; // Gutter between notation and keyboard, in pixels
     static MENU_WIDTH = 50; // In pixels, the menu is on the left
     static PLAYER_HEIGHT = 50; // The transport is on the bottom
     static SCROLL_BAR_WIDTH = 35; // Have to assume that it is there
@@ -85,7 +86,7 @@ class PBUI {
 
         let notationHeight = Math.floor(this.canvas.height * PBUI.NOTATION_FRACTION_OF_CANVAS); // Resize the clippingRects
         this.notationClippingRect = PBUI.buildClippingRect(0, 0, this.canvas.width, notationHeight);
-        this.pianoClippingRect = PBUI.buildClippingRect(0, notationHeight, this.canvas.width, this.canvas.height - notationHeight);
+        this.pianoClippingRect = PBUI.buildClippingRect(0, notationHeight + PBUI.GUTTER, this.canvas.width, this.canvas.height - notationHeight - PBUI.GUTTER);
 
         if (!this.notation) { // In the constructor.  Need to instantiate the classes.
             this.notation = new PBNotation(this.context, this.notationClippingRect);
