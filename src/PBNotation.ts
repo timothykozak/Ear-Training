@@ -10,7 +10,7 @@ import {SequenceItem} from "./PBSequencer.js";
 import {PBConst} from "./PBConst.js";
 import {PBSequencer, NoteType} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
-import {ClippingRect} from "./PBUI.js";
+import {MyRect} from "./PBUI.js";
 
 interface GlyphItem {
     value: string,
@@ -24,26 +24,30 @@ interface QualifiedNote {
 }
 
 export default class PBNotation {
-    static ORG_X_IN_NOTE_WIDTHS = 1.0;
+    static ORG_X_IN_NOTE_WIDTHS = 0.5;
     static ORG_Y_IN_NOTE_HEIGHTS = 6.0;
     static FONT_SIZE_IN_NOTE_WIDTHS = 2;
+    static QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS = 2.0;
     static NOTE_HEIGHT_IN_NOTE_WIDTHS = 0.5;
     static STAFF_WIDTH_IN_NOTE_WIDTHS = 13;
-    static STAFF_HEIGHT_IN_NOTE_WIDTHS = 4;
+    static STAFF_HEIGHT_IN_NOTE_WIDTHS = 4.3;
     static ORG_WIDTH = 20;  // The width of the origin cross in pixels
 
     orgX = 50;  // x coord of the origin
     orgY = 250; // y coord of the origin
 
-    static xByNoteType = [2, 3, 4, 5, 7, 9, 10];  // Units are noteWidth
+    static xByNoteType = [2, 3, 4, 5, 6, 8, 10];  // Units are noteWidth
 
     fontSize: number;   // In pixels
     noteWidth: number;
     noteHeight: number;
     grandStaff: boolean = false;
 
-    constructor(public context: CanvasRenderingContext2D, public clippingRect: ClippingRect) {
-        this.resize(this.clippingRect);
+    showOrigin: boolean = true;
+    showContextRect: boolean = true;
+
+    constructor(public context: CanvasRenderingContext2D, public contextRect: MyRect) {
+        this.resize(this.contextRect);
         document.addEventListener(PBConst.EVENTS.sequencerCadenceStarted, (event: CustomEvent) => {this.onCadenceStarted(event);}, false);
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event);}, false);
         document.addEventListener(PBConst.EVENTS.keyboardHover, (event: CustomEvent) => {this.onHover(event);}, false);
@@ -68,21 +72,24 @@ export default class PBNotation {
     }
 
     drawHoverNote(note: number, color: number) {
-        let x = this.orgX + PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth;
+        let x = this.orgX + PBNotation.xByNoteType[NoteType.Immediate] * this.noteWidth;
+        let rectX = x - this.noteWidth * 0.4;
         let y = this.orgY;
-        this.context.clearRect(x - this.noteWidth, y + (this.noteHeight * 2), this.noteWidth * 3, -(this.noteHeight * 8));
+        //this.context.clearRect(x - this.noteWidth, y + (this.noteHeight * 2), this.noteWidth * 3, -(this.noteHeight * 8));
+        this.context.clearRect(rectX, 0, this.noteWidth * PBNotation.QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS, this.contextRect.height);
+        this.drawRect(rectX, 0, this.noteWidth * PBNotation.QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS, this.contextRect.height, 1, 'red', 'butt');
         this.drawGlyph(x - this.noteWidth, y, PBConst.GLYPHS.staff5Lines, 'left', 'middle', 'black', 3);
         if (note != -1)
             this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(note + PBSounds.MIDI_MIDDLE_C -2), 'gray');
     }
     
-    resize(theClippingRect: ClippingRect) {
-        this.clippingRect = theClippingRect;
-        let noteWidthByClippingWidth = Math.floor(theClippingRect.width / PBNotation.STAFF_WIDTH_IN_NOTE_WIDTHS);
-        let noteWidthByClippingHeight = Math.floor(theClippingRect.height / PBNotation.STAFF_HEIGHT_IN_NOTE_WIDTHS);
+    resize(theContextRect: MyRect) {
+        this.contextRect = theContextRect;
+        let noteWidthByClippingWidth = Math.floor(theContextRect.width / PBNotation.STAFF_WIDTH_IN_NOTE_WIDTHS);
+        let noteWidthByClippingHeight = Math.floor(theContextRect.height / PBNotation.STAFF_HEIGHT_IN_NOTE_WIDTHS);
         this.updateNoteWidth(Math.min(noteWidthByClippingHeight, noteWidthByClippingWidth));
-        this.orgX = this.clippingRect.x + PBNotation.ORG_X_IN_NOTE_WIDTHS * this.noteWidth;
-        this.orgY = this.clippingRect.y + PBNotation.ORG_Y_IN_NOTE_HEIGHTS * this.noteHeight;
+        this.orgX = this.contextRect.x + PBNotation.ORG_X_IN_NOTE_WIDTHS * this.noteWidth;
+        this.orgY = this.contextRect.y + PBNotation.ORG_Y_IN_NOTE_HEIGHTS * this.noteHeight;
         this.redraw();
     }
 
@@ -110,7 +117,7 @@ export default class PBNotation {
 
     clearCanvas() {
         this.context.fillStyle = "white";
-        this.context.fillRect(this.clippingRect.x, this.clippingRect.y, this.clippingRect.width, this.clippingRect.height);
+        this.context.fillRect(this.contextRect.x, this.contextRect.y, this.contextRect.width, this.contextRect.height);
     }
 
     drawLine(startX: number,  startY: number,  endX: number,  endY: number,  width: number,  color: string,  cap: string) {
@@ -124,9 +131,25 @@ export default class PBNotation {
         this.context.closePath();
     }
 
+    drawRect(startX: number,  startY: number,  width: number,  height: number,  lineWidth: number,  color: string,  cap: string) {
+        this.context.strokeStyle = color;
+        this.context.lineWidth = lineWidth;
+        this.context.lineCap = cap;
+        this.context.rect(startX, startY, width, height);
+        this.context.stroke();
+    }
+
     drawOrg() {
-        this.drawLine(this.orgX - PBNotation.ORG_WIDTH, this.orgY, this.orgX + PBNotation.ORG_WIDTH, this.orgY, 1, 'red', 'butt');
-        this.drawLine(this.orgX, this.orgY - PBNotation.ORG_WIDTH, this.orgX, this.orgY + PBNotation.ORG_WIDTH, 1, 'red', 'butt');
+        if (this.showOrigin) {
+            this.drawLine(this.orgX - PBNotation.ORG_WIDTH, this.orgY, this.orgX + PBNotation.ORG_WIDTH, this.orgY, 1, 'red', 'butt');
+            this.drawLine(this.orgX, this.orgY - PBNotation.ORG_WIDTH, this.orgX, this.orgY + PBNotation.ORG_WIDTH, 1, 'red', 'butt');
+        }
+    }
+
+    drawContextRect() {
+        if (this.showContextRect) {
+            this.drawRect(this.contextRect.x, this.contextRect.y, this.contextRect.width, this.contextRect.height, 1, 'red', 'butt');
+        }
     }
 
     drawGlyph(x: number, y: number, glyph: GlyphItem, align: string, baseline: string, color: string, repeat: number = 1, font: string = 'aruvarb') {
@@ -148,16 +171,18 @@ export default class PBNotation {
     drawStaff() {
         // Draw the empty staff with clefs and terminations
         this.drawOrg();
+        this.drawContextRect();
         let staffY = this.orgY;
         let ng = PBConst.GLYPHS;
         let lengthInNotes = PBNotation.STAFF_WIDTH_IN_NOTE_WIDTHS - 1;
 
+        // The treble staff
         this.drawGlyph(this.orgX, staffY, ng.staff5Lines, 'left', 'middle', 'black', lengthInNotes);    // Draw treble staff
         this.drawGlyph(this.orgX, staffY, ng.beginBar, 'left', 'middle', 'black');
         this.drawGlyph(this.orgX + (this.noteWidth / 4), staffY - this.noteHeight, ng.gClef, 'left', 'middle', 'black');
         this.drawGlyph(this.orgX + (this.noteWidth * lengthInNotes), staffY, ng.endBar, 'right', 'middle', 'black');
 
-        if (this.grandStaff) {
+        if (this.grandStaff) {  // Need to draw the bass staff
             staffY += (this.noteHeight * 8);
             this.drawGlyph(this.orgX, staffY, ng.staff5Lines, 'left', 'middle', 'black', lengthInNotes);    // Draw bass staff
             this.drawGlyph(this.orgX, staffY, ng.beginBar, 'left', 'middle', 'black');
