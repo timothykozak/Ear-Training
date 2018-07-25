@@ -8,7 +8,7 @@ import {PBNotation} from "./PBNotation.js";
 import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
 
-interface ClippingRect {
+interface MyRect {
     x: number, // Of the upper left corner
     y: number,
     width: number,
@@ -28,8 +28,8 @@ class PBUI {
     notation: PBNotation;
     pianoKeyboard: PBPianoKeyboard;
     resizingTimer: number = -1; // Handle to the timer to use for delaying the redraw on resize
-    notationClippingRect: ClippingRect;
-    pianoClippingRect: ClippingRect;
+    notationRect: MyRect;
+    pianoRect: MyRect;
 
     constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer) {
         PBUI.buildBodyHTML();
@@ -84,22 +84,22 @@ class PBUI {
         this.canvas.style.left = PBUI.MENU_WIDTH + "px";    // Position the canvas
         this.canvas.style.top = "0px";
 
-        let notationHeight = Math.floor(this.canvas.height * PBUI.NOTATION_FRACTION_OF_CANVAS); // Resize the clippingRects
-        this.notationClippingRect = PBUI.buildClippingRect(0, 0, this.canvas.width, notationHeight);
-        this.pianoClippingRect = PBUI.buildClippingRect(0, notationHeight + PBUI.GUTTER, this.canvas.width, this.canvas.height - notationHeight - PBUI.GUTTER);
+        let notationHeight = Math.floor(this.canvas.height * PBUI.NOTATION_FRACTION_OF_CANVAS); // Resize the Rects
+        this.notationRect = PBUI.buildRect(0, 0, this.canvas.width, notationHeight);
+        this.pianoRect = PBUI.buildRect(0, notationHeight + PBUI.GUTTER, this.canvas.width, this.canvas.height - notationHeight - PBUI.GUTTER);
 
         if (!this.notation) { // In the constructor.  Need to instantiate the classes.
-            this.notation = new PBNotation(this.context, this.notationClippingRect);
-            this.pianoKeyboard = new PBPianoKeyboard(this.canvas, this.context, this.pianoClippingRect, this.statusWindow, this.sequencer);
+            this.notation = new PBNotation(this.context, this.notationRect);
+            this.pianoKeyboard = new PBPianoKeyboard(this.canvas, this.context, this.pianoRect, this.statusWindow, this.sequencer);
         } else { // Regular resize
-            this.notation.resize(this.notationClippingRect);
-            this.pianoKeyboard.resize(this.pianoClippingRect);
+            this.notation.resize(this.notationRect);
+            this.pianoKeyboard.resize(this.pianoRect);
         }
     }
 
-    static buildClippingRect(theX: number, theY: number, theWidth: number, theHeight: number): ClippingRect {
+    static buildRect(theX: number, theY: number, theWidth: number, theHeight: number): MyRect {
         return({x: theX, y: theY, width: theWidth, height: theHeight});
     }
 }
 
-export {PBUI, ClippingRect};
+export {PBUI, MyRect};
