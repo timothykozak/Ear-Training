@@ -18,6 +18,7 @@ interface GlyphItem {
 }
 
 interface QualifiedNote {
+    midi: number,
     octave: number,
     degree: number,
     sharped: boolean
@@ -30,10 +31,10 @@ export default class PBNotation {
     static QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS = 2.0;
     static NOTE_HEIGHT_IN_NOTE_WIDTHS = 0.5;
     static STAFF_WIDTH_IN_NOTE_WIDTHS = 13;
-    static STAFF_HEIGHT_IN_NOTE_WIDTHS = 4.3;
+    static STAFF_HEIGHT_IN_NOTE_WIDTHS = 4.8;
     static ORG_WIDTH = 20;  // The width of the origin cross in pixels
 
-    orgX = 50;  // x coord of the origin
+    orgX = 50;  // x coord of the origin, which is the lower left corner of the treble staff
     orgY = 250; // y coord of the origin
 
     static xByNoteType = [2, 3, 4, 5, 6, 8, 10];  // Units are noteWidth
@@ -43,7 +44,7 @@ export default class PBNotation {
     noteHeight: number;
     grandStaff: boolean = false;
 
-    showHelpers: boolean = true;    // The origin and various rectangles
+    showHelpers: boolean = false;    // The origin and various rectangles
 
     constructor(public context: CanvasRenderingContext2D, public contextRect: MyRect) {
         this.resize(this.contextRect);
@@ -70,7 +71,7 @@ export default class PBNotation {
         this.drawHoverNote(event.detail, 0);
     }
 
-    drawHoverNote(note: number, color: number) {
+    drawHoverNote(midiNote: number, color: number) {
         let x = this.orgX + PBNotation.xByNoteType[NoteType.Immediate] * this.noteWidth;
         let y = this.orgY;
         let hoverRect = PBUI.buildMyRect(x - this.noteWidth * 0.5, 0, this.noteWidth * PBNotation.QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS, this.contextRect.height);
@@ -84,8 +85,8 @@ export default class PBNotation {
         if (this.showHelpers)
             this.drawRect(hoverRect.x, hoverRect.y, hoverRect.width, hoverRect.height, 1, 'red', 'butt');
         this.drawGlyph(x - this.noteWidth, y, PBConst.GLYPHS.staff5Lines, 'left', 'middle', 'black', 3);
-        if (note != -1)
-            this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(note + PBSounds.MIDI_MIDDLE_C -2), 'gray');
+        if (midiNote != -1)
+            this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(midiNote), 'gray');
         this.context.restore(); // Restore old clipping path
     }
     
@@ -105,12 +106,15 @@ export default class PBNotation {
         this.noteHeight = this.noteWidth * PBNotation.NOTE_HEIGHT_IN_NOTE_WIDTHS;
     }
 
-    static midiToQualifiedNote(midi: number) : QualifiedNote {
+    static midiToQualifiedNote(midiNote: number) : QualifiedNote {
         // A qualified note is the degree plus accidentals
-        let i = midi % 12;
-        let theDegree = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7];
+        if ((midiNote < PBConst.MIDI.LOW.KEYBOARD) || (midiNote > PBConst.MIDI.HIGH.KEYBOARD))
+            midiNote = PBConst.MIDI.MIDDLE_C;
+        let theOctave = Math.floor(midiNote/ 12 - 1);
+        let i = midiNote % 12;
+        let theDegree = [0, 0, 1, 1, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7]; // The twelve notes in the octave, starting with C
         let isSharped = [false, true, false, true, false, false, true, false, true, false, true, false];
-        return({octave: 4, degree: theDegree[i], sharped: isSharped[i]});
+        return({midi: midiNote, octave: theOctave, degree: theDegree[i], sharped: isSharped[i]});
     }
 
     onSequencer (event: CustomEvent) {
@@ -206,10 +210,15 @@ export default class PBNotation {
     drawQualifiedNote(x: number, qNote: QualifiedNote, color: string = 'black') {
         // Draw the note, along with accidentals and ledger line
         // ORG_Y is E4 and not C4
-        let y = this.orgY + (qNote.degree - 2) * this.noteHeight / -2;
+        let y = this.orgY +
+            ((qNote.octave - 4) * (this.noteHeight * -3.5)) +        // Take into account the octave
+            ((qNote.degree - 2) * (this.noteHeight / -2));  // Take into account the degree
         this.drawGlyph(x, y, PBConst.GLYPHS.quarterNoteUp, 'left', 'middle', color);
-        if (qNote.degree == 0)  // Need a ledger line
-            this.drawGlyph(x - this.noteWidth / 4, y + this.noteHeight * 2, PBConst.GLYPHS.ledgerLine, 'left', 'middle', color);
+        if (qNote.midi <= (PBConst.MIDI.MIDDLE_C + 1)) { // Need a ledger lines
+            this.drawGlyph(x - this.noteWidth / 4, this.orgY + (this.noteHeight * 3), PBConst.GLYPHS.ledgerLine, 'left', 'middle', color);  // For middle C
+            if (qNote.midi <= (PBConst.MIDI.MIDDLE_C - 2)) // Need a ledger lines
+                this.drawGlyph(x - this.noteWidth / 4, this.orgY + (this.noteHeight * 4), PBConst.GLYPHS.ledgerLine, 'left', 'middle', color);  // For A below middle C
+        }
         if (qNote.sharped)
             this.drawGlyph(x + this.noteWidth, y, PBConst.GLYPHS.sharp, 'left', 'middle', color);
     }
