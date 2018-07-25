@@ -41,7 +41,7 @@ class PBTester {
     onNotePlayed(event: CustomEvent) {
         if (this.waitingForAnswer && event.detail.state) {  // Make sure to disregard the note off of the degreeBeingTested note
             this.waitingForAnswer = false;
-            let correctAnswer = (event.detail.note == (this.degreeBeingTested + PBSounds.MIDI_MIDDLE_C));
+            let correctAnswer = (event.detail.note == (this.degreeBeingTested + PBConst.MIDI.MIDDLE_C));
             document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerNoteAnswered, {detail: {correct: correctAnswer}}));
         }
     }
@@ -70,7 +70,7 @@ class PBTester {
                 theResult = this._degreesToTest[index];
                 this.degreeBeingTested = theResult;
                 this._degreesToTest.splice(index, 1);   // Remove the note being tested
-                this.sequencer.cadencePlusNote(theResult + PBSounds.MIDI_MIDDLE_C);
+                this.sequencer.cadencePlusNote(theResult + PBConst.MIDI.MIDDLE_C);
                 this.sequencer.startSequence();
                 this.waitingForAnswer = false;
             } else {
@@ -85,7 +85,7 @@ class PBTester {
         let theResult = false;  // Return false if problem starting test
         if (!this.sequencer.sequenceRunning && !this.testRunning) {
             this.testRunning = true;
-            if (this.pickNextNoteToTest() >= PBSounds.MIDI_LOW)
+            if (this.pickNextNoteToTest() >= PBConst.MIDI.LOW.SOUND)
                 theResult = true; // Test has actually started
         }
         return(theResult);
