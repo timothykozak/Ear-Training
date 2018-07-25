@@ -6,10 +6,7 @@
 // Watches the sequencer to reflect the notes being played.
 // The keyboard is used to answer tested note.
 
-// TODO: Show the notes being played during the sequence
-
 import {PBStatusWindow} from "./PBStatusWindow.js";
-import {PBNotation} from "./PBNotation.js";
 import {PBSequencer, SequenceItem} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
 import {PBConst} from "./PBConst.js";
@@ -19,7 +16,6 @@ interface KeyRegion {
     path: Path2D,
     playing: boolean,
     notPlayingFillStyle: string,
-    innerPath: Path2D
 }
 
 class PBPianoKeyboard {
@@ -64,11 +60,8 @@ class PBPianoKeyboard {
     onSequencerNotePlayed(event: CustomEvent) {
         let theItem: SequenceItem = event.detail;
         let theKey = theItem.note - PBSounds.MIDI_MIDDLE_C + 2;
-        if (theItem.state) {    // Turn on
-            // if (this.hoverKey != -1) {}
-            this.fillRegion(theKey, true);
-        } else {    //Turn off
-            this.fillRegion(theKey, false);
+        if (this.hoverKey != theKey) {    // Not hovering over the key, update it
+            this.fillRegion(theKey, theItem.state);
         }
     }
 
@@ -155,13 +148,13 @@ class PBPianoKeyboard {
         this.drawKeyboard();
     }
 
-    buildBlackKeyPath(orgX: number, orgY: number, index: number, inset: number = 0): Path2D {
+    buildBlackKeyPath(orgX: number, orgY: number, index: number): Path2D {
         // The black key is only a rectangle.
         let keyPath = new Path2D();
-        let x = orgX + Math.floor(this.scale * (PBPianoKeyboard.X_OFFSET[index] - (PBPianoKeyboard.BLACK_WIDTH / 2) + inset));
-        let width = Math.floor(this.scale * (PBPianoKeyboard.BLACK_WIDTH - (inset * 2)));
-        let height = Math.floor(this.scale * (PBPianoKeyboard.BLACK_LENGTH - (inset * 2)));
-        keyPath.rect(x, orgY + inset * this.scale, width, height);
+        let x = orgX + Math.floor(this.scale * (PBPianoKeyboard.X_OFFSET[index] - (PBPianoKeyboard.BLACK_WIDTH / 2)));
+        let width = Math.floor(this.scale * PBPianoKeyboard.BLACK_WIDTH);
+        let height = Math.floor(this.scale * PBPianoKeyboard.BLACK_LENGTH);
+        keyPath.rect(x, orgY, width, height);
         return (keyPath);
     }
 
@@ -198,43 +191,30 @@ class PBPianoKeyboard {
         let orgX = this.clippingRect.x + Math.floor(this.scale * PBPianoKeyboard.BLACK_WIDTH / 2);    // Round down to whole pixel, and take into account scaling
         let orgY = this.clippingRect.y;
         let thePath: Path2D = null;
-        let theInnerPath: Path2D = null;
         let theFillStyle: string = null;
 
         PBPianoKeyboard.WHITE_KEYS.forEach((white, index) => { //
             if (white) {
                 thePath = this.buildWhiteKeyPath(orgX, orgY, index);
-                theInnerPath = null;
                 theFillStyle = PBPianoKeyboard.WHITE_KEY_FILL_STYLE;
                 orgX += Math.floor(this.scale * PBPianoKeyboard.WHITE_WIDTH);
             } else {
                 thePath = this.buildBlackKeyPath(orgX, orgY, index);
-                theInnerPath = this.buildBlackKeyPath(orgX, orgY, index, 2);
                 theFillStyle = PBPianoKeyboard.BLACK_KEY_FILL_STYLE;
             }
             this.keyRegions[index] = {
                 path: thePath,
                 playing: false,
                 notPlayingFillStyle: theFillStyle,
-                innerPath: theInnerPath
             };
         });
     };
-
-    drawAKey(white: boolean, index: number) {
-        this.context.strokeStyle = "#000";
-        let theKeyRegion = this.keyRegions[index];
-        this.context.stroke(theKeyRegion.path);
-        if (!white) {
-            this.context.fill(theKeyRegion.path);
-        }
-    }
 
     drawKeyboard() {
         this.clearClippingRect();
         this.buildKeyboardRegions();
         PBPianoKeyboard.WHITE_KEYS.forEach((white, index) => {
-            this.drawAKey(white, index);
+            this.fillRegion(index, false);
         });
     }
 }
