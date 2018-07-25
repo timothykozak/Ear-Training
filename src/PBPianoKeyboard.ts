@@ -58,14 +58,15 @@ class PBPianoKeyboard {
 
     onSequencerNotePlayed(event: CustomEvent) {
         let theItem: SequenceItem = event.detail;
-        let theKey = theItem.note - PBSounds.MIDI_MIDDLE_C + 2;
+        let theKey = theItem.note - PBConst.MIDI.MIDDLE_C + 2;
         if (this.hoverKey != theKey) {    // Not hovering over the key, update it
             this.fillRegion(theKey, theItem.state);
         }
     }
 
     static dispatchHoverEvent(theHoverKey: number) {
-        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.keyboardHover, {detail: theHoverKey})); // No longer hovering
+        let midiNote = (theHoverKey == -1) ? -1 : theHoverKey + PBConst.MIDI.LOW.KEYBOARD;
+        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.keyboardHover, {detail: midiNote})); // No longer hovering
     }
 
     checkForHover(event: MouseEvent): number {
@@ -83,6 +84,7 @@ class PBPianoKeyboard {
     }
 
     onMouseLeave(event: MouseEvent) {
+        // Mouse left the canvas, can not be hovering
         this.statusWnd.writeMsg(event.type + " event: x " + event.offsetX + " y " + event.offsetY);
         if (this.hoverKey != -1) {
             this.fillRegion(this.hoverKey, false);
@@ -116,17 +118,19 @@ class PBPianoKeyboard {
         this.statusWnd.writeMsg(event.type + " event: x " + event.offsetX + " y " + event.offsetY + "  hoverKey: " + hoverKey);
         if (hoverKey != -1) {
             this.statusWnd.writeMsg("Piano: Clicked region " + hoverKey);
-            this.sequencer.playNote(hoverKey + PBSounds.MIDI_MIDDLE_C - 2)
+            this.sequencer.playNote(hoverKey + PBConst.MIDI.MIDDLE_C - 2)
         }
     }
 
     fillRegion(i: number, hover: boolean) {
         if (i >= 0) { // Valid region
+            this.context.save();
             this.context.strokeStyle = "#000";
             let theKeyRegion = this.keyRegions[i];
             this.context.fillStyle = (hover) ? PBPianoKeyboard.HOVER_FILL_STYLE : theKeyRegion.fillStyle;
             this.context.fill(theKeyRegion.path);
             this.context.stroke(theKeyRegion.path);
+            this.context.restore();
         }
     }
 
