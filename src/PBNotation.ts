@@ -61,6 +61,7 @@ export default class PBNotation {
             this.drawGlyph(x, y, PBConst.GLYPHS.checkMark, 'left', 'middle', 'green', 1, "ionicons");
         else
           this.drawGlyph(x, y, PBConst.GLYPHS.xMark, 'left', 'middle', 'red', 1, "ionicons");
+        this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(event.detail.answerNote), 'black');
     }
 
     onCadenceStarted(event: CustomEvent) {
