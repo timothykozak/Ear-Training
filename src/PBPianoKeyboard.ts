@@ -10,7 +10,7 @@ import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBSequencer, SequenceItem} from "./PBSequencer.js";
 import {PBSounds} from "./PBSounds.js";
 import {PBConst} from "./PBConst.js";
-import {ClippingRect} from "./PBUI.js";
+import {MyRect} from "./PBUI.js";
 
 interface KeyRegion {
     path: Path2D,
@@ -38,7 +38,7 @@ class PBPianoKeyboard {
     scale: number = 3;
     hoverKey: number = -1;
 
-    constructor(public canvas: HTMLCanvasElement, public context: CanvasRenderingContext2D, public clippingRect: ClippingRect, public statusWnd: PBStatusWindow, public sequencer: PBSequencer) {
+    constructor(public canvas: HTMLCanvasElement, public context: CanvasRenderingContext2D, public contextRect: MyRect, public statusWnd: PBStatusWindow, public sequencer: PBSequencer) {
         if (canvas) {
             this.canvas.addEventListener(PBConst.EVENTS.mouseClick, (event: MouseEvent) => {
                 this.onClick(event);
@@ -52,7 +52,7 @@ class PBPianoKeyboard {
             document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {
                 this.onSequencerNotePlayed(event);
             }, false);
-            this.resize(this.clippingRect);
+            this.resize(this.contextRect);
         }
     }
 
@@ -130,19 +130,19 @@ class PBPianoKeyboard {
         }
     }
 
-    clearClippingRect() {
-        this.context.clearRect(this.clippingRect.x, this.clippingRect.y, this.clippingRect.width, this.clippingRect.height);
+    clearContextRect() {
+        this.context.clearRect(this.contextRect.x, this.contextRect.y, this.contextRect.width, this.contextRect.height);
     }
 
     updateScale(theScale: number) {
         this.scale = theScale;
     }
 
-    resize(theClippingRect: ClippingRect) {
+    resize(theContextRect: MyRect) {
         // Calculate the scale based on the height and the width, selecting the minimum that fits.
-        this.clippingRect = theClippingRect;
-        let scaleByWidth = this.clippingRect.width * PBPianoKeyboard.SCALE_PER_WIDTH;
-        let scaleByHeight = this.clippingRect.height * PBPianoKeyboard.SCALE_PER_HEIGHT;
+        this.contextRect = theContextRect;
+        let scaleByWidth = this.contextRect.width * PBPianoKeyboard.SCALE_PER_WIDTH;
+        let scaleByHeight = this.contextRect.height * PBPianoKeyboard.SCALE_PER_HEIGHT;
         this.updateScale(Math.min(scaleByHeight, scaleByWidth));
         this.drawKeyboard();
     }
@@ -187,8 +187,8 @@ class PBPianoKeyboard {
 
     buildKeyboardRegions() {
         this.keyRegions = [];   // Toss old regions
-        let orgX = this.clippingRect.x + Math.floor(this.scale * PBPianoKeyboard.BLACK_WIDTH / 2);    // Round down to whole pixel, and take into account scaling
-        let orgY = this.clippingRect.y;
+        let orgX = this.contextRect.x + Math.floor(this.scale * PBPianoKeyboard.BLACK_WIDTH / 2);    // Round down to whole pixel, and take into account scaling
+        let orgY = this.contextRect.y;
         let thePath: Path2D = null;
         let theFillStyle: string = null;
 
@@ -210,7 +210,7 @@ class PBPianoKeyboard {
     };
 
     drawKeyboard() {
-        this.clearClippingRect();
+        this.clearContextRect();
         this.buildKeyboardRegions();
         PBPianoKeyboard.WHITE_KEYS.forEach((white, index) => {
             this.fillRegion(index, false);
