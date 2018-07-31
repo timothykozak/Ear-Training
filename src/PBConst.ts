@@ -62,12 +62,12 @@ class PBConst {
     static MIDI = {
         // On a piano keyboard, 21 is A0, 108 is C8 and 60 is C4 (middle C)
         LOW: {
-            SOUND: 59,
+            SOUND: 58,
             KEYBOARD: 58
                 },
         HIGH: {
-            SOUND: 72,
-            KEYBOARD: 74
+            SOUND: 73,
+            KEYBOARD: 73
         },
         MIDDLE_C: 60
     };
