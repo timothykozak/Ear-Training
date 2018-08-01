@@ -72,17 +72,30 @@ class PBUI {
         `);
     }
 
+    static buildSettingsPageHTML(): string {
+        return('');
+    }
+
+    static buildPagesHTML() : string {
+        return(PBUI.buildSettingsPageHTML());
+    }
+
     static buildBodyHTML() {
-        document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML());
+        document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML() + PBUI.buildPagesHTML());
     }
 
     onResizeFinished() {
         // Called during a resize and in the constructor
+
+        // Size and position the canvas
         this.canvas.width = window.innerWidth - PBUI.MENU_WIDTH - PBUI.SCROLL_BAR_WIDTH;    // Resize the canvas
         this.canvas.height = window.innerHeight - PBUI.PLAYER_HEIGHT - PBUI.SCROLL_BAR_WIDTH;
         this.canvas.style.left = PBUI.MENU_WIDTH + "px";    // Position the canvas
         this.canvas.style.top = "0px";
 
+        //
+
+        // Calculate the notation and the piano rects
         let notationHeight = Math.floor(this.canvas.height * PBUI.NOTATION_FRACTION_OF_CANVAS); // Resize the Rects
         this.notationRect = PBUI.buildMyRect(0, 0, this.canvas.width, notationHeight);
         this.pianoRect = PBUI.buildMyRect(0, notationHeight + PBUI.GUTTER, this.canvas.width, this.canvas.height - notationHeight - PBUI.GUTTER);
