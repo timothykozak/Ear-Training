@@ -52,10 +52,10 @@ class PBUI {
     static buildTransportHTML(): string {
         return(`<div class="transportDiv">
             <ul>
-                <li>&#xf3cf</li>
-                <li onclick="window.pbEarTraining.tester.startTest();">&#xf488</li>
-                <li>&#xf478</li>
-                <li>&#xf3d1</li>
+                <li class="tooltip">&#xf3cf<span class="tooltiptext tooltiptextabove">Rewind</span></li>
+                <li class="tooltip" onclick="window.pbEarTraining.tester.startTest();">&#xf488<span class="tooltiptext tooltiptextabove">Play</span></li>
+                <li class="tooltip">&#xf478<span class="tooltiptext tooltiptextabove">Pause</span></li>
+                <li class="tooltip">&#xf3d1<span class="tooltiptext tooltiptextabove">Forward</span></li>
             </ul>
         </div>        `);
     }
@@ -63,11 +63,10 @@ class PBUI {
     static buildMenuHTML(): string {
         return(`        <div class="menuDiv">
             <ul>
-                <li>&#xf20d</li>
-                <li>&#xf2f7</li>
-                <li>&#xf384</li>
-                <li>&#xf2b5</li>
-                <li>&#xf444</li>
+                <li class="tooltip">&#xf20d<span class="tooltiptext tooltiptextright">The Menu</span></li>
+                <li class="tooltip">&#xf2f7<span class="tooltiptext tooltiptextright">Settings</span></li>
+                <li class="tooltip">&#xf2b5<span class="tooltiptext tooltiptextright">Results</span></li>
+                <li class="tooltip">&#xf444<span class="tooltiptext tooltiptextright">Help</span></li>
             </ul>
         </div>
         `);
