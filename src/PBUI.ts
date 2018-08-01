@@ -52,10 +52,10 @@ class PBUI {
     static buildTransportHTML(): string {
         return(`<div class="transportDiv">
             <ul>
-                <li class="tooltip">&#xf3cf<span class="tooltiptext tooltiptextabove">Rewind</span></li>
-                <li class="tooltip" onclick="window.pbEarTraining.tester.startTest();">&#xf488<span class="tooltiptext tooltiptextabove">Play</span></li>
-                <li class="tooltip">&#xf478<span class="tooltiptext tooltiptextabove">Pause</span></li>
-                <li class="tooltip">&#xf3d1<span class="tooltiptext tooltiptextabove">Forward</span></li>
+                <li class="toolTip">&#xf3cf<span class="toolTipText toolTipTextAbove">Rewind</span></li>
+                <li class="toolTip" onclick="window.pbEarTraining.tester.startTest();">&#xf488<span class="toolTipText toolTipTextAbove">Play</span></li>
+                <li class="toolTip">&#xf478<span class="toolTipText toolTipTextAbove">Pause</span></li>
+                <li class="toolTip">&#xf3d1<span class="toolTipText toolTipTextAbove">Forward</span></li>
             </ul>
         </div>        `);
     }
@@ -63,10 +63,10 @@ class PBUI {
     static buildMenuHTML(): string {
         return(`        <div class="menuDiv">
             <ul>
-                <li class="tooltip">&#xf20d<span class="tooltiptext tooltiptextright">The Menu</span></li>
-                <li class="tooltip">&#xf2f7<span class="tooltiptext tooltiptextright">Settings</span></li>
-                <li class="tooltip">&#xf2b5<span class="tooltiptext tooltiptextright">Results</span></li>
-                <li class="tooltip">&#xf444<span class="tooltiptext tooltiptextright">Help</span></li>
+                <li class="toolTip">&#xf20d<span class="toolTipText toolTipTextRight">The Menu</span></li>
+                <li class="toolTip">&#xf2f7<span class="toolTipText toolTipTextRight">Settings</span></li>
+                <li class="toolTip">&#xf2b5<span class="toolTipText toolTipTextRight">Results</span></li>
+                <li class="toolTip">&#xf444<span class="toolTipText toolTipTextRight">Help</span></li>
             </ul>
         </div>
         `);
