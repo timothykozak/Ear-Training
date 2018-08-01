@@ -1,6 +1,8 @@
 /*  basic.css
 */
 
+
+/*************************** Fonts **********************************************/
 @font-face {    /* Used by the font loader */
     font-family:"Aruvarb";
     src:url("assets/fonts/Aruvarb.ttf") format("truetype");
@@ -11,6 +13,7 @@
     src:url("assets/fonts/ionicons.ttf") format("truetype");
 }
 
+/*************************** Menu and Transport **********************************/
 .menuDiv {
     background-color: #ddd;
     height: 100%;
@@ -72,6 +75,12 @@ div.transportDiv li:hover {
     color: white;
 }
 
+
+/*************************** Pages **********************************************/
+.pagesDiv {
+
+}
+/*************************** Tool Tips **********************************************/
 /* toolTip container */
 .toolTip {
     position: relative;
