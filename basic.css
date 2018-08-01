@@ -72,15 +72,14 @@ div.transportDiv li:hover {
     color: white;
 }
 
-/* Tooltip container */
-.tooltip {
+/* toolTip container */
+.toolTip {
     position: relative;
     display: inline-block;
-    border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
 }
 
-/* Tooltip text */
-.tooltip .tooltiptext {
+/* toolTip text */
+.toolTip .toolTipText {
     visibility: hidden;
     font-size: 20px;
     width: 120px;
@@ -90,30 +89,31 @@ div.transportDiv li:hover {
     padding: 5px 0;
     border-radius: 6px;
 
-    /* Fade in tooltip */
+    /* Fade in toolTip */
     opacity: 0;
     transition: opacity 0.7s;
+    transition-delay: 0.5s;
 }
 
-/* Position the tooltip text to the right */
-.tooltip .tooltiptextright {
+/* Position the toolTip text to the right */
+.toolTip .toolTipTextRight {
     position: absolute;
     z-index: 1;
     top: 15%;
     left: 120%;
 }
 
-/* Position the tooltip text above */
-.tooltip .tooltiptextabove {
+/* Position the toolTip text above */
+.toolTip .toolTipTextAbove {
     position: absolute;
     z-index: 1;
     top: -70%;
-    left: 0%;
+    left: -20%;
     text-shadow: none;
 }
 
-/* Show the tooltip text when you mouse over the tooltip container */
-.tooltip:hover .tooltiptext {
+/* Show the toolTip text when you mouse over the toolTip container */
+.toolTip:hover .toolTipText {
     visibility: visible;
     opacity: 1;
 } 
