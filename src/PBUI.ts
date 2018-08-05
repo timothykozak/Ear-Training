@@ -24,6 +24,7 @@ class PBUI {
     static RESIZE_PAUSE = 200;  // In milliseconds
 
     canvas: HTMLCanvasElement; // The drawing canvas for both notation and keyboard
+    pages: HTMLDivElement;
     context: CanvasRenderingContext2D;
     notation: PBNotation;
     pianoKeyboard: PBPianoKeyboard;
@@ -33,6 +34,8 @@ class PBUI {
 
     constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer) {
         PBUI.buildBodyHTML();
+        this.pages = document.getElementById("thePages") as HTMLDivElement;
+        this.pages.style['visibility'] = 'hidden';
         this.canvas = document.getElementById("theCanvas") as HTMLCanvasElement;
         this.context = this.canvas.getContext("2d");
         this.onResizeFinished();    // The initial sizing
@@ -46,7 +49,7 @@ class PBUI {
     }
 
     static buildCanvasHTML(): string {
-        return (`<canvas id="theCanvas" style="border-style: dotted; position: absolute;"></canvas>`);
+        return (`<canvas id="theCanvas" style="position: absolute;"></canvas>`);
     }
 
     static buildTransportHTML(): string {
@@ -63,7 +66,7 @@ class PBUI {
     static buildMenuHTML(): string {
         return(`        <div class="menuDiv">
             <ul>
-                <li class="toolTip">&#xf20d<span class="toolTipText toolTipTextRight">The Menu</span></li>
+                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu();">&#xf20d<span class="toolTipText toolTipTextRight">The Menu</span></li>
                 <li class="toolTip">&#xf2f7<span class="toolTipText toolTipTextRight">Settings</span></li>
                 <li class="toolTip">&#xf2b5<span class="toolTipText toolTipTextRight">Results</span></li>
                 <li class="toolTip">&#xf444<span class="toolTipText toolTipTextRight">Help</span></li>
@@ -72,8 +75,14 @@ class PBUI {
         `);
     }
 
+    handleMenu(): void {
+        this.pages.style['visibility'] =  (this.pages.style["visibility"] == 'hidden') ? 'visible' : 'hidden';
+    }
+
     static buildSettingsPageHTML(): string {
-        return('');
+        return(`<div id="thePages" class="pagesDiv">
+            This is the settings page.
+            </div>`);
     }
 
     static buildPagesHTML() : string {
@@ -87,13 +96,21 @@ class PBUI {
     onResizeFinished() {
         // Called during a resize and in the constructor
 
-        // Size and position the canvas
-        this.canvas.width = window.innerWidth - PBUI.MENU_WIDTH - PBUI.SCROLL_BAR_WIDTH;    // Resize the canvas
-        this.canvas.height = window.innerHeight - PBUI.PLAYER_HEIGHT - PBUI.SCROLL_BAR_WIDTH;
-        this.canvas.style.left = PBUI.MENU_WIDTH + "px";    // Position the canvas
-        this.canvas.style.top = "0px";
+        // Size and position the canvas and pages area
+        let theWidth = window.innerWidth - PBUI.MENU_WIDTH - PBUI.SCROLL_BAR_WIDTH;
+        let theHeight = window.innerHeight - PBUI.PLAYER_HEIGHT - PBUI.SCROLL_BAR_WIDTH;
+        let theLeft = PBUI.MENU_WIDTH + "px";   // Styles need "px" attached
+        let theTop = "0px";
 
-        //
+        this.canvas.width = theWidth;
+        this.canvas.height = theHeight;
+        this.canvas.style.left = theLeft;
+        this.canvas.style.top = theTop;
+
+        this.pages.style.width = theWidth + "px";   // Styles need "px" attached
+        this.pages.style.height = theHeight + "px";
+        this.pages.style.left = theLeft;
+        this.pages.style.top = theTop;
 
         // Calculate the notation and the piano rects
         let notationHeight = Math.floor(this.canvas.height * PBUI.NOTATION_FRACTION_OF_CANVAS); // Resize the Rects
