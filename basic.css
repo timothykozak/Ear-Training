@@ -78,7 +78,10 @@ div.transportDiv li:hover {
 
 /*************************** Pages **********************************************/
 .pagesDiv {
-
+    background-color: #00ff00;
+    position: fixed;
+    z-index: 1;
+    visibility: hidden;
 }
 /*************************** Tool Tips **********************************************/
 /* toolTip container */
