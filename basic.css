@@ -80,8 +80,6 @@ div.transportDiv li:hover {
 .pageContainerDiv {
     background-color: #000000;
     position: fixed;
-    z-index: 1;
-    visibility: hidden;
 }
 .pageDiv {
     position: absolute;
