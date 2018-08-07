@@ -112,7 +112,7 @@ class PBUI {
     }
 
     static buildBodyHTML() {
-        document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML() + PBUI.buildPagesHTML());
+        document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildPagesHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML());
     }
 
     onResizeFinished() {
