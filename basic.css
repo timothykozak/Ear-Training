@@ -88,7 +88,8 @@ div.transportDiv li:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 70px;
+    font-size: 30px;
+    overflow: scroll;
 }
 /*************************** Tool Tips **********************************************/
 /* toolTip container */
