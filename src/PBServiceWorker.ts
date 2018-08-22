@@ -6,7 +6,37 @@ let CACHE_NAME = 'EarTraining-cache';
 let REQUIRED_FILES = [
     '../basic.css',
     '../index.html',
-    '../built/PBConst.js'
+     '../built/PBCharacterInput.js',
+    '../built/PBConst.js',
+    '../built/PBEarTraining.js',
+    '../built/PBNotation.js',
+    '../built/PBNotation.js',
+    '../built/PBPianoKeyboard.js',
+    '../built/PBSequencer.js',
+    '../built/PBServiceWorker.js',
+    '../built/PBSounds.js',
+    '../built/PBStatusWindow.js',
+    '../built/PBTester.js',
+    '../built/PBUI.js',
+    '../assets/fonts/Aruvarb.ttf',
+    '../assets/fonts/ionicons.ttf',
+    '../assets/sounds/instruments.txt',
+    '../assets/sounds/piano/58.mp3',
+    '../assets/sounds/piano/59.mp3',
+    '../assets/sounds/piano/60.mp3',
+    '../assets/sounds/piano/61.mp3',
+    '../assets/sounds/piano/62.mp3',
+    '../assets/sounds/piano/63.mp3',
+    '../assets/sounds/piano/64.mp3',
+    '../assets/sounds/piano/65.mp3',
+    '../assets/sounds/piano/66.mp3',
+    '../assets/sounds/piano/67.mp3',
+    '../assets/sounds/piano/68.mp3',
+    '../assets/sounds/piano/69.mp3',
+    '../assets/sounds/piano/70.mp3',
+    '../assets/sounds/piano/71.mp3',
+    '../assets/sounds/piano/72.mp3',
+    '../assets/sounds/piano/73.mp3'
 ];
 
 console.log('Inside PBServiceWorker.js');
