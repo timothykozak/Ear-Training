@@ -103,7 +103,15 @@ class PBUI {
 
     static buildHelpPageHTML(): string {
         return(`<div id="theHelpPage" class="pageDiv" style="background-color: #0000ff;">
-            This is the help page.
+            Lorem ipsum dolor sit amet, agam quodsi ne eam. Eam an tantas sapientem eloquentiam, ea nec exerci equidem. Cu duo soleat graeci equidem, eos cu stet iuvaret mnesarchum. Sale solum melius ius eu, ei facilisi accusamus sea. Mei zril gubergren ea, vero commune ne ius.
+
+Repudiare voluptatum liberavisse ad sit, adhuc nusquam molestie et has. Et erroribus voluptatum mei. Eu mel dolorem reprehendunt, ex alterum civibus neglegentur his. Ius eu nisl nibh platonem, doming audire mei cu, qui ad vide doming appetere. Ad unum facilis nam.
+
+Eos qualisque suscipiantur ut, nostro eirmod ocurreret per eu. Ubique legimus mel cu. Est facer oportere definiebas te, eirmod vidisse accusam sed ut. Pri ut porro ignota, ei numquam feugait adolescens vel, te accusata argumentum nam. Pri tollit appellantur conclusionemque ei. Ne sit consectetuer comprehensam, qui accusam consequat percipitur ne.
+
+Tale atqui omnium vel no, facilisi conclusionemque ea eam, reque ipsum quo te. Cu admodum salutatus cum, vim at aeque legendos. Verear voluptatum usu ea, vim tation audiam comprehensam id. Ex mucius viderer interpretaris nec, qui mazim volumus appetere no.
+
+Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dicant aliquam dolores. His homero utamur mediocrem et. Ei has latine fierent interpretaris, no prima tamquam suscipit est.
             </div>`);
     }
 
