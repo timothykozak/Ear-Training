@@ -41,7 +41,7 @@ let REQUIRED_FILES = [
 
 console.log('Inside PBServiceWorker.js');
 
-self.addEventListener('install', (event) => {
+self.addEventListener('install', (event: InstallEvent) => {
     // Perform install step:  loading each required file into cache
     event.waitUntil(
         caches.open(CACHE_NAME)
@@ -59,7 +59,7 @@ self.addEventListener('install', (event) => {
     );
 });
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', function(event: FetchEvent) {
     event.respondWith(
         caches.match(event.request)
             .then((response) => {
@@ -78,7 +78,7 @@ self.addEventListener('fetch', function(event) {
     );
 });
 
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', (event: ActivateEvent) => {
     console.log('[activate] Activating ServiceWorker!');
 
     // Calling claim() to force a "controllerchange" event on navigator.serviceWorker
