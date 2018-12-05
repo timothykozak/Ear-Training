@@ -3,10 +3,9 @@
 //
 // This module is the sequencer
 //
-// TODO: Use the note types, and handle the chordal notes
 
-import {PBSounds} from "./PBSounds.js";
-import {PBConst, NoteType} from "./PBConst.js";
+import {PBSounds} from "PBSounds.js";
+import {PBConst, NoteType} from "PBConst.js";
 
 interface SequenceItem {
     note: number,   // A MIDI note
@@ -34,22 +33,25 @@ class PBSequencer {
     }
 
     onTimer() {
+        // Timer event received.  See if any notes to be played.
         if (this.sequenceRunning) {
             this.sequence.forEach((item) => {
-                if (item.time == this.ticks) {
+                if (item.time == this.ticks) {  // Dispatch events to play notes and to update the display.
                     document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerNotePlayed, {detail: item}));
                     if (item.noteType == NoteType.Testing) {
                         document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerTestNotePlayed, {detail: item}));
                     }
                 }
             });
-            if (this.sequence[this.sequence.length - 1].time <= this.ticks)
+
+            if (this.sequence[this.sequence.length - 1].time <= this.ticks) // Check if the sequence is completed.
                 this.sequenceRunning = false;
             this.ticks++;
         }
     }
 
-    playNote(theMidi: number) { // Play a note right now
+    playNote(theMidi: number) {
+        // Play a note right now
         document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerNotePlayed, {detail: {note: theMidi, state: true, time: this.ticks, noteType: NoteType.Immediate} as SequenceItem}))
     }
 
