@@ -8,6 +8,7 @@ import {PBConst} from "./PBConst.js";
 class PBStatusWindow {
     static theStatusWindows: PBStatusWindow[] = []; // All of the SWs in order of creation
     static theZOrder: PBStatusWindow[] = [];  // The SWs in increasing z order of display.
+    static allClosed: boolean = true;
 
     windowDiv: HTMLDivElement;
     titleDiv: HTMLDivElement;  // The draggable part
@@ -25,6 +26,7 @@ class PBStatusWindow {
         this.addEventHandlers();
         PBStatusWindow.theStatusWindows.push(this);
         PBStatusWindow.zSort(this);
+        PBStatusWindow.close(this, PBStatusWindow.allClosed);
     }
 
     static zSort(lastSW: PBStatusWindow) {
@@ -170,6 +172,30 @@ class PBStatusWindow {
         );
     };
 
+    static close(theObject: any, close: boolean) : void {
+        // Close/show SW based on instance or WindowDiv
+        if (theObject instanceof PBStatusWindow) {
+            theObject.windowDiv.style.display = close ? 'none' : 'initial';
+        } else if (theObject instanceof HTMLDivElement) {
+            theObject.style.display = close ? 'none' : 'initial';
+        }
+    }
+
+    static closeAll(close: boolean) {
+        // Close or show all SWs
+        if (PBStatusWindow.allClosed != close) {
+            PBStatusWindow.allClosed = close;
+            PBStatusWindow.theStatusWindows.forEach(function(theSW) {
+                PBStatusWindow.close(theSW, close);
+            })
+        }
+    }
+
+    static switchAll() {
+        // Switch close/show state of all SWs
+        PBStatusWindow.closeAll(!PBStatusWindow.allClosed);
+    }
+
     writeMsg(theMsg: string) {
         this.clientDiv.innerHTML = theMsg + "<br/>" + this.clientDiv.innerHTML;
     };
@@ -187,7 +213,7 @@ class PBStatusWindow {
 
     static closeOnClick(event: MouseEvent) {
         let theWindowDiv: HTMLDivElement = (event.target as HTMLDivElement).parentNode.parentNode as HTMLDivElement;  // The windowDiv is the grandparent of the closeDiv
-        theWindowDiv.style.display = 'none';
+        PBStatusWindow.close(theWindowDiv, true);
     };
 
     static clientOnClick(event: MouseEvent) {
