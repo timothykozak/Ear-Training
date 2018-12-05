@@ -2,13 +2,13 @@
 // pbEarTraining.js
 //
 
-import {PBStatusWindow} from "./PBStatusWindow.js";
-import {PBSounds} from "./PBSounds.js";
-import {PBSequencer} from "./PBSequencer.js";
-import {PBCharacterInput} from "./PBCharacterInput.js";
-import {PBTester} from "./PBTester.js";
-import {PBConst} from "./PBConst.js";
-import {PBUI} from "./PBUI.js";
+import {PBStatusWindow} from "PBStatusWindow.js";
+import {PBSounds} from "PBSounds.js";
+import {PBSequencer} from "PBSequencer.js";
+import {PBCharacterInput} from "PBCharacterInput.js";
+import {PBTester} from "PBTester.js";
+import {PBConst} from "PBConst.js";
+import {PBUI} from "PBUI.js";
 
 class PBEarTraining {
     soundsAvailable = false;
