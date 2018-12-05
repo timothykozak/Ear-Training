@@ -6,11 +6,10 @@
 
 // TODO: Handle the chords in place of individual notes
 
-import {SequenceItem} from "./PBSequencer.js";
-import {PBConst} from "./PBConst.js";
-import {PBSequencer, NoteType} from "./PBSequencer.js";
-import {PBSounds} from "./PBSounds.js";
-import {PBUI, MyRect} from "./PBUI.js";
+import {SequenceItem} from "PBSequencer.js";
+import {PBConst} from "PBConst.js";
+import {NoteType} from "PBSequencer.js";
+import {PBUI, MyRect} from "PBUI.js";
 
 interface GlyphItem {
     value: string,
@@ -18,13 +17,17 @@ interface GlyphItem {
 }
 
 interface QualifiedNote {
-    midi: number,
-    octave: number,
-    degree: number,
+    // A qualified note fully defines the note
+    midi: number,   // Middle C is 60
+    octave: number, // Middle C is octave 4
+    degree: number, // C is degree 0
     sharped: boolean
 }
 
-export default class PBNotation {
+class PBNotation {
+    // Sizing and positioning of staff and notes is in widths of a standard note.
+    // Any time the contextRect is resized, this width will be recalculated so that
+    // the staff can be maximized.
     static ORG_X_IN_NOTE_WIDTHS = 0.5;
     static ORG_Y_IN_NOTE_HEIGHTS = 6.0;
     static FONT_SIZE_IN_NOTE_WIDTHS = 2;
@@ -39,22 +42,26 @@ export default class PBNotation {
 
     static xByNoteType = [2, 3, 4, 5, 6, 8, 10];  // Units are noteWidth
 
-    fontSize: number;   // In pixels
+    // These sizes are updated when the contextRect is resized.
+    fontSize: number;
     noteWidth: number;
     noteHeight: number;
+
     grandStaff: boolean = false;
 
     showHelpers: boolean = false;    // The origin and various rectangles
 
     constructor(public context: CanvasRenderingContext2D, public contextRect: MyRect) {
-        this.resize(this.contextRect);
-        document.addEventListener(PBConst.EVENTS.sequencerCadenceStarted, (event: CustomEvent) => {this.onCadenceStarted(event);}, false);
+        this.resize(this.contextRect);  // The initial sizing.
+        document.addEventListener(PBConst.EVENTS.sequencerCadenceStarted, () => {this.onCadenceStarted();}, false);
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event);}, false);
         document.addEventListener(PBConst.EVENTS.keyboardHover, (event: CustomEvent) => {this.onHover(event);}, false);
         document.addEventListener(PBConst.EVENTS.testerNoteAnswered, (event: CustomEvent) => {this.onAnswered(event);}, false);
     }
 
     onAnswered(event: CustomEvent) {
+        // Called when the note being tested is answered.
+        // Draws the answer and indicates if correct.
         let x = this.orgX + (PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth);
         let y = this.orgY - this.noteHeight * 5;
         if (event.detail.correct)
@@ -64,15 +71,20 @@ export default class PBNotation {
         this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(event.detail.answerNote), 'black');
     }
 
-    onCadenceStarted(event: CustomEvent) {
+    onCadenceStarted() {
+        // The cadence has started.  Redraw the staff.
         this.redraw();
     }
 
     onHover(event: CustomEvent) {
-        this.drawHoverNote(event.detail, 0);
+        // Mouse is hovering over the keyboard.  Draw the hover note.
+        this.drawHoverNote(event.detail);
     }
 
-    drawHoverNote(midiNote: number, color: number) {
+    drawHoverNote(midiNote: number, color: string = 'gray') {
+        // Draw the note in the hovering area of the staff.
+        // Somebody else may be using the clipping rect, so we need to save and then
+        // restore it when we finish.
         let x = this.orgX + PBNotation.xByNoteType[NoteType.Immediate] * this.noteWidth;
         let y = this.orgY;
         let hoverRect = PBUI.buildMyRect(x - this.noteWidth * 0.5, 0, this.noteWidth * PBNotation.QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS, this.contextRect.height);
@@ -87,11 +99,12 @@ export default class PBNotation {
             this.drawRect(hoverRect.x, hoverRect.y, hoverRect.width, hoverRect.height, 1, 'red', 'butt');
         this.drawGlyph(x - this.noteWidth, y, PBConst.GLYPHS.staff5Lines, 'left', 'middle', 'black', 3);
         if (midiNote != -1)
-            this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(midiNote), 'gray');
+            this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(midiNote), color);
         this.context.restore(); // Restore old clipping path
     }
     
     resize(theContextRect: MyRect) {
+        // The contextRect has been resized.  Recalculate all sizes and redraw the staff.
         this.contextRect = theContextRect;
         let noteWidthByClippingWidth = Math.floor(theContextRect.width / PBNotation.STAFF_WIDTH_IN_NOTE_WIDTHS);
         let noteWidthByClippingHeight = Math.floor(theContextRect.height / PBNotation.STAFF_HEIGHT_IN_NOTE_WIDTHS);
@@ -102,13 +115,14 @@ export default class PBNotation {
     }
 
     updateNoteWidth(newSize: number) {
+        // Update fundamental sizes.
         this.noteWidth = newSize;
         this.fontSize = this.noteWidth * PBNotation.FONT_SIZE_IN_NOTE_WIDTHS;
         this.noteHeight = this.noteWidth * PBNotation.NOTE_HEIGHT_IN_NOTE_WIDTHS;
     }
 
     static midiToQualifiedNote(midiNote: number) : QualifiedNote {
-        // A qualified note is the degree plus accidentals
+        // A qualified note is the degree plus a possible sharp.
         if ((midiNote < PBConst.MIDI.LOW.KEYBOARD) || (midiNote > PBConst.MIDI.HIGH.KEYBOARD))
             midiNote = PBConst.MIDI.MIDDLE_C;
         let theOctave = Math.floor(midiNote/ 12 - 1);
@@ -119,6 +133,7 @@ export default class PBNotation {
     }
 
     onSequencer (event: CustomEvent) {
+        // Sequencer has played a note.
         let theItem: SequenceItem = event.detail;
         if (theItem.state) {
             let x = this.orgX  + (PBNotation.xByNoteType[theItem.noteType] * this.noteWidth);
@@ -126,12 +141,15 @@ export default class PBNotation {
         }
     }
 
-    clearCanvas() {
+    clearContextRect() {
+        // Clear the contextRect.
         this.context.fillStyle = "white";
         this.context.fillRect(this.contextRect.x, this.contextRect.y, this.contextRect.width, this.contextRect.height);
     }
 
     drawLine(startX: number,  startY: number,  endX: number,  endY: number,  width: number,  color: string,  cap: string) {
+        // Basic drawing routine used for drawing the origin and helper rectangles.
+        // Note that the staff is drawn with glyphs.
         this.context.beginPath();
         this.context.strokeStyle = color;
         this.context.lineWidth = width;
@@ -225,7 +243,7 @@ export default class PBNotation {
     }
 
     redraw() {
-        this.clearCanvas();
+        this.clearContextRect();
         this.drawStaff();
     }
 }
