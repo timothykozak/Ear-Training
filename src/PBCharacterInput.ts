@@ -8,6 +8,7 @@
 import {PBSequencer} from "./PBSequencer.js";
 import {PBTester} from "./PBTester.js";
 import {PBConst} from "./PBConst.js";
+import {PBStatusWindow} from "./PBStatusWindow.js";
 
 class PBCharacterInput {
     theNote: number = 0;
@@ -18,6 +19,12 @@ class PBCharacterInput {
 
     onCharacterInput(event: KeyboardEvent) {
         if (event.key)
+            switch (event.key) {
+                case 'h':
+                case 'H':
+                    PBStatusWindow.switchAll();
+                    break;
+            }
             this.tester.pickNextNoteToTest();
     }
 }
