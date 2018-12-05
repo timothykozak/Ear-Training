@@ -1,7 +1,11 @@
 // PBStatusWindow.ts
 //
-// TODO: Support clearing the window
-// TODO: Support hiding and showing the window
+// The PBStatusWindow, SW, is a draggable, resizable window that can be used for displaying
+// information.  The windowDiv is the parent of all the other divs, and
+// all writing is done to the clientDiv.  Clicking the closeDiv hides the window,
+// but does not delete it or the information being written to the client.
+// Clicking on the client clears all information.  Multiple SWs are supported.  Hiding
+// and showing all SWs is supported.
 
 import {PBConst} from "./PBConst.js";
 
@@ -172,7 +176,7 @@ class PBStatusWindow {
         );
     };
 
-    static close(theObject: HTMLDivElement | PBStatusWindow, close: boolean) : void {
+    static close(theObject: HTMLDivElement | PBStatusWindow, close: boolean) {
         // Close/show SW based on instance or WindowDiv
         if (theObject) {
             if (theObject instanceof PBStatusWindow) {
@@ -219,10 +223,13 @@ class PBStatusWindow {
     };
 
     static clientOnClick(event: MouseEvent) {
+        // Bring SW to front and clear all messages.
         PBStatusWindow.bringToFront((event.target as HTMLDivElement).id);
+        (event.target as HTMLDivElement).innerText = '';
     };
 
     static windowOnClick(event: MouseEvent) {
+        // Bring SW to front.
         PBStatusWindow.bringToFront((event.target as HTMLDivElement).id);
     };
 
@@ -238,7 +245,7 @@ class PBStatusWindow {
         event.preventDefault();
 
         function moveHandler(e: MouseEvent){
-            // Still dragging
+            // Still dragging.
             elementToDrag.style.left = (e.clientX - deltaX) + "px";
             elementToDrag.style.top = (e.clientY - deltaY) + "px";
             e.stopPropagation();
