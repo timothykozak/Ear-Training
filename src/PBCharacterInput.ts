@@ -3,12 +3,11 @@
 //
 // Handles the character input from computer keyboard.
 //
-// TODO: Flesh out this stub
 
-import {PBSequencer} from "./PBSequencer.js";
-import {PBTester} from "./PBTester.js";
-import {PBConst} from "./PBConst.js";
-import {PBStatusWindow} from "./PBStatusWindow.js";
+import {PBSequencer} from "PBSequencer.js";
+import {PBTester} from "PBTester.js";
+import {PBConst} from "PBConst.js";
+import {PBStatusWindow} from "PBStatusWindow.js";
 
 class PBCharacterInput {
     theNote: number = 0;
@@ -22,10 +21,11 @@ class PBCharacterInput {
             switch (event.key) {
                 case 'h':
                 case 'H':
-                    PBStatusWindow.switchAll();
+                    PBStatusWindow.switchAll(); // Used for hiding/showing all status windows.
                     break;
+                default:
+                    this.tester.pickNextNoteToTest();
             }
-            this.tester.pickNextNoteToTest();
     }
 }
 
