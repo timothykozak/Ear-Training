@@ -172,9 +172,7 @@ class PBStatusWindow {
         );
     };
 
-    static close(theObject: PBStatusWindow, close: boolean) : void;
-    static close(theObject: HTMLDivElement, close: boolean) : void;
-    static close(theObject: any, close: boolean) : void {
+    static close(theObject: HTMLDivElement | PBStatusWindow, close: boolean) : void {
         // Close/show SW based on instance or WindowDiv
         if (theObject) {
             if (theObject instanceof PBStatusWindow) {
