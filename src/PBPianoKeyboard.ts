@@ -6,11 +6,11 @@
 // Watches the sequencer to reflect the notes being played.
 // The keyboard is used to answer tested note.
 
-import {PBStatusWindow} from "./PBStatusWindow.js";
-import {PBSequencer, SequenceItem} from "./PBSequencer.js";
-import {PBSounds} from "./PBSounds.js";
-import {PBConst} from "./PBConst.js";
-import {MyRect} from "./PBUI.js";
+import {PBStatusWindow} from "PBStatusWindow.js";
+import {PBSequencer, SequenceItem} from "PBSequencer.js";
+import {PBSounds} from "PBSounds.js";
+import {PBConst} from "PBConst.js";
+import {MyRect} from "PBUI.js";
 
 interface KeyRegion {
     path: Path2D,
@@ -20,10 +20,12 @@ interface KeyRegion {
 
 class PBPianoKeyboard {
 
-    static WHITE_WIDTH = 24;   // Dimensions are in millimeters
+    // Dimensions are in millimeters
+    static WHITE_WIDTH = 24;
     static WHITE_LENGTH = 148;
     static BLACK_WIDTH = 13;
     static BLACK_LENGTH = 98;
+
     static BLACK_KEY_FILL_STYLE = 'black';
     static WHITE_KEY_FILL_STYLE = 'white';
     static HOVER_FILL_STYLE = 'darkgray';
@@ -36,7 +38,7 @@ class PBPianoKeyboard {
     keyRegions: KeyRegion[];
 
     scale: number = 3;
-    hoverKey: number = -1;
+    hoverKey: number = -1;  // Key over which the mouse is hovering.  -1 means no key.
 
     constructor(public canvas: HTMLCanvasElement, public context: CanvasRenderingContext2D, public contextRect: MyRect, public statusWnd: PBStatusWindow, public sequencer: PBSequencer) {
         if (canvas) {
@@ -57,6 +59,7 @@ class PBPianoKeyboard {
     }
 
     onSequencerNotePlayed(event: CustomEvent) {
+        // The sequencer has played a note.  Show the key as playing.
         let theItem: SequenceItem = event.detail;
         let theKey = theItem.note - PBConst.MIDI.MIDDLE_C + 2;
         if (this.hoverKey != theKey) {    // Not hovering over the key, update it
@@ -70,11 +73,13 @@ class PBPianoKeyboard {
     }
 
     checkForHover(event: MouseEvent): number {
-        // Returns the key over which the mouse is hovering, or -1 for none
+        // Returns the key over which the mouse is hovering, or -1 for none.
         let x = event.offsetX;
         let y = event.offsetY;
         let theResult = -1;
+
         for (let index = 0; index < this.keyRegions.length; index++) {
+            // Cycle through all the key regions to see if we have a match.
             if (this.context.isPointInPath(this.keyRegions[index].path, x, y)) {
                 this.statusWnd.writeMsg("Mouseover: key " + index);
                 theResult = index;
@@ -94,8 +99,10 @@ class PBPianoKeyboard {
     }
 
     onMouseMove(event: MouseEvent) {
+        // The mouse has moved.  Check to see if the hover needs to be updated.
         let hoverKey = this.checkForHover(event);
         this.statusWnd.writeMsg(event.type + " event: x " + event.offsetX + " y " + event.offsetY + "  hoverKey: " + hoverKey);
+
         if (hoverKey != -1) { // Hovering
             PBPianoKeyboard.dispatchHoverEvent(hoverKey);
             if (this.hoverKey != -1) { // Previously hovering
@@ -114,6 +121,7 @@ class PBPianoKeyboard {
     }
 
     onClick(event: MouseEvent) {
+        // Mouse clicked.  Check to see if a note needs to be played.
         let hoverKey = this.checkForHover(event);
         this.statusWnd.writeMsg(event.type + " event: x " + event.offsetX + " y " + event.offsetY + "  hoverKey: " + hoverKey);
         if (hoverKey != -1) {
@@ -152,7 +160,7 @@ class PBPianoKeyboard {
     }
 
     buildBlackKeyPath(orgX: number, orgY: number, index: number): Path2D {
-        // The black key is only a rectangle.
+        // Build an individual black key rectangle and return the path.
         let keyPath = new Path2D();
         let x = orgX + Math.floor(this.scale * (PBPianoKeyboard.X_OFFSET[index] - (PBPianoKeyboard.BLACK_WIDTH / 2)));
         let width = Math.floor(this.scale * PBPianoKeyboard.BLACK_WIDTH);
@@ -162,6 +170,7 @@ class PBPianoKeyboard {
     }
 
     buildWhiteKeyPath(orgX: number, orgY: number, index: number): Path2D {
+        // Builds and and returns an individual path for a white key.
         // The white key is a rectangle with a notch from a black key
         // on at least one side.  Math.floor is used to avoid fractional pixels.
         let keyPath = new Path2D();
@@ -190,6 +199,7 @@ class PBPianoKeyboard {
     }
 
     buildKeyboardRegions() {
+        // Build all of the individual white and black key paths.
         this.keyRegions = [];   // Toss old regions
         let orgX = this.contextRect.x + Math.floor(this.scale * PBPianoKeyboard.BLACK_WIDTH / 2);    // Round down to whole pixel, and take into account scaling
         let orgY = this.contextRect.y;
