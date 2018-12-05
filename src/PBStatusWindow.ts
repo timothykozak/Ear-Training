@@ -7,7 +7,7 @@
 // Clicking on the client clears all information.  Multiple SWs are supported.  Hiding
 // and showing all SWs is supported.
 
-import {PBConst} from "./PBConst.js";
+import {PBConst} from "PBConst.js";
 
 class PBStatusWindow {
     static theStatusWindows: PBStatusWindow[] = []; // All of the SWs in order of creation
