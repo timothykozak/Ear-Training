@@ -172,12 +172,16 @@ class PBStatusWindow {
         );
     };
 
+    static close(theObject: PBStatusWindow, close: boolean) : void;
+    static close(theObject: HTMLDivElement, close: boolean) : void;
     static close(theObject: any, close: boolean) : void {
         // Close/show SW based on instance or WindowDiv
-        if (theObject instanceof PBStatusWindow) {
-            theObject.windowDiv.style.display = close ? 'none' : 'initial';
-        } else if (theObject instanceof HTMLDivElement) {
-            theObject.style.display = close ? 'none' : 'initial';
+        if (theObject) {
+            if (theObject instanceof PBStatusWindow) {
+                theObject.windowDiv.style.display = close ? 'none' : 'initial';
+            } else if (theObject instanceof HTMLDivElement) {
+                theObject.style.display = close ? 'none' : 'initial';
+            }
         }
     }
 
