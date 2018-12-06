@@ -6,8 +6,8 @@
 // This class listens to the sequencer and plays the sequenced notes.
 //
 
-import {PBStatusWindow} from "PBStatusWindow.js";
-import {PBConst} from "PBConst.js";
+import {PBStatusWindow} from "./PBStatusWindow.js";
+import {PBConst} from "./PBConst.js";
 
 interface Sound {
     playing: boolean,
