@@ -6,11 +6,11 @@
 // Watches the sequencer to reflect the notes being played.
 // The keyboard is used to answer tested note.
 
-import {PBStatusWindow} from "PBStatusWindow.js";
-import {PBSequencer, SequenceItem} from "PBSequencer.js";
-import {PBSounds} from "PBSounds.js";
-import {PBConst} from "PBConst.js";
-import {MyRect} from "PBUI.js";
+import {PBStatusWindow} from "./PBStatusWindow.js";
+import {PBSequencer, SequenceItem} from "./PBSequencer.js";
+import {PBSounds} from "./PBSounds.js";
+import {PBConst} from "./PBConst.js";
+import {MyRect} from "./PBUI.js";
 
 interface KeyRegion {
     path: Path2D,
