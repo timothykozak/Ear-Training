@@ -3,10 +3,10 @@
 //
 // Handles the user interface
 
-import {PBSequencer} from "PBSequencer.js";
-import {PBNotation} from "PBNotation.js";
-import {PBPianoKeyboard} from "PBPianoKeyboard.js";
-import {PBStatusWindow} from "PBStatusWindow.js";
+import {PBSequencer} from "./PBSequencer.js";
+import {PBNotation} from "./PBNotation.js";
+import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
+import {PBStatusWindow} from "./PBStatusWindow.js";
 
 interface MyRect {
     x: number, // Of the upper left corner
