@@ -1,7 +1,7 @@
 //
 // PBUI.ts
 //
-// Handles the user interface
+// Handles the user interface.
 
 import {PBSequencer} from "./PBSequencer.js";
 import {PBNotation} from "./PBNotation.js";
