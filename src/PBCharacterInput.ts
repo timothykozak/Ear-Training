@@ -4,10 +4,10 @@
 // Handles the character input from computer keyboard.
 //
 
-import {PBSequencer} from "PBSequencer.js";
-import {PBTester} from "PBTester.js";
-import {PBConst} from "PBConst.js";
-import {PBStatusWindow} from "PBStatusWindow.js";
+import {PBSequencer} from "./PBSequencer.js";
+import {PBTester} from "./PBTester.js";
+import {PBConst} from "./PBConst.js";
+import {PBStatusWindow} from "./PBStatusWindow.js";
 
 class PBCharacterInput {
     theNote: number = 0;
