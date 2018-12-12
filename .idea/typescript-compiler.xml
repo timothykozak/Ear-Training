@@ -3,9 +3,10 @@
   <component name="TypeScriptCompiler">
     <option name="enableServiceForProjectsWithoutConfig" value="true" />
     <option name="recompileOnChanges" value="true" />
+    <option name="typeScriptServiceDirectory" value="$USER_HOME$/AppData/Roaming/npm/node_modules/typescript" />
     <option name="hasOutDirectory" value="true" />
     <option name="outDirectory" value="C:\Users\Fr. Tim\Desktop\Other Machines\SBM1 Backup 6-6-11\My Source\Webstorm\Music\Ear Training\output" />
     <option name="showAllErrors" value="true" />
-    <option name="versionType" value="EMBEDDED" />
+    <option name="versionType" value="SERVICE_DIRECTORY" />
   </component>
 </project>
