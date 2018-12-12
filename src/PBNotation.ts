@@ -153,7 +153,7 @@ class PBNotation {
         this.context.beginPath();
         this.context.strokeStyle = color;
         this.context.lineWidth = width;
-        this.context.lineCap = cap;
+        this.context.lineCap = <CanvasLineCap>cap;
         this.context.moveTo(startX, startY);
         this.context.lineTo(endX, endY);
         this.context.stroke();
@@ -163,7 +163,7 @@ class PBNotation {
     drawRect(startX: number,  startY: number,  width: number,  height: number,  lineWidth: number,  color: string,  cap: string) {
         this.context.strokeStyle = color;
         this.context.lineWidth = lineWidth;
-        this.context.lineCap = cap;
+        this.context.lineCap = <CanvasLineCap>cap;
         this.context.rect(startX, startY, width, height);
         this.context.stroke();
     }
@@ -186,8 +186,8 @@ class PBNotation {
         this.context.fillStyle = color;
         this.context.font = (this.fontSize * glyph.rem) + "px " + font; // "px aruvarb";
 
-        this.context.textAlign = align;
-        this.context.textBaseline = baseline;
+        this.context.textAlign = <CanvasTextAlign>align;
+        this.context.textBaseline = <CanvasTextBaseline>baseline;
         let string = glyph.value;
         while (repeat > 1) {    // Primarily used for drawing the staff
             string += glyph.value;
