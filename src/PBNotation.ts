@@ -6,10 +6,10 @@
 
 // TODO: Handle the chords in place of individual notes
 
-import {SequenceItem} from "PBSequencer.js";
-import {PBConst} from "PBConst.js";
-import {NoteType} from "PBSequencer.js";
-import {PBUI, MyRect} from "PBUI.js";
+import {SequenceItem} from "./PBSequencer.js";
+import {PBConst} from "./PBConst.js";
+import {NoteType} from "./PBSequencer.js";
+import {PBUI, MyRect} from "./PBUI.js";
 
 interface GlyphItem {
     value: string,

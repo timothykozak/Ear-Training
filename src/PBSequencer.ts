@@ -4,8 +4,8 @@
 // This module is the sequencer
 //
 
-import {PBSounds} from "PBSounds.js";
-import {PBConst, NoteType} from "PBConst.js";
+import {PBSounds} from "./PBSounds.js";
+import {PBConst, NoteType} from "./PBConst.js";
 
 interface SequenceItem {
     note: number,   // A MIDI note
