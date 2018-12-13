@@ -86,10 +86,23 @@ class PBTester {
         let theResult = false;  // Return false if problem starting test
         if (!this.sequencer.sequenceRunning && !this.testRunning) {
             this.testRunning = true;
-            if (this.pickNextNoteToTest() >= PBConst.MIDI.LOW.SOUND)
+            if (this.pickNextNoteToTest() >= PBConst.MIDI.LOW.SOUND) {
                 theResult = true; // Test has actually started
+                document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerStarted, {detail: {}}));
+            }
         }
         return(theResult);
+    }
+
+    stopTest(): void {
+        this.testRunning = false;
+        this.waitingForAnswer = false;
+    }
+
+    newTest(): void {
+        this.stopTest();
+        this.degreesToTest = PBTester.TEST_ALL;
+        this.startTest();
     }
 }
 
