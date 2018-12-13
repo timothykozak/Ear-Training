@@ -23,8 +23,15 @@ class PBCharacterInput {
                 case 'H':
                     PBStatusWindow.switchAll(); // Used for hiding/showing all status windows.
                     break;
-                default:
+                case 's':
+                case 'S':
+                    this.tester.newTest();
+                    break;
+                case ' ':
                     this.tester.pickNextNoteToTest();
+                    break;
+                default:
+                    break;
             }
     }
 }
