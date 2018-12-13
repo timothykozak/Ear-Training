@@ -9,6 +9,7 @@ class PBConst {
         sequencerCadenceStarted: "PBSequencerCadenceStarted",
         sequencerTestNotePlayed: "PBSequencerTestNotePlayed",
 
+        testerStarted: "PBTesterStarted",
         testerFinished: "PBTesterFinished",
         testerNoteAnswered: "PBTesterNoteAnswered",
 
@@ -53,6 +54,7 @@ class PBConst {
         questionMark:       {value: '\u{0f444}', rem: 0.3},
         pause:              {value: '\u{0f478}', rem: 0.3},
         start:              {value: '\u{0f488}', rem: 0.3},
+        stop:               {value: '\u{0f24f}', rem: 0.3},
         home:               {value: '\u{0f384}', rem: 0.3},
         graph:              {value: '\u{0f2b5}', rem: 0.3},
         gitHub:             {value: '\u{0f233}', rem: 0.3},
