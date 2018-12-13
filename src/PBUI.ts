@@ -59,10 +59,11 @@ class PBUI {
     static buildTransportHTML(): string {
         return(`<div class="transportDiv">
             <ul>
-                <li class="toolTip">&#xf3cf<span class="toolTipText toolTipTextAbove">Rewind</span></li>
-                <li class="toolTip" onclick="window.pbEarTraining.tester.startTest();">&#xf488<span class="toolTipText toolTipTextAbove">Play</span></li>
-                <li class="toolTip">&#xf478<span class="toolTipText toolTipTextAbove">Pause</span></li>
-                <li class="toolTip">&#xf3d1<span class="toolTipText toolTipTextAbove">Forward</span></li>
+                <li id="transportRewind" class="toolTip">&#xf3cf<span class="toolTipText toolTipTextAbove">Rewind</span></li>
+                <li id="transportStart" class="toolTip" onclick="window.pbEarTraining.tester.startTest();">&#xf488<span class="toolTipText toolTipTextAbove">Play</span></li>
+                <li id="transportStop" class="toolTip">&#xf24f<span class="toolTipText toolTipTextAbove">Stop</span></li>
+                <li id="transportPause" class="toolTip">&#xf478<span class="toolTipText toolTipTextAbove">Pause</span></li>
+                <li id="transportForward" class="toolTip">&#xf3d1<span class="toolTipText toolTipTextAbove">Forward</span></li>
             </ul>
         </div>        `);
     }
