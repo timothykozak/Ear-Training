@@ -85,4 +85,12 @@ enum NoteType {  // For notation positioning
     Immediate
 }
 
-export {PBConst, NoteType};
+enum TID { // Transport IDs
+    Rewind,
+    Start,
+    Stop,
+    Pause,
+    Forward
+}
+
+export {PBConst, NoteType, TID};
