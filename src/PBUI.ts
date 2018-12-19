@@ -1,8 +1,16 @@
 //
 // PBUI.ts
 //
-// Handles the user interface.
+// This class handles the user interface.  The entire screen is used and is made
+// up of three parts: the canvas, the menu and the transport.  The menu takes up
+// the left side and is of constant width.  The transport takes up the bottom,
+// except the lower part of the menu, and is of constant height.  The rest of the
+// screen, minus scrollbars, is the canvas, which is used for drawing the notation
+// and the keyboard.  The icons for the menu, and the buttons for the transport,
+// come from ionicons.ttf.  The pages for the menu are displayed on top of the
+// canvas.  The notation and the keyboard are handled by separate classes.
 
+import {PBConst, TID} from "./PBConst.js";
 import {PBSequencer} from "./PBSequencer.js";
 import {PBNotation} from "./PBNotation.js";
 import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
@@ -32,24 +40,17 @@ class PBUI {
     resizingTimer: number = -1; // Handle to the timer to use for delaying the redraw on resize
     notationRect: MyRect;
     pianoRect: MyRect;
+    transportElements: HTMLElement[];
 
     constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer) {
         PBUI.buildBodyHTML();
-        this.pageContainer = document.getElementById("thePageContainer") as HTMLDivElement;
-        this.pageContainer.style.visibility = 'hidden';
-        this.pages.push(document.getElementById("theSettingsPage") as HTMLDivElement);
-        this.pages.push(document.getElementById("theResultsPage") as HTMLDivElement);
-        this.pages.push(document.getElementById("theHelpPage") as HTMLDivElement);
         this.canvas = document.getElementById("theCanvas") as HTMLCanvasElement;
         this.context = this.canvas.getContext("2d");
+        this.buildPages();
+        this.initTransport();
+        this.transportBuildElementArray();
         this.onResizeFinished();    // The initial sizing
-
-        window.onresize = () => {   // The resizing can go on for many events.
-                                    // Wait until the resize of the window has paused for a while.
-            clearTimeout(this.resizingTimer);
-            this.resizingTimer = setTimeout(() => {
-                this.onResizeFinished();}, PBUI.RESIZE_PAUSE);
-        };
+        this.assignOnResize();
     }
 
     static buildCanvasHTML(): string {
@@ -124,6 +125,23 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
         document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildPagesHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML());
     }
 
+    buildPages() {
+        this.pageContainer = document.getElementById("thePageContainer") as HTMLDivElement;
+        this.pageContainer.style.visibility = 'hidden';
+        this.pages.push(document.getElementById("theSettingsPage") as HTMLDivElement);
+        this.pages.push(document.getElementById("theResultsPage") as HTMLDivElement);
+        this.pages.push(document.getElementById("theHelpPage") as HTMLDivElement);
+    }
+
+    assignOnResize() {  // Assign the resize event handler
+        window.onresize = () => {   // The resizing can go on for many events.
+            // Wait until the resize of the window has paused for a while.
+            clearTimeout(this.resizingTimer);
+            this.resizingTimer = setTimeout(() => {
+                this.onResizeFinished();}, PBUI.RESIZE_PAUSE);
+        };
+    }
+
     onResizeFinished() {
         // Called during a resize and in the constructor
 
@@ -159,6 +177,30 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
 
     static buildMyRect(theX: number, theY: number, theWidth: number, theHeight: number): MyRect {
         return({x: theX, y: theY, width: theWidth, height: theHeight});
+    }
+
+    initTransport() {
+        this.transportBuildElementArray();
+        this.transportShowStart();
+    }
+
+    transportBuildElementArray() {
+        this.transportElements = [];
+        this.transportElements[TID.Rewind] = document.getElementById("transportRewind") as HTMLDivElement;
+        this.transportElements[TID.Start] = document.getElementById("transportStart") as HTMLDivElement;
+        this.transportElements[TID.Stop] = document.getElementById("transportStop") as HTMLDivElement;
+        this.transportElements[TID.Pause] = document.getElementById("transportPause") as HTMLDivElement;
+        this.transportElements[TID.Forward] = document.getElementById("transportForward") as HTMLDivElement;
+    }
+
+    transportHideAllElements() {
+        this.transportElements.forEach((element) => {element.style.display = 'none';});
+    }
+
+    transportShowStart() {
+        // Show only the start button
+        this.transportHideAllElements();
+        this.transportElements[TID.Start].style.display = 'initial';
     }
 }
 
