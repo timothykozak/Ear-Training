@@ -61,9 +61,9 @@ class PBUI {
         return(`<div class="transportDiv">
             <ul>
                 <li id="transportRewind" class="toolTip">&#xf3cf<span class="toolTipText toolTipTextAbove">Rewind</span></li>
-                <li id="transportStart" class="toolTip" onclick="window.pbEarTraining.tester.startTest();">&#xf488<span class="toolTipText toolTipTextAbove">Play</span></li>
                 <li id="transportStop" class="toolTip">&#xf24f<span class="toolTipText toolTipTextAbove">Stop</span></li>
-                <li id="transportPause" class="toolTip">&#xf478<span class="toolTipText toolTipTextAbove">Pause</span></li>
+                <li id="transportStart" class="toolTip" onclick="window.pbEarTraining.tester.startTest();">&#xf488<span class="toolTipText toolTipTextAbove">Play</span></li>
+                <li id="transportPause" onclick="window.pbEarTraining.ui.transportShowStopStart();" class="toolTip">&#xf478<span class="toolTipText toolTipTextAbove">Pause</span></li>
                 <li id="transportForward" class="toolTip">&#xf3d1<span class="toolTipText toolTipTextAbove">Forward</span></li>
             </ul>
         </div>        `);
@@ -135,7 +135,7 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
 
     assignOnResize() {  // Assign the resize event handler
         window.onresize = () => {   // The resizing can go on for many events.
-            // Wait until the resize of the window has paused for a while.
+                                    // Wait until the resize of the window has paused for a while.
             clearTimeout(this.resizingTimer);
             this.resizingTimer = setTimeout(() => {
                 this.onResizeFinished();}, PBUI.RESIZE_PAUSE);
@@ -181,7 +181,8 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
 
     initTransport() {
         this.transportBuildElementArray();
-        this.transportShowStart();
+        this.transportShowElements([TID.Start]);
+        document.addEventListener(PBConst.EVENTS.testerStarted, () => {this.transportShowElements([TID.Stop, TID.Pause]);}, false);
     }
 
     transportBuildElementArray() {
@@ -193,15 +194,20 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
         this.transportElements[TID.Forward] = document.getElementById("transportForward") as HTMLDivElement;
     }
 
-    transportHideAllElements() {
-        this.transportElements.forEach((element) => {element.style.display = 'none';});
+    transportHideAllElements(isHidden: boolean) {
+        this.transportElements.forEach((element) => {element.style.display = isHidden ? 'none' : 'initial';});
     }
 
-    transportShowStart() {
-        // Show only the start button
-        this.transportHideAllElements();
-        this.transportElements[TID.Start].style.display = 'initial';
+    transportShowElements(theElements: TID[]) {
+        // Show only the the requested elements
+        this.transportHideAllElements(true);
+        theElements.forEach((index) => {this.transportElements[index].style.display = 'initial';})
     }
+
+    transportShowStopStart() {
+        this.transportShowElements([TID.Stop, TID.Start]);
+    }
+
 }
 
 export {PBUI, MyRect};
