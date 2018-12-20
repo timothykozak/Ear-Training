@@ -86,7 +86,7 @@ class PBTester {
         let theResult = false;  // Return false if problem starting test
         if (!this.sequencer.sequenceRunning && !this.testRunning) {
             this.testRunning = true;
-            if (this.pickNextNoteToTest() >= PBConst.MIDI.LOW.SOUND) {
+            if (this.pickNextNoteToTest() != -1) {
                 theResult = true; // Test has actually started
                 document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerStarted, {detail: {}}));
             }
