@@ -87,8 +87,8 @@ enum NoteType {  // For notation positioning
 
 enum TID { // Transport IDs
     Rewind,
-    Start,
     Stop,
+    Start,
     Pause,
     Forward
 }
