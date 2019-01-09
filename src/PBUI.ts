@@ -51,6 +51,11 @@ class PBUI {
         this.transportBuildElementArray();
         this.onResizeFinished();    // The initial sizing
         this.assignOnResize();
+        document.addEventListener(PBConst.EVENTS.sequencerTestNotePlayed, (event: CustomEvent) => {this.onTestNotePlayed(event);}, false);
+    }
+
+    onTestNotePlayed(event: CustomEvent) : void {
+        this.transportShowStopStart();
     }
 
     static buildCanvasHTML(): string {
