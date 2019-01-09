@@ -47,6 +47,12 @@ class PBNotation {
     noteWidth: number;
     noteHeight: number;
 
+    currentHoverNote: number;
+    answerNote: QualifiedNote = null;
+    answerNoteCorrect: boolean;
+    answerNoteCorrectX: number;
+    answerNoteCorrectY: number;
+
     grandStaff: boolean = false;
 
     showHelpers: boolean = false;    // The origin and various rectangles
@@ -61,18 +67,26 @@ class PBNotation {
 
     onAnswered(event: CustomEvent) {
         // Called when the note being tested is answered.
-        // Draws the answer and indicates if correct.
-        let x = this.orgX + (PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth);
-        let y = this.orgY - this.noteHeight * 5;
-        if (event.detail.correct)
-            this.drawGlyph(x, y, PBConst.GLYPHS.checkMark, 'left', 'middle', 'green', 1, "ionicons");
-        else
-          this.drawGlyph(x, y, PBConst.GLYPHS.xMark, 'left', 'middle', 'red', 1, "ionicons");
-        this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(event.detail.answerNote), 'black');
+        this.answerNoteCorrect = event.detail.correct;
+        this.answerNote = PBNotation.midiToQualifiedNote(event.detail.answerNote);
+        this.drawHoverNote(this.currentHoverNote);
+    }
+
+    drawAnswerNote(): void {
+        if (this.answerNote) {
+            let x = this.answerNoteCorrectX;
+            let y = this.answerNoteCorrectY;
+            if (this.answerNoteCorrect)
+                this.drawGlyph(x, y, PBConst.GLYPHS.checkMark, 'left', 'middle', 'green', 1, "ionicons");
+            else
+                this.drawGlyph(x, y, PBConst.GLYPHS.xMark, 'left', 'middle', 'red', 1, "ionicons");
+            this.drawQualifiedNote(x, this.answerNote, 'black');
+        }
     }
 
     onCadenceStarted() {
         // The cadence has started.  Redraw the staff.
+        this.answerNote = null;
         this.redraw();
     }
 
@@ -85,7 +99,8 @@ class PBNotation {
         // Draw the note in the hovering area of the staff.
         // Somebody else may be using the clipping rect, so we need to save and then
         // restore it when we finish.
-        let x = this.orgX + PBNotation.xByNoteType[NoteType.Immediate] * this.noteWidth;
+        this.currentHoverNote = midiNote;
+        let x = this.answerNoteCorrectX;
         let y = this.orgY;
         let hoverRect = PBUI.buildMyRect(x - this.noteWidth * 0.5, 0, this.noteWidth * PBNotation.QUALIFIED_NOTE_WIDTH_IN_NOTE_WIDTHS, this.contextRect.height);
 
@@ -100,6 +115,7 @@ class PBNotation {
         this.drawGlyph(x - this.noteWidth, y, PBConst.GLYPHS.staff5Lines, 'left', 'middle', 'black', 3);
         if (midiNote != -1)
             this.drawQualifiedNote(x, PBNotation.midiToQualifiedNote(midiNote), color);
+        this.drawAnswerNote();
         this.context.restore(); // Restore old clipping path
     }
     
@@ -111,6 +127,8 @@ class PBNotation {
         this.updateNoteWidth(Math.min(noteWidthByClippingHeight, noteWidthByClippingWidth));
         this.orgX = this.contextRect.x + PBNotation.ORG_X_IN_NOTE_WIDTHS * this.noteWidth;
         this.orgY = this.contextRect.y + PBNotation.ORG_Y_IN_NOTE_HEIGHTS * this.noteHeight;
+        this.answerNoteCorrectX = this.orgX + (PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth);
+        this.answerNoteCorrectY = this.orgY - this.noteHeight * 5;
         this.redraw();
     }
 
