@@ -82,7 +82,7 @@ enum NoteType {  // For notation positioning
     Cadence4,
     Testing,
     Answer,
-    Immediate
+    Immediate = Answer
 }
 
 enum TID { // Transport IDs
