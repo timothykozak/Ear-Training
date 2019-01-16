@@ -19,8 +19,8 @@ class PBCharacterInput {
     onCharacterInput(event: KeyboardEvent) {
         if (event.key)
             switch (event.key) {
-                case 'h':
-                case 'H':
+                case 'm':
+                case 'M':
                     PBStatusWindow.switchAll(); // Used for hiding/showing all status windows.
                     break;
                 case 's':
