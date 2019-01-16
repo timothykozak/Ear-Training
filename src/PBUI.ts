@@ -15,6 +15,7 @@ import {PBSequencer} from "./PBSequencer.js";
 import {PBNotation} from "./PBNotation.js";
 import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
+import {PBOptionsPage} from "./PBOptionsPage.js";
 
 interface MyRect {
     x: number, // Of the upper left corner
@@ -32,6 +33,7 @@ class PBUI {
     static RESIZE_PAUSE = 200;  // In milliseconds
 
     canvas: HTMLCanvasElement; // The drawing canvas for both notation and keyboard
+    options: PBOptionsPage;
     pageContainer: HTMLDivElement;
     pages: HTMLDivElement[] = [];
     context: CanvasRenderingContext2D;
@@ -46,6 +48,7 @@ class PBUI {
         PBUI.buildBodyHTML();
         this.canvas = document.getElementById("theCanvas") as HTMLCanvasElement;
         this.context = this.canvas.getContext("2d");
+        this.options = new PBOptionsPage(statusWindow);
         this.buildPages();
         this.initTransport();
         this.transportBuildElementArray();
