@@ -60,7 +60,7 @@ class PBEarTraining {
         this.sequencer = new PBSequencer();
         this.tester = new PBTester(this.sequencer);
         this.characterInput = new PBCharacterInput(this.sequencer, this.tester);
-        this.ui = new PBUI(this.statusWindow, this.sequencer);
+        this.ui = new PBUI(this.statusWindow, this.sequencer, this.tester);
         // Register the ServiceWorker
         navigator.serviceWorker.register('./built/PBServiceWorker.js').then((registration) => {
             this.statusWindow.writeMsg('The service worker has been registered ' + registration);
