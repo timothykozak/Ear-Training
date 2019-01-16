@@ -4,8 +4,6 @@
 // This module handles the musical notation.  It is passed an HTMLCanvasElement
 // on which it draws out the treble staff in the key of C Major.
 
-// TODO: Handle the chords in place of individual notes
-
 import {SequenceItem} from "./PBSequencer.js";
 import {PBConst} from "./PBConst.js";
 import {NoteType} from "./PBSequencer.js";
@@ -47,7 +45,7 @@ class PBNotation {
     noteWidth: number;
     noteHeight: number;
 
-    currentHoverNote: number;
+    currentHoverNote: number;   // A midi value, or -1 if not hovering.
     answerNote: QualifiedNote = null;
     answerNoteCorrect: boolean;
     answerNoteCorrectX: number;
@@ -72,7 +70,7 @@ class PBNotation {
         this.drawHoverNote(this.currentHoverNote);
     }
 
-    drawAnswerNote(): void {
+    drawAnswerNote() {
         if (this.answerNote) {
             let x = this.answerNoteCorrectX;
             let y = this.answerNoteCorrectY;
@@ -96,7 +94,8 @@ class PBNotation {
     }
 
     drawHoverNote(midiNote: number, color: string = 'gray') {
-        // Draw the note in the hovering area of the staff.
+        // Draw the note in the hovering area of the staff and then draw the answer
+        // note over top of it.
         // Somebody else may be using the clipping rect, so we need to save and then
         // restore it when we finish.
         this.currentHoverNote = midiNote;
@@ -122,13 +121,17 @@ class PBNotation {
     resize(theContextRect: MyRect) {
         // The contextRect has been resized.  Recalculate all sizes and redraw the staff.
         this.contextRect = theContextRect;
+
         let noteWidthByClippingWidth = Math.floor(theContextRect.width / PBNotation.STAFF_WIDTH_IN_NOTE_WIDTHS);
         let noteWidthByClippingHeight = Math.floor(theContextRect.height / PBNotation.STAFF_HEIGHT_IN_NOTE_WIDTHS);
         this.updateNoteWidth(Math.min(noteWidthByClippingHeight, noteWidthByClippingWidth));
+
         this.orgX = this.contextRect.x + PBNotation.ORG_X_IN_NOTE_WIDTHS * this.noteWidth;
         this.orgY = this.contextRect.y + PBNotation.ORG_Y_IN_NOTE_HEIGHTS * this.noteHeight;
+
         this.answerNoteCorrectX = this.orgX + (PBNotation.xByNoteType[NoteType.Answer] * this.noteWidth);
         this.answerNoteCorrectY = this.orgY - this.noteHeight * 5;
+
         this.redraw();
     }
 
@@ -220,7 +223,7 @@ class PBNotation {
         this.drawOrg();
         this.drawContextRect();
         let staffY = this.orgY;
-        let ng = PBConst.GLYPHS;
+        let ng = PBConst.GLYPHS;    // Notation glyphs
         let lengthInNotes = PBNotation.STAFF_WIDTH_IN_NOTE_WIDTHS - 1;
 
         // The treble staff
