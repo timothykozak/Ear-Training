@@ -54,7 +54,7 @@ class PBUI {
         document.addEventListener(PBConst.EVENTS.sequencerTestNotePlayed, (event: CustomEvent) => {this.onTestNotePlayed(event);}, false);
     }
 
-    onTestNotePlayed(event: CustomEvent) : void {
+    onTestNotePlayed(event: CustomEvent) {
         this.transportShowStopStart();
     }
 
@@ -90,7 +90,7 @@ class PBUI {
         `);
     }
 
-    handleMenu(thePage: number): void {
+    handleMenu(thePage: number) {
         this.pages.forEach((element) => {element.style.visibility = 'hidden';});
         if (thePage != -1)
             this.pages[thePage].style.visibility = 'visible';
