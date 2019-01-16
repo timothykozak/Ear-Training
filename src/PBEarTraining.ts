@@ -1,5 +1,7 @@
 //
-// pbEarTraining.js
+// This is the main program.  WebFont is instantiated in the calling
+// html and passed to this class.  All other classes are instantiated
+// here.  After the instantiations this class does nothing.
 //
 
 import {PBStatusWindow} from "./PBStatusWindow.js";
@@ -7,11 +9,9 @@ import {PBSounds} from "./PBSounds.js";
 import {PBSequencer} from "./PBSequencer.js";
 import {PBCharacterInput} from "./PBCharacterInput.js";
 import {PBTester} from "./PBTester.js";
-import {PBConst} from "./PBConst.js";
 import {PBUI} from "./PBUI.js";
 
 class PBEarTraining {
-    soundsAvailable = false;
     audioContext: AudioContext;
     statusWindow = new PBStatusWindow('Status Messages');
     characterInput: PBCharacterInput;
@@ -56,7 +56,6 @@ class PBEarTraining {
 
     initClass() {
         // Ready to roll.  Start everything in the proper order.
-        document.addEventListener(PBConst.EVENTS.soundsInstrumentLoaded, () => {this.soundsAvailable = true;}, false);
         this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
         this.sequencer = new PBSequencer();
         this.tester = new PBTester(this.sequencer);
