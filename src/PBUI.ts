@@ -16,6 +16,7 @@ import {PBNotation} from "./PBNotation.js";
 import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBOptionsPage} from "./PBOptionsPage.js";
+import {PBTester} from "./PBTester";
 
 interface MyRect {
     x: number, // Of the upper left corner
@@ -44,11 +45,10 @@ class PBUI {
     pianoRect: MyRect;
     transportElements: HTMLElement[];
 
-    constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer) {
+    constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer, public tester: PBTester) {
         PBUI.buildBodyHTML();
         this.canvas = document.getElementById("theCanvas") as HTMLCanvasElement;
         this.context = this.canvas.getContext("2d");
-        this.options = new PBOptionsPage(statusWindow);
         this.buildPages();
         this.initTransport();
         this.transportBuildElementArray();
@@ -99,20 +99,18 @@ class PBUI {
             this.pages[thePage].style.visibility = 'visible';
     }
 
-    static buildSettingsPageHTML(): string {
-        return(`<div id="theSettingsPage" class="pageDiv" style="background-color: #ff0000;">
-            This is the settings page.
-            </div>`);
+    static buildOptionsPageHTML(): string {
+        return(`<div id="theOptionsPage" class="pageDiv" style="background-color: #eeeeee;"></div>`);
     }
 
     static buildResultsPageHTML(): string {
-        return(`<div id="theResultsPage" class="pageDiv" style="background-color: #00ff00;">
+        return(`<div id="theResultsPage" class="pageDiv centerDiv" style="background-color: #00ff00;">
             This is the results page.
             </div>`);
     }
 
     static buildHelpPageHTML(): string {
-        return(`<div id="theHelpPage" class="pageDiv" style="background-color: #0000ff;">
+        return(`<div id="theHelpPage" class="pageDiv centerDiv" style="background-color: #0000ff;">
             Lorem ipsum dolor sit amet, agam quodsi ne eam. Eam an tantas sapientem eloquentiam, ea nec exerci equidem. Cu duo soleat graeci equidem, eos cu stet iuvaret mnesarchum. Sale solum melius ius eu, ei facilisi accusamus sea. Mei zril gubergren ea, vero commune ne ius.
 
 Repudiare voluptatum liberavisse ad sit, adhuc nusquam molestie et has. Et erroribus voluptatum mei. Eu mel dolorem reprehendunt, ex alterum civibus neglegentur his. Ius eu nisl nibh platonem, doming audire mei cu, qui ad vide doming appetere. Ad unum facilis nam.
@@ -126,7 +124,7 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
     }
 
     static buildPagesHTML() : string {
-        return(`<div id="thePageContainer" class="pageContainerDiv">` + PBUI.buildSettingsPageHTML() + PBUI.buildResultsPageHTML() + PBUI.buildHelpPageHTML() + `</div>`);
+        return(`<div id="thePageContainer" class="pageContainerDiv">` + PBUI.buildOptionsPageHTML() + PBUI.buildResultsPageHTML() + PBUI.buildHelpPageHTML() + `</div>`);
     }
 
     static buildBodyHTML() {
@@ -136,7 +134,9 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
     buildPages() {
         this.pageContainer = document.getElementById("thePageContainer") as HTMLDivElement;
         this.pageContainer.style.visibility = 'hidden';
-        this.pages.push(document.getElementById("theSettingsPage") as HTMLDivElement);
+        let optionsHTML = document.getElementById("theOptionsPage") as HTMLDivElement;
+        this.options = new PBOptionsPage(this.statusWindow, optionsHTML, this.tester);
+        this.pages.push(optionsHTML);
         this.pages.push(document.getElementById("theResultsPage") as HTMLDivElement);
         this.pages.push(document.getElementById("theHelpPage") as HTMLDivElement);
     }
