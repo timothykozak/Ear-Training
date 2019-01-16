@@ -23,7 +23,9 @@ class PBConst {
         mouseDown: "mousedown",
         mouseUp: "mouseup",
 
-        keyPress: "keypress"
+        keyPress: "keypress",
+
+        unload: "unload"
     };
 
     static GLYPHS = {   // To view the characters of the font, use http://torinak.com/font/lsfont.html
@@ -72,6 +74,10 @@ class PBConst {
             KEYBOARD: 73
         },
         MIDDLE_C: 60
+    };
+
+    static STORAGE = {
+        optionsPage: "optionsPage"
     };
 }
 
