@@ -102,12 +102,12 @@ class PBTester {
         return(theResult);
     }
 
-    stopTest(): void {
+    stopTest() {
         this.testRunning = false;
         this.waitingForAnswer = false;
     }
 
-    newTest(): void {
+    newTest() {
         this.stopTest();
         this.degreesToTest = PBTester.TEST_ALL;
         this.startTest();
