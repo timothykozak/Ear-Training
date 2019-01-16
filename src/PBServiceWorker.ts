@@ -1,4 +1,8 @@
-// [Working example](/serviceworker-cookbook/offline-status/).
+// This is the Service Worker code.  It is registered in PBEarTraining.
+// Note that the console messages will only show up when the Service
+// Worker is registered the first time.
+// Unsure why the [fetch] console messages are not showing up.
+//
 
 let CACHE_NAME = 'EarTraining-cache';
 
