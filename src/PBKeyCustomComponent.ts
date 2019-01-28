@@ -9,6 +9,13 @@ class PBKeyCustomComponent extends HTMLElement {
     static SLIDER_HEIGHT = 100;
 
     shadow: ShadowRoot;
+    wrapperElement: HTMLDivElement;
+    sliderDiv: HTMLDivElement;
+    sliderElement: HTMLInputElement;
+    checkboxElement: HTMLInputElement;
+    valueElement: HTMLInputElement;
+    labelElement: HTMLDivElement;
+    styleElement: HTMLStyleElement;
     
     constructor() {
 
@@ -20,59 +27,59 @@ class PBKeyCustomComponent extends HTMLElement {
 
         // This element wraps all of the other elements and is absolute positioned
         // using attributes defined in the html.
-        const wrapperElement = document.createElement('div');
-        wrapperElement.setAttribute('class', 'wrapperDiv');
+        this.wrapperElement = document.createElement('div');
+        this.wrapperElement.setAttribute('class', 'wrapperDiv');
         let wrapperX = (this.hasAttribute('x')) ? this.getAttribute('x') : 100;
         let wrapperY = (this.hasAttribute('y')) ? this.getAttribute('y') : 100;
 
         // This element will hold the actual slider.
         // Need to do this for proper positioning.
-        const sliderDiv = document.createElement('div');
-        sliderDiv.setAttribute('class', 'sliderDiv');
+        this.sliderDiv = document.createElement('div');
+        this.sliderDiv.setAttribute('class', 'sliderDiv');
 
         // The slider element itself.
         // It will be rotated in CSS.
         // The slider and the value element interact with each other.
-        const sliderElement = document.createElement('input');
-        sliderElement.setAttribute('type', 'range');
-        sliderElement.setAttribute('class', 'stackedSlider');
-        sliderElement.setAttribute('min', PBKeyCustomComponent.SLIDER_MIN.toString());
-        sliderElement.setAttribute('max', PBKeyCustomComponent.SLIDER_MAX.toString());
-        sliderElement.setAttribute('value', '5');
-        sliderElement.oninput = (event) => {valueElement.value = (<HTMLInputElement>event.target).value;};
+        this.sliderElement = document.createElement('input');
+        this.sliderElement.setAttribute('type', 'range');
+        this.sliderElement.setAttribute('class', 'stackedSlider');
+        this.sliderElement.setAttribute('min', PBKeyCustomComponent.SLIDER_MIN.toString());
+        this.sliderElement.setAttribute('max', PBKeyCustomComponent.SLIDER_MAX.toString());
+        this.sliderElement.setAttribute('value', '5');
+        this.sliderElement.oninput = (event) => {this.valueElement.value = (<HTMLInputElement>event.target).value;};
 
         // Used to disable the custom component.
-        const checkboxElement = document.createElement('input');
-        checkboxElement.setAttribute('type', 'checkbox');
-        checkboxElement.setAttribute('class', 'stackedElement');
-        checkboxElement.oninput = (event) => {
+        this.checkboxElement = document.createElement('input');
+        this.checkboxElement.setAttribute('type', 'checkbox');
+        this.checkboxElement.setAttribute('class', 'stackedElement');
+        this.checkboxElement.oninput = (event) => {
             if ((<HTMLInputElement>event.target).checked) {
-                sliderElement.removeAttribute('disabled');
-                valueElement.removeAttribute('disabled');
+                this.sliderElement.removeAttribute('disabled');
+                this.valueElement.removeAttribute('disabled');
             } else {
-                sliderElement.setAttribute('disabled', 'disabled');
-                valueElement.setAttribute('disabled', 'disabled');
+                this.sliderElement.setAttribute('disabled', 'disabled');
+                this.valueElement.setAttribute('disabled', 'disabled');
             }
         };
 
         // The element with the numeric value.
         // Interacts with the slider.
-        const valueElement = document.createElement('input');
-        valueElement.setAttribute('type', 'number');
-        valueElement.setAttribute('class', 'valueElement');
-        valueElement.setAttribute('min', PBKeyCustomComponent.SLIDER_MIN.toString());
-        valueElement.setAttribute('max', PBKeyCustomComponent.SLIDER_MAX.toString());
-        valueElement.value = '5';
-        valueElement.oninput = (event) => {sliderElement.value = (<HTMLInputElement>event.target).value;};
+        this.valueElement = document.createElement('input');
+        this.valueElement.setAttribute('type', 'number');
+        this.valueElement.setAttribute('class', 'this.valueElement');
+        this.valueElement.setAttribute('min', PBKeyCustomComponent.SLIDER_MIN.toString());
+        this.valueElement.setAttribute('max', PBKeyCustomComponent.SLIDER_MAX.toString());
+        this.valueElement.value = '5';
+        this.valueElement.oninput = (event) => {this.sliderElement.value = (<HTMLInputElement>event.target).value;};
 
         // Just a static label that is set in the html.
-        const labelElement = document.createElement('div');
-        labelElement.setAttribute('class', 'labelElement');
-        labelElement.innerText = (this.hasAttribute('label')) ? this.getAttribute('label') : 'None';
+        this.labelElement = document.createElement('div');
+        this.labelElement.setAttribute('class', 'labelElement');
+        this.labelElement.innerText = (this.hasAttribute('label')) ? this.getAttribute('label') : 'None';
 
         // Create some CSS to apply to the shadow dom.
-        const style = document.createElement('style');
-        style.textContent = `
+        this.styleElement = document.createElement('style');
+        this.styleElement.textContent = `
             .wrapperDiv {
                 width: ${PBKeyCustomComponent.DIV_WIDTH}px;
                 position: absolute;
@@ -96,11 +103,11 @@ class PBKeyCustomComponent extends HTMLElement {
                 transform: rotate(-90deg);
             }
             
-            .valueElement {
+            .this.valueElement {
                 width: ${PBKeyCustomComponent.DIV_WIDTH - 10}px;
             }
             
-            .labelElement {
+            .this.labelElement {
                 display-inline: block;
             }
               
@@ -111,13 +118,13 @@ class PBKeyCustomComponent extends HTMLElement {
         `;
 
         // Attach the created elements to the shadow dom
-        this.shadow.appendChild(style);
-        this.shadow.appendChild(wrapperElement);
-        sliderDiv.appendChild(sliderElement);
-        wrapperElement.appendChild(sliderDiv);
-        wrapperElement.appendChild(valueElement);
-        wrapperElement.appendChild(checkboxElement);
-        wrapperElement.appendChild(labelElement);
+        this.shadow.appendChild(this.styleElement);
+        this.shadow.appendChild(this.wrapperElement);
+        this.sliderDiv.appendChild(this.sliderElement);
+        this.wrapperElement.appendChild(this.sliderDiv);
+        this.wrapperElement.appendChild(this.valueElement);
+        this.wrapperElement.appendChild(this.checkboxElement);
+        this.wrapperElement.appendChild(this.labelElement);
     }
 }
 
