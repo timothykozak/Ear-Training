@@ -2,8 +2,9 @@
 //
 
 import {PBConst} from "./PBConst.js";
-import {PBStatusWindow} from "./PBStatusWindow";
-import {PBTester} from "./PBTester";
+import {PBStatusWindow} from "./PBStatusWindow.js";
+import {PBTester} from "./PBTester.js";
+import {PBKeyCustomComponent} from "./PBKeyCustomComponent.js";
 
 class PBOptionsPage {
     static NOTES_IN_OCTAVE = 12;
@@ -16,10 +17,13 @@ class PBOptionsPage {
         timeToWait: number;
     };
     noteHTMLInput: Array<HTMLInputElement>;
+    theCC: PBKeyCustomComponent;
 
     constructor(public statusWindow: PBStatusWindow, public parentHTMLDiv: HTMLDivElement, public tester: PBTester) {
+        customElements.define('key-component', PBKeyCustomComponent);
         this.restoreOptions();
         this.buildHTML();
+        this.theCC = document.getElementById('theCC') as PBKeyCustomComponent;
         window.addEventListener(PBConst.EVENTS.unload, () => { this.onUnload()});
     }
 
@@ -66,6 +70,7 @@ class PBOptionsPage {
                 <input type="button" value="Black" onclick="window.pbEarTraining.ui.options.createStandardTest(1);">
                 <input type="button" value="White" onclick="window.pbEarTraining.ui.options.createStandardTest(2);">
                 <input type="button" value="I IV V" onclick="window.pbEarTraining.ui.options.createStandardTest(3);">
+                <key-component id="theCC" x="100" y="100" label="CSharp"></key-component>
             </div>
             `);
     }
