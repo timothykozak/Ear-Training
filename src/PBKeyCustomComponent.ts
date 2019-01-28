@@ -3,17 +3,20 @@
 // stacked on top of each other.
 
 class PBKeyCustomComponent extends HTMLElement {
+    static SLIDER_MIN = 0;
+    static SLIDER_MAX = 25;
+    static DIV_WIDTH = 40;
+    static SLIDER_HEIGHT = 100;
+
+    shadow: ShadowRoot;
+    
     constructor() {
-        const SLIDER_MIN = 0;
-        const SLIDER_MAX = 25;
-        const DIV_WIDTH = 40;
-        const SLIDER_HEIGHT = 100;
 
         // Always call super() first
         super();
 
         // Create a shadow root
-        const shadow = this.attachShadow({mode: 'open'});
+        this.shadow = this.attachShadow({mode: 'open'});
 
         // This element wraps all of the other elements and is absolute positioned
         // using attributes defined in the html.
@@ -33,8 +36,8 @@ class PBKeyCustomComponent extends HTMLElement {
         const sliderElement = document.createElement('input');
         sliderElement.setAttribute('type', 'range');
         sliderElement.setAttribute('class', 'stackedSlider');
-        sliderElement.setAttribute('min', SLIDER_MIN.toString());
-        sliderElement.setAttribute('max', SLIDER_MAX.toString());
+        sliderElement.setAttribute('min', PBKeyCustomComponent.SLIDER_MIN.toString());
+        sliderElement.setAttribute('max', PBKeyCustomComponent.SLIDER_MAX.toString());
         sliderElement.setAttribute('value', '5');
         sliderElement.oninput = (event) => {valueElement.value = (<HTMLInputElement>event.target).value;};
 
@@ -57,8 +60,8 @@ class PBKeyCustomComponent extends HTMLElement {
         const valueElement = document.createElement('input');
         valueElement.setAttribute('type', 'number');
         valueElement.setAttribute('class', 'valueElement');
-        valueElement.setAttribute('min', SLIDER_MIN.toString());
-        valueElement.setAttribute('max', SLIDER_MAX.toString());
+        valueElement.setAttribute('min', PBKeyCustomComponent.SLIDER_MIN.toString());
+        valueElement.setAttribute('max', PBKeyCustomComponent.SLIDER_MAX.toString());
         valueElement.value = '5';
         valueElement.oninput = (event) => {sliderElement.value = (<HTMLInputElement>event.target).value;};
 
@@ -71,7 +74,7 @@ class PBKeyCustomComponent extends HTMLElement {
         const style = document.createElement('style');
         style.textContent = `
             .wrapperDiv {
-                width: ${DIV_WIDTH}px;
+                width: ${PBKeyCustomComponent.DIV_WIDTH}px;
                 position: absolute;
                 top: ${wrapperY}px;
                 left: ${wrapperX}px;
@@ -81,20 +84,20 @@ class PBKeyCustomComponent extends HTMLElement {
             }
             
             .sliderDiv {
-                width: ${DIV_WIDTH}px;
-                height: ${SLIDER_HEIGHT}px;
+                width: ${PBKeyCustomComponent.DIV_WIDTH}px;
+                height: ${PBKeyCustomComponent.SLIDER_HEIGHT}px;
                 padding-bottom: 5px;
             }
             
             .stackedSlider {
-                width: ${SLIDER_HEIGHT}px;
-                height: ${DIV_WIDTH}px;
-                transform-origin: ${SLIDER_HEIGHT / 2}px ${SLIDER_HEIGHT / 2}px;
+                width: ${PBKeyCustomComponent.SLIDER_HEIGHT}px;
+                height: ${PBKeyCustomComponent.DIV_WIDTH}px;
+                transform-origin: ${PBKeyCustomComponent.SLIDER_HEIGHT / 2}px ${PBKeyCustomComponent.SLIDER_HEIGHT / 2}px;
                 transform: rotate(-90deg);
             }
             
             .valueElement {
-                width: ${DIV_WIDTH - 10}px;
+                width: ${PBKeyCustomComponent.DIV_WIDTH - 10}px;
             }
             
             .labelElement {
@@ -102,14 +105,14 @@ class PBKeyCustomComponent extends HTMLElement {
             }
               
             .stackedElement {
-                width: ${DIV_WIDTH}px;
+                width: ${PBKeyCustomComponent.DIV_WIDTH}px;
             }
           }
         `;
 
         // Attach the created elements to the shadow dom
-        shadow.appendChild(style);
-        shadow.appendChild(wrapperElement);
+        this.shadow.appendChild(style);
+        this.shadow.appendChild(wrapperElement);
         sliderDiv.appendChild(sliderElement);
         wrapperElement.appendChild(sliderDiv);
         wrapperElement.appendChild(valueElement);
@@ -118,5 +121,4 @@ class PBKeyCustomComponent extends HTMLElement {
     }
 }
 
-// Define the new element
-customElements.define('key-component', PBKeyCustomComponent);
+export {PBKeyCustomComponent};
