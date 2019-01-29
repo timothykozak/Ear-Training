@@ -66,7 +66,7 @@ class PBKeyCustomComponent extends HTMLElement {
         // Interacts with the slider.
         this.valueElement = document.createElement('input');
         this.valueElement.setAttribute('type', 'number');
-        this.valueElement.setAttribute('class', 'this.valueElement');
+        this.valueElement.setAttribute('class', 'valueElement');
         this.valueElement.setAttribute('min', PBKeyCustomComponent.SLIDER_MIN.toString());
         this.valueElement.setAttribute('max', PBKeyCustomComponent.SLIDER_MAX.toString());
         this.valueElement.value = '5';
@@ -103,11 +103,11 @@ class PBKeyCustomComponent extends HTMLElement {
                 transform: rotate(-90deg);
             }
             
-            .this.valueElement {
+            .valueElement {
                 width: ${PBKeyCustomComponent.DIV_WIDTH - 10}px;
             }
             
-            .this.labelElement {
+            .labelElement {
                 display-inline: block;
             }
               
