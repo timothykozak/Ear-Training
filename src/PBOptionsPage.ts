@@ -63,14 +63,22 @@ class PBOptionsPage {
     buildHTML(){
         this.parentHTMLDiv.insertAdjacentHTML('beforeend',
             `<div>
-                C:<input type="text" id="C"><br>
-                C#:<input type="text" id="C#"><br>
-                D:<input type="text" id="D"><br>
                 <input type="button" value="All" onclick="window.pbEarTraining.ui.options.createStandardTest(0);">
                 <input type="button" value="Black" onclick="window.pbEarTraining.ui.options.createStandardTest(1);">
                 <input type="button" value="White" onclick="window.pbEarTraining.ui.options.createStandardTest(2);">
                 <input type="button" value="I IV V" onclick="window.pbEarTraining.ui.options.createStandardTest(3);">
-                <key-component id="theCC" x="100" y="100" label="CSharp"></key-component>
+                <key-component id="idC" x="100" y="200" label="C"></key-component>
+                <key-component id="idD" x="140" y="200" label="D"></key-component>
+                <key-component id="idE" x="180" y="200" label="E"></key-component>
+                <key-component id="idF" x="220" y="200" label="F"></key-component>
+                <key-component id="idG" x="260" y="200" label="G"></key-component>
+                <key-component id="idA" x="300" y="200" label="A"></key-component>
+                <key-component id="idB" x="340" y="200" label="B"></key-component>
+                <key-component id="idC#" x="120" y="50" label="C#"></key-component>
+                <key-component id="idD#" x="160" y="50" label="D#"></key-component>
+                <key-component id="idF#" x="240" y="50" label="F#"></key-component>
+                <key-component id="idG#" x="280" y="50" label="G#"></key-component>
+                <key-component id="idA#" x="320" y="50" label="A#"></key-component>
             </div>
             `);
     }
