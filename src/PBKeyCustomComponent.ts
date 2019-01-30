@@ -30,6 +30,8 @@ class PBKeyCustomComponent extends HTMLElement {
         this.wrapperElement.setAttribute('class', 'wrapperDiv');
         let wrapperX = (this.hasAttribute('x')) ? this.getAttribute('x') : 100;
         let wrapperY = (this.hasAttribute('y')) ? this.getAttribute('y') : 100;
+        let wrapperColor = (this.hasAttribute('backgroundColor')) ? this.getAttribute('backgroundColor') : 'white';
+        let fontColor = (this.hasAttribute('fontColor')) ? this.getAttribute('fontColor') : 'black';
 
         // This element will hold the actual slider.
         // Need to do this for proper positioning.
@@ -71,8 +73,9 @@ class PBKeyCustomComponent extends HTMLElement {
                 top: ${wrapperY}px;
                 left: ${wrapperX}px;
                 text-align: center;
-                background: green;
-                opacity: 0.75;
+                border: 1px solid ${fontColor};
+                background: ${wrapperColor};
+                color: ${fontColor};
             }
             
             .sliderDiv {
