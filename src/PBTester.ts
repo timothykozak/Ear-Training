@@ -19,9 +19,6 @@ class PBTester {
     static DEGREE_MIN = 0;  // The degree is the position in the 12 tone musical scale,
                             // with 0 = C, 1 = C#, 2 = D, ... 11 = B
     static DEGREE_MAX = 11;
-    static TEST_I_IV_V = [0, 5, 7];
-    static TEST_I_TO_VII = [0, 2, 4, 5, 7, 9, 11];
-    static TEST_SHARPED = [1, 3, 6, 8, 10];
     static TEST_ALL = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
 
     private _degreesToTest: Array<number>;  // The degrees to be tested
@@ -33,7 +30,6 @@ class PBTester {
     constructor(public sequencer: PBSequencer) {
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onNotePlayed(event);}, false);
         document.addEventListener(PBConst.EVENTS.sequencerTestNotePlayed, (event: CustomEvent) => {this.onTestNotePlayed(event);}, false);
-        this._degreesToTest = PBTester.TEST_I_IV_V;
     }
 
     onTestNotePlayed(event: CustomEvent) {
@@ -53,6 +49,7 @@ class PBTester {
         // theDegrees contains all the degrees to test.  The same degree can show up
         // multiple times or the degree may not show up at all.  The order that the
         // degrees appear does not equal the order that they are played.
+        this.stopTest();
         theDegrees.forEach((item: number, index: number) => { // Remove all invalid degrees
             if ((item > PBTester.DEGREE_MAX) || (item < PBTester.DEGREE_MIN))
                 theDegrees.splice(index, 1); // Remove invalid degrees
