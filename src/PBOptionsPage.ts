@@ -24,6 +24,7 @@ class PBOptionsPage {
         customElements.define('key-component', PBKeyCustomComponent);
         this.buildHTML();
         this.getKCCIds();
+        this.setKCConchange();
         window.addEventListener(PBConst.EVENTS.unload, () => { this.onUnload()});
         this.restoreOptions();
     }
@@ -99,6 +100,17 @@ class PBOptionsPage {
         let theNames: string[] = ['idC', 'idC#', 'idD', 'idD#', 'idE', 'idF', 'idF#', 'idG', 'idG#', 'idA', 'idA#', 'idB'];
         this.theKCCIds = [];
         theNames.forEach((theName, index) => {this.theKCCIds[index] = document.getElementById(theName) as PBKeyCustomComponent;});
+    }
+
+    setKCConchange() {
+        this.theKCCIds.forEach((theId, index) => {
+            theId.valueElement.onchange = (event) => {
+                this.theOptions.noteFrequency[index] = parseInt(theId.valueElement.value);
+            };
+            theId.sliderElement.onchange = (event) => {
+                this.theOptions.noteFrequency[index] = parseInt(theId.sliderElement.value);
+            };
+        })
     }
 
     setKCCValues() {
