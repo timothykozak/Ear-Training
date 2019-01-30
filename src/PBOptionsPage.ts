@@ -17,14 +17,14 @@ class PBOptionsPage {
         timeToWait: number;
     };
     noteHTMLInput: Array<HTMLInputElement>;
-    theCC: PBKeyCustomComponent;
+    theKCCIds: PBKeyCustomComponent[];
 
     constructor(public statusWindow: PBStatusWindow, public parentHTMLDiv: HTMLDivElement, public tester: PBTester) {
         customElements.define('key-component', PBKeyCustomComponent);
-        this.restoreOptions();
         this.buildHTML();
-        this.theCC = document.getElementById('theCC') as PBKeyCustomComponent;
+        this.getKCCIds();
         window.addEventListener(PBConst.EVENTS.unload, () => { this.onUnload()});
+        this.restoreOptions();
     }
 
     restoreOptions() {
@@ -34,6 +34,22 @@ class PBOptionsPage {
                 noteFrequency: PBOptionsPage.NOTE_FREQUENCY_I_IV_V,
                 timeToWait: 10 };
         }
+        this.setKCCValues();
+        this.setDegreesToTest();
+    }
+
+    setDegreesToTest() {
+        let theDegrees: Array<number> = [];
+        this.theOptions.noteFrequency.forEach((theValue, theDegree) => {
+            for (let i = 0; i < theValue; i++)
+                theDegrees.push(theDegree);
+        });
+        this.tester.degreesToTest = theDegrees;
+    }
+
+    lostFocus(){
+        // The page has lost the focus
+        this.setDegreesToTest();
     }
 
     onUnload(){
@@ -81,6 +97,27 @@ class PBOptionsPage {
                 <key-component id="idA#" x="320" y="50" label="A#"></key-component>
             </div>
             `);
+    }
+
+    getKCCIds() {
+        // Set the key custom component ids
+        let theNames: string[] = ['idC', 'idC#', 'idD', 'idD#', 'idE', 'idF', 'idF#', 'idG', 'idG#', 'idA', 'idA#', 'idB'];
+        this.theKCCIds = [];
+        theNames.forEach((theName, index) => {this.theKCCIds[index] = document.getElementById(theName) as PBKeyCustomComponent;});
+    }
+
+    setKCCValues() {
+        // Set the values for the key custom components
+        this.theKCCIds.forEach((theId, index) => {
+            (theId as PBKeyCustomComponent).valueElement.value = this.theOptions.noteFrequency[index].toString();
+        });
+    }
+
+    getKCCValues() {
+        // Get the values from the key custom components and update the noteFrequency.
+        this.theKCCIds.forEach((theId, index) => {
+            this.theOptions.noteFrequency[index] = parseInt((theId as PBKeyCustomComponent).valueElement.value);
+        });
     }
 }
 
