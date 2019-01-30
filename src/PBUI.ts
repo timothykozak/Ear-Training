@@ -32,11 +32,16 @@ class PBUI {
     static PLAYER_HEIGHT = 50; // The transport is on the bottom
     static SCROLL_BAR_WIDTH = 35; // Have to assume that it is there
     static RESIZE_PAUSE = 200;  // In milliseconds
+    static MP_HOME = -1;    // The Home menu page
+    static MP_OPTIONS = 0;  // The Options menu page
+    static MP_STATS = 1;    // The Stats menu page
+    static MP_HELP = 2;     // The Help menu page
 
     canvas: HTMLCanvasElement; // The drawing canvas for both notation and keyboard
     options: PBOptionsPage;
     pageContainer: HTMLDivElement;
     pages: HTMLDivElement[] = [];
+    currentPage = PBUI.MP_HOME;
     context: CanvasRenderingContext2D;
     notation: PBNotation;
     pianoKeyboard: PBPianoKeyboard;
@@ -80,13 +85,13 @@ class PBUI {
     static buildMenuHTML(): string {
         return(`        <div class="menuDiv">
             <ul>
-                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(-1);">
+                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_HOME});">
                     &#xf20d<span class="toolTipText toolTipTextRight">Home</span></li>
-                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(0);">
+                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_OPTIONS});">
                     &#xf2f7<span class="toolTipText toolTipTextRight">Settings</span></li>
-                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(1);">
+                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_STATS});">
                     &#xf2b5<span class="toolTipText toolTipTextRight">Results</span></li>
-                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(2);">
+                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_HELP});">
                     &#xf444<span class="toolTipText toolTipTextRight">Help</span></li>
             </ul>
         </div>
@@ -94,9 +99,15 @@ class PBUI {
     }
 
     handleMenu(thePage: number) {
-        this.pages.forEach((element) => {element.style.visibility = 'hidden';});
-        if (thePage != -1)
-            this.pages[thePage].style.visibility = 'visible';
+        this.pages.forEach((element, index) => {
+            if (thePage == index)
+                element.style.visibility = 'visible';
+            else
+                element.style.visibility = 'hidden';
+        });
+        if (this.currentPage == PBUI.MP_OPTIONS)
+            this.options.lostFocus();
+        this.currentPage = thePage;
     }
 
     static buildOptionsPageHTML(): string {
