@@ -8,10 +8,10 @@ import {PBKeyCustomComponent} from "./PBKeyCustomComponent.js";
 
 class PBOptionsPage {
     static NOTES_IN_OCTAVE = 12;
-    static NOTE_FREQUENCY_I_IV_V = [1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0];
-    static NOTE_FREQUENCY_ALL = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
-    static NOTE_FREQUENCY_WHITE = [1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1];
-    static NOTE_FREQUENCY_BLACK = [0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 1, 0];
+    static NOTE_FREQUENCY_I_IV_V = [5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0];
+    static NOTE_FREQUENCY_ALL = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
+    static NOTE_FREQUENCY_WHITE = [5, 0, 5, 0, 5, 5, 0, 5, 0, 5, 0, 5];
+    static NOTE_FREQUENCY_BLACK = [0, 5, 0, 5, 0, 0, 5, 0, 5, 0, 5, 0];
     theOptions: {
         noteFrequency: number[];
         timeToWait: number;
@@ -35,21 +35,12 @@ class PBOptionsPage {
                 timeToWait: 10 };
         }
         this.setKCCValues();
-        this.setDegreesToTest();
-    }
-
-    setDegreesToTest() {
-        let theDegrees: Array<number> = [];
-        this.theOptions.noteFrequency.forEach((theValue, theDegree) => {
-            for (let i = 0; i < theValue; i++)
-                theDegrees.push(theDegree);
-        });
-        this.tester.degreesToTest = theDegrees;
+        this.createNewTest();
     }
 
     lostFocus(){
         // The page has lost the focus
-        this.setDegreesToTest();
+        this.createNewTest();
     }
 
     onUnload(){
@@ -65,6 +56,7 @@ class PBOptionsPage {
         testType = ((testType >= 0) && (testType < theTests.length)) ? testType : 0;
         this.theOptions.noteFrequency = theTests[testType];
         this.createNewTest();
+        this.setKCCValues();
     }
 
     createNewTest() {
@@ -109,7 +101,9 @@ class PBOptionsPage {
     setKCCValues() {
         // Set the values for the key custom components
         this.theKCCIds.forEach((theId, index) => {
-            (theId as PBKeyCustomComponent).valueElement.value = this.theOptions.noteFrequency[index].toString();
+            let theValue = this.theOptions.noteFrequency[index].toString();
+            (theId as PBKeyCustomComponent).valueElement.value = theValue;
+            (theId as PBKeyCustomComponent).sliderElement.value = theValue;
         });
     }
 
