@@ -8,6 +8,7 @@ import {PBKeyCustomComponent} from "./PBKeyCustomComponent.js";
 
 class PBOptionsPage {
     static NOTES_IN_OCTAVE = 12;
+    static NOTE_FREQUENCY_NONE = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     static NOTE_FREQUENCY_I_IV_V = [5, 0, 0, 0, 0, 5, 0, 5, 0, 0, 0, 0];
     static NOTE_FREQUENCY_ALL = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
     static NOTE_FREQUENCY_WHITE = [5, 0, 5, 0, 5, 5, 0, 5, 0, 5, 0, 5];
@@ -49,10 +50,11 @@ class PBOptionsPage {
     }
 
     createStandardTest(testType: number) {
-        let theTests = [PBOptionsPage.NOTE_FREQUENCY_ALL,
-                        PBOptionsPage.NOTE_FREQUENCY_BLACK,
+        let theTests = [PBOptionsPage.NOTE_FREQUENCY_NONE,
+                        PBOptionsPage.NOTE_FREQUENCY_I_IV_V,
                         PBOptionsPage.NOTE_FREQUENCY_WHITE,
-                        PBOptionsPage.NOTE_FREQUENCY_I_IV_V];
+                        PBOptionsPage.NOTE_FREQUENCY_BLACK,
+                        PBOptionsPage.NOTE_FREQUENCY_ALL];
         testType = ((testType >= 0) && (testType < theTests.length)) ? testType : 0;
         this.theOptions.noteFrequency = theTests[testType];
         this.createNewTest();
@@ -71,22 +73,23 @@ class PBOptionsPage {
     buildHTML(){
         this.parentHTMLDiv.insertAdjacentHTML('beforeend',
             `<div>
-                <input type="button" value="All" onclick="window.pbEarTraining.ui.options.createStandardTest(0);">
-                <input type="button" value="Black" onclick="window.pbEarTraining.ui.options.createStandardTest(1);">
+                <input type="button" value="None" onclick="window.pbEarTraining.ui.options.createStandardTest(0);">
+                <input type="button" value="I IV V" onclick="window.pbEarTraining.ui.options.createStandardTest(1);">
                 <input type="button" value="White" onclick="window.pbEarTraining.ui.options.createStandardTest(2);">
-                <input type="button" value="I IV V" onclick="window.pbEarTraining.ui.options.createStandardTest(3);">
-                <key-component id="idC" x="100" y="200" label="C"></key-component>
-                <key-component id="idD" x="140" y="200" label="D"></key-component>
-                <key-component id="idE" x="180" y="200" label="E"></key-component>
-                <key-component id="idF" x="220" y="200" label="F"></key-component>
-                <key-component id="idG" x="260" y="200" label="G"></key-component>
-                <key-component id="idA" x="300" y="200" label="A"></key-component>
-                <key-component id="idB" x="340" y="200" label="B"></key-component>
-                <key-component id="idC#" x="120" y="50" label="C#"></key-component>
-                <key-component id="idD#" x="160" y="50" label="D#"></key-component>
-                <key-component id="idF#" x="240" y="50" label="F#"></key-component>
-                <key-component id="idG#" x="280" y="50" label="G#"></key-component>
-                <key-component id="idA#" x="320" y="50" label="A#"></key-component>
+                <input type="button" value="Black" onclick="window.pbEarTraining.ui.options.createStandardTest(3);">
+                <input type="button" value="All" onclick="window.pbEarTraining.ui.options.createStandardTest(4);">
+                <key-component id="idC" x="100" y="200" label="C" ></key-component>
+                <key-component id="idD" x="140" y="200" label="D" ></key-component>
+                <key-component id="idE" x="180" y="200" label="E" ></key-component>
+                <key-component id="idF" x="220" y="200" label="F" ></key-component>
+                <key-component id="idG" x="260" y="200" label="G" ></key-component>
+                <key-component id="idA" x="300" y="200" label="A" ></key-component>
+                <key-component id="idB" x="340" y="200" label="B" ></key-component>
+                <key-component id="idC#" x="120" y="50" label="C#" backgroundColor="black" fontColor="white"></key-component>
+                <key-component id="idD#" x="160" y="50" label="D#" backgroundColor="black" fontColor="white"></key-component>
+                <key-component id="idF#" x="240" y="50" label="F#" backgroundColor="black" fontColor="white"></key-component>
+                <key-component id="idG#" x="280" y="50" label="G#" backgroundColor="black" fontColor="white"></key-component>
+                <key-component id="idA#" x="320" y="50" label="A#" backgroundColor="black" fontColor="white"></key-component>
             </div>
             `);
     }
