@@ -12,7 +12,6 @@ class PBKeyCustomComponent extends HTMLElement {
     wrapperElement: HTMLDivElement;
     sliderDiv: HTMLDivElement;
     sliderElement: HTMLInputElement;
-    checkboxElement: HTMLInputElement;
     valueElement: HTMLInputElement;
     labelElement: HTMLDivElement;
     styleElement: HTMLStyleElement;
@@ -47,20 +46,6 @@ class PBKeyCustomComponent extends HTMLElement {
         this.sliderElement.setAttribute('max', PBKeyCustomComponent.SLIDER_MAX.toString());
         this.sliderElement.setAttribute('value', '5');
         this.sliderElement.oninput = (event) => {this.valueElement.value = (<HTMLInputElement>event.target).value;};
-
-        // Used to disable the custom component.
-        this.checkboxElement = document.createElement('input');
-        this.checkboxElement.setAttribute('type', 'checkbox');
-        this.checkboxElement.setAttribute('class', 'stackedElement');
-        this.checkboxElement.oninput = (event) => {
-            if ((<HTMLInputElement>event.target).checked) {
-                this.sliderElement.removeAttribute('disabled');
-                this.valueElement.removeAttribute('disabled');
-            } else {
-                this.sliderElement.setAttribute('disabled', 'disabled');
-                this.valueElement.setAttribute('disabled', 'disabled');
-            }
-        };
 
         // The element with the numeric value.
         // Interacts with the slider.
@@ -123,7 +108,6 @@ class PBKeyCustomComponent extends HTMLElement {
         this.sliderDiv.appendChild(this.sliderElement);
         this.wrapperElement.appendChild(this.sliderDiv);
         this.wrapperElement.appendChild(this.valueElement);
-        this.wrapperElement.appendChild(this.checkboxElement);
         this.wrapperElement.appendChild(this.labelElement);
     }
 }
