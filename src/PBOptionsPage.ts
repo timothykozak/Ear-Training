@@ -1,5 +1,10 @@
 // PBOptionsPage.ts
 //
+// This class handles the options page of the menu.  It contains custom components
+// that are used for entering the frequency that a degree of the octave is tested.
+// There are buttons to set some default frequencies.
+// There is no OK or Cancel button.  Changes are automatically used.
+//
 
 import {PBConst} from "./PBConst.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
@@ -13,12 +18,13 @@ class PBOptionsPage {
     static NOTE_FREQUENCY_ALL = [5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5];
     static NOTE_FREQUENCY_WHITE = [5, 0, 5, 0, 5, 5, 0, 5, 0, 5, 0, 5];
     static NOTE_FREQUENCY_BLACK = [0, 5, 0, 5, 0, 0, 5, 0, 5, 0, 5, 0];
+
     theOptions: {
         noteFrequency: number[];
         timeToWait: number;
     };
-    noteHTMLInput: Array<HTMLInputElement>;
-    theKCCIds: PBKeyCustomComponent[];
+    theKCCIds: PBKeyCustomComponent[];  // The ids of the key custom components (KCC).
+    isDirty: boolean;   // Changes have been made.
 
     constructor(public statusWindow: PBStatusWindow, public parentHTMLDiv: HTMLDivElement, public tester: PBTester) {
         customElements.define('key-component', PBKeyCustomComponent);
@@ -27,9 +33,11 @@ class PBOptionsPage {
         this.setKCConchange();
         window.addEventListener(PBConst.EVENTS.unload, () => { this.onUnload()});
         this.restoreOptions();
+        this.isDirty = false;
     }
 
     restoreOptions() {
+        // Need to get the options from the browser.
         this.theOptions = JSON.parse(localStorage.getItem(PBConst.STORAGE.optionsPage));
         if (!this.theOptions) {
             this.theOptions = {
@@ -42,7 +50,10 @@ class PBOptionsPage {
 
     lostFocus(){
         // The page has lost the focus
-        this.createNewTest();
+        if (this.isDirty) { // Changes have been made.  Need to make a new test.
+            this.createNewTest();
+            this.isDirty = false;
+        }
     }
 
     onUnload(){
@@ -63,6 +74,8 @@ class PBOptionsPage {
     }
 
     createNewTest() {
+        // Takes the noteFrequency array and creates an array of degrees
+        // to be tested by the tester.
         let theDegreesToTest: Array<number> = [];
         this.theOptions.noteFrequency.forEach((value, index) => {
             for (let i = 0; i < value; i++)
@@ -72,6 +85,7 @@ class PBOptionsPage {
     }
 
     buildHTML(){
+        // The HTML to build the page.
         this.parentHTMLDiv.insertAdjacentHTML('beforeend',
             `<div>
                 <input type="button" value="None" onclick="window.pbEarTraining.ui.options.createStandardTest(0);">
@@ -103,12 +117,17 @@ class PBOptionsPage {
     }
 
     setKCConchange() {
+        // Sets the onchange callbacks for the key custom components.
+        // Not sure why it necessary to do this for both the slider and value
+        // since they are tied together in the custom component.
         this.theKCCIds.forEach((theId, index) => {
             theId.valueElement.onchange = (event) => {
                 this.theOptions.noteFrequency[index] = parseInt(theId.valueElement.value);
+                this.isDirty = true;
             };
             theId.sliderElement.onchange = (event) => {
                 this.theOptions.noteFrequency[index] = parseInt(theId.sliderElement.value);
+                this.isDirty = true;
             };
         })
     }
