@@ -33,6 +33,7 @@ class PBTester {
     }
 
     onTestNotePlayed(event: CustomEvent) {
+        // Let listeners know that the test note has been played.
         this.waitingForAnswer = true;
     }
 
@@ -55,7 +56,7 @@ class PBTester {
                 theDegrees.splice(index, 1); // Remove invalid degrees
         });
         if (theDegrees.length == 0)
-            this._degreesToTest = PBTester.TEST_ALL;    // None at all.  Use default.
+            this._degreesToTest = theDegrees;    // None at all.  Possibly an error condition.  Allow for now.
         else
             this._degreesToTest = theDegrees;
     }
@@ -102,12 +103,6 @@ class PBTester {
     stopTest() {
         this.testRunning = false;
         this.waitingForAnswer = false;
-    }
-
-    newTest() {
-        this.stopTest();
-        this.degreesToTest = PBTester.TEST_ALL;
-        this.startTest();
     }
 }
 
