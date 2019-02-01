@@ -25,7 +25,6 @@ class PBCharacterInput {
                     break;
                 case 's':
                 case 'S':
-                    this.tester.newTest();
                     break;
                 case ' ':
                     this.tester.pickNextNoteToTest();
