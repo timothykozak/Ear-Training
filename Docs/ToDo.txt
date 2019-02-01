@@ -7,4 +7,5 @@
 + Show right, wrong, notes left on home page.
 + Save stats
 + Somehow ID storage structure
++ Look at MIDI
 +
