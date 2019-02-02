@@ -9,6 +9,7 @@
 // and the keyboard.  The icons for the menu, and the buttons for the transport,
 // come from ionicons.ttf.  The pages for the menu are displayed on top of the
 // canvas.  The notation and the keyboard are handled by separate classes.
+// The menu pages overlay the canvas area.
 
 import {PBConst, TID} from "./PBConst.js";
 import {PBSequencer} from "./PBSequencer.js";
@@ -39,8 +40,9 @@ class PBUI {
 
     canvas: HTMLCanvasElement; // The drawing canvas for both notation and keyboard
     options: PBOptionsPage;
-    pageContainer: HTMLDivElement;
-    pages: HTMLDivElement[] = [];
+    pageContainer: HTMLDivElement;  // Contains all of the pages
+    pages: HTMLDivElement[] = [];   // The individual pages
+    menuListItems: HTMLLIElement[] = [];    // The list items of the menu bar
     currentPage = PBUI.MP_HOME;
     context: CanvasRenderingContext2D;
     notation: PBNotation;
@@ -55,6 +57,7 @@ class PBUI {
         this.canvas = document.getElementById("theCanvas") as HTMLCanvasElement;
         this.context = this.canvas.getContext("2d");
         this.buildPages();
+        this.buildMenuListItems();
         this.initTransport();
         this.transportBuildElementArray();
         this.onResizeFinished();    // The initial sizing
@@ -85,13 +88,13 @@ class PBUI {
     static buildMenuHTML(): string {
         return(`        <div class="menuDiv">
             <ul>
-                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_HOME});">
+                <li id="${'MLI' + (PBUI.MP_HOME + 1)}" class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_HOME});">
                     &#xf20d<span class="toolTipText toolTipTextRight">Home</span></li>
-                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_OPTIONS});">
+                <li id="${'MLI' + (PBUI.MP_OPTIONS + 1)}" class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_OPTIONS});">
                     &#xf2f7<span class="toolTipText toolTipTextRight">Settings</span></li>
-                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_STATS});">
+                <li id="${'MLI' + (PBUI.MP_STATS + 1)}" class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_STATS});">
                     &#xf2b5<span class="toolTipText toolTipTextRight">Results</span></li>
-                <li class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_HELP});">
+                <li id="${'MLI' + (PBUI.MP_HELP + 1)}" class="toolTip" onclick="window.pbEarTraining.ui.handleMenu(${PBUI.MP_HELP});">
                     &#xf444<span class="toolTipText toolTipTextRight">Help</span></li>
             </ul>
         </div>
@@ -100,10 +103,12 @@ class PBUI {
 
     handleMenu(thePage: number) {
         this.pages.forEach((element, index) => {
-            if (thePage == index)
-                element.style.visibility = 'visible';
-            else
+            if (thePage == index) {
+                element.style.visibility = 'visible';   // Make page visible
+            }
+            else {
                 element.style.visibility = 'hidden';
+            }
         });
         if (this.currentPage == PBUI.MP_OPTIONS)
             this.options.lostFocus();
@@ -147,9 +152,15 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
         this.pageContainer.style.visibility = 'hidden';
         let optionsHTML = document.getElementById("theOptionsPage") as HTMLDivElement;
         this.options = new PBOptionsPage(this.statusWindow, optionsHTML, this.tester);
-        this.pages.push(optionsHTML);
-        this.pages.push(document.getElementById("theResultsPage") as HTMLDivElement);
-        this.pages.push(document.getElementById("theHelpPage") as HTMLDivElement);
+        this.pages[PBUI.MP_OPTIONS] = optionsHTML;
+        this.pages[PBUI.MP_STATS]  = document.getElementById("theResultsPage") as HTMLDivElement;
+        this.pages[PBUI.MP_HELP]  = document.getElementById("theHelpPage") as HTMLDivElement;
+    }
+
+    buildMenuListItems() {
+        for (let index = 0; index < (PBUI.MP_HELP + 1); index++) {
+            this.menuListItems[index] = document.getElementById('MLI' + index.toString()) as HTMLLIElement;
+        }
     }
 
     assignOnResize() {  // Assign the resize event handler
