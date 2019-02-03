@@ -58,6 +58,7 @@ class PBUI {
         this.context = this.canvas.getContext("2d");
         this.buildPages();
         this.buildMenuListItems();
+        this.handleMenu(PBUI.MP_HOME);
         this.initTransport();
         this.transportBuildElementArray();
         this.onResizeFinished();    // The initial sizing
@@ -102,14 +103,20 @@ class PBUI {
     }
 
     handleMenu(thePage: number) {
-        this.pages.forEach((element, index) => {
-            if (thePage == index) {
-                element.style.visibility = 'visible';   // Make page visible
-            }
-            else {
+        this.pages.forEach((element, index) => {    // Show/hide the pages
+            if (thePage == index)
+                element.style.visibility = 'visible';
+            else
                 element.style.visibility = 'hidden';
-            }
         });
+
+        this.menuListItems.forEach((element, index) => {
+            if (thePage == (index - 1))
+                element.style.borderLeft = '4px solid white';
+            else
+                element.style.borderLeft = 'none';
+        });
+
         if (this.currentPage == PBUI.MP_OPTIONS)
             this.options.lostFocus();
         this.currentPage = thePage;
@@ -158,7 +165,7 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
     }
 
     buildMenuListItems() {
-        for (let index = 0; index < (PBUI.MP_HELP + 1); index++) {
+        for (let index = 0; index <= (PBUI.MP_HELP + 1); index++) {
             this.menuListItems[index] = document.getElementById('MLI' + index.toString()) as HTMLLIElement;
         }
     }
