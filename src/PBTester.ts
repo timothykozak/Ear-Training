@@ -141,4 +141,4 @@ class PBTester {
     }
 }
 
-export {PBTester};
+export {PBTester, TestItem};
