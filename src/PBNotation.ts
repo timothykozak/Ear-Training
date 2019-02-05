@@ -8,6 +8,7 @@ import {SequenceItem} from "./PBSequencer.js";
 import {PBConst} from "./PBConst.js";
 import {NoteType} from "./PBSequencer.js";
 import {PBUI, MyRect} from "./PBUI.js";
+import {TestItem} from "./PBTester.js";
 
 interface GlyphItem {
     value: string,
@@ -65,7 +66,7 @@ class PBNotation {
 
     onAnswered(event: CustomEvent) {
         // Called when the note being tested is answered.
-        this.answerNoteCorrect = event.detail.correct;
+        this.answerNoteCorrect = (event.detail.theTestItem as TestItem).correct;
         this.answerNote = PBNotation.midiToQualifiedNote(event.detail.answerNote);
         this.drawHoverNote(this.currentHoverNote);
     }
