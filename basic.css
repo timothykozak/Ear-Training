@@ -53,6 +53,15 @@ div.menuDiv li:hover {
     right: 0;
 }
 
+.resultsDiv {
+    position: absolute;
+    top: 10px;
+    left: 55px;
+    width: 200px;
+    height: 40px;
+    background: white;
+}
+
 div.transportDiv ul {
     font-family: "ionicons";
     list-style-type: none;
