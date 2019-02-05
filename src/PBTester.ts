@@ -5,14 +5,23 @@
 //
 
 import {PBSequencer} from "./PBSequencer.js";
-import {PBSounds} from "./PBSounds.js";
 import {PBConst} from "./PBConst.js";
 
-interface ResultItem {
-    numTests: number,
+interface TestItem {
+    testNote: number,
+    answerNote: number,
+    correct: boolean,
+    slow: boolean
+}
+
+interface TestResults {
+    totalNotes: number,
+    notesTested: number,
     numCorrect: number,
     numWrong: number,
-    numSlow: number
+    numSlow: number,
+    finished: boolean,
+    testItems: TestItem[]
 }
 
 class PBTester {
@@ -25,7 +34,7 @@ class PBTester {
     testRunning: boolean = false;
     degreeBeingTested: number;
     waitingForAnswer: boolean;
-    results: ResultItem[];
+    results: TestResults;
 
     constructor(public sequencer: PBSequencer) {
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onNotePlayed(event);}, false);
@@ -38,11 +47,24 @@ class PBTester {
     }
 
     onNotePlayed(event: CustomEvent) {
+        // Check if the note played was the answer note.
         if (this.waitingForAnswer && event.detail.state) {  // Make sure to disregard the note off of the degreeBeingTested note
             this.waitingForAnswer = false;
             let midiNote = this.degreeBeingTested + PBConst.MIDI.MIDDLE_C;
             let correctAnswer = (event.detail.note == midiNote);
-            document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerNoteAnswered, {detail: {testNote: this.degreeBeingTested, answerNote: event.detail.note, correct: correctAnswer}}));
+
+            this.results.notesTested++; // Update the testItems
+            if (correctAnswer)
+                this.results.numCorrect++;
+            else
+                this.results.numWrong++;
+            let testItem = {
+                testNote: this.degreeBeingTested,
+                answerNote: event.detail.note,
+                correct: correctAnswer,
+                slow: false};
+            this.results.testItems.push(testItem);
+            document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerNoteAnswered, {detail: {theTestItem: testItem, theResults: this.results}}));
         }
     }
 
@@ -88,21 +110,34 @@ class PBTester {
         return(theResult);
     }
 
+    initTestResults() {
+        this.results = {} as TestResults;
+        this.results.totalNotes = this._degreesToTest.length;
+        this.results.notesTested = 0;
+        this.results.numCorrect = 0;
+        this.results.numWrong = 0;
+        this.results.numSlow = 0;
+        this.results.finished = false;
+        this.results.testItems = [];
+    }
+
     startTest(): boolean {
         let theResult = false;  // Return false if problem starting test
-        if (!this.sequencer.sequenceRunning && !this.testRunning) {
+        if (!this.sequencer.sequenceRunning && !this.testRunning && (this._degreesToTest.length > 0)) {
             this.testRunning = true;
-            if (this.pickNextNoteToTest() != -1) {
-                theResult = true; // Test has actually started
-                document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerStarted, {detail: {}}));
-            }
+            theResult = true; // Test has actually started
+            this.initTestResults();
+            document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerStarted, {detail: {}}));
         }
         return(theResult);
     }
 
     stopTest() {
-        this.testRunning = false;
-        this.waitingForAnswer = false;
+        if (this.testRunning) {
+            this.testRunning = false;
+            this.waitingForAnswer = false;
+            document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerFinished, {detail: {theResults: this.results}}));
+        }
     }
 }
 
