@@ -9,9 +9,9 @@ class PBConst {
         sequencerCadenceStarted: "PBSequencerCadenceStarted",
         sequencerTestNotePlayed: "PBSequencerTestNotePlayed",
 
-        testerStarted: "PBTesterStarted",
-        testerFinished: "PBTesterFinished",
-        testerNoteAnswered: "PBTesterNoteAnswered",
+        testerStarted: "PBTesterStarted",   // event.detail {}
+        testerFinished: "PBTesterFinished", // event.detail {theResults: TestResults}
+        testerNoteAnswered: "PBTesterNoteAnswered",   // event.detail {theTestItem: TestItem, theResults: TestResults}
 
         soundsInstrumentLoaded: "PBSoundsInstrumentLoaded",
 
