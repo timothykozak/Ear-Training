@@ -17,7 +17,7 @@ import {PBNotation} from "./PBNotation.js";
 import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBOptionsPage} from "./PBOptionsPage.js";
-import {PBTester} from "./PBTester";
+import {PBTester, TestItem, TestResults} from "./PBTester";
 
 interface MyRect {
     x: number, // Of the upper left corner
@@ -51,6 +51,7 @@ class PBUI {
     notationRect: MyRect;
     pianoRect: MyRect;
     transportElements: HTMLElement[];
+    resultsDiv: HTMLDivElement;
 
     constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer, public tester: PBTester) {
         PBUI.buildBodyHTML();
@@ -64,11 +65,17 @@ class PBUI {
         this.onResizeFinished();    // The initial sizing
         this.assignOnResize();
         document.addEventListener(PBConst.EVENTS.sequencerTestNotePlayed, (event: CustomEvent) => {this.onTestNotePlayed(event);}, false);
+        document.addEventListener(PBConst.EVENTS.testerNoteAnswered, (event: CustomEvent) => {this.onNoteAnswered(event);}, false);
     }
 
     onTestNotePlayed(event: CustomEvent) {
         this.transportShowStopStart();
     }
+
+    onNoteAnswered(event: CustomEvent) {
+        let theTest = event.detail.theResults as TestResults;
+        this.resultsDiv.innerText = `Total Notes: ${theTest.totalNotes} Correct: ${theTest.numCorrect} Tested Notes: ${theTest.notesTested} Wrong: ${theTest.numWrong}`;
+}
 
     static buildCanvasHTML(): string {
         return (`<canvas id="theCanvas" style="position: absolute;"></canvas>`);
@@ -76,6 +83,7 @@ class PBUI {
 
     static buildTransportHTML(): string {
         return(`<div class="transportDiv">
+            <div id="transportResults" class="resultsDiv"></div>
             <ul>
                 <li id="transportRewind" class="toolTip">&#xf3cf<span class="toolTipText toolTipTextAbove">Rewind</span></li>
                 <li id="transportStop" class="toolTip">&#xf24f<span class="toolTipText toolTipTextAbove">Stop</span></li>
@@ -217,6 +225,7 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
     }
 
     initTransport() {
+        this.resultsDiv = document.getElementById('transportResults') as HTMLDivElement;
         this.transportBuildElementArray();
         this.transportShowElements([TID.Start]);
         document.addEventListener(PBConst.EVENTS.testerStarted, () => {this.transportShowElements([TID.Stop, TID.Pause]);}, false);
