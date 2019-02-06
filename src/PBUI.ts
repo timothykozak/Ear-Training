@@ -30,8 +30,8 @@ class PBUI {
     static NOTATION_FRACTION_OF_CANVAS = 0.33; // Fraction of the canvas to be used by notation
     static GUTTER = 10; // Gutter between notation and keyboard, in pixels
     static MENU_WIDTH = 50; // In pixels, the menu is on the left
-    static PLAYER_HEIGHT = 50; // The transport is on the bottom
-    static SCROLL_BAR_WIDTH = 10; // Have to assume that it is there
+    static PLAYER_HEIGHT = 60; // The transport is on the bottom
+    static SCROLL_BAR_WIDTH = 0; // Have to assume that it is there
     static RESIZE_PAUSE = 200;  // In milliseconds
     static MP_HOME = -1;    // The Home menu page
     static MP_OPTIONS = 0;  // The Options menu page
@@ -141,17 +141,15 @@ class PBUI {
     }
 
     static buildHelpPageHTML(): string {
-        return(`<div id="theHelpPage" class="pageDiv" style="background-color: #0000ff;">
-            Lorem ipsum dolor sit amet, agam quodsi ne eam. Eam an tantas sapientem eloquentiam, ea nec exerci equidem. Cu duo soleat graeci equidem, eos cu stet iuvaret mnesarchum. Sale solum melius ius eu, ei facilisi accusamus sea. Mei zril gubergren ea, vero commune ne ius.
-
-Repudiare voluptatum liberavisse ad sit, adhuc nusquam molestie et has. Et erroribus voluptatum mei. Eu mel dolorem reprehendunt, ex alterum civibus neglegentur his. Ius eu nisl nibh platonem, doming audire mei cu, qui ad vide doming appetere. Ad unum facilis nam.
-
-Eos qualisque suscipiantur ut, nostro eirmod ocurreret per eu. Ubique legimus mel cu. Est facer oportere definiebas te, eirmod vidisse accusam sed ut. Pri ut porro ignota, ei numquam feugait adolescens vel, te accusata argumentum nam. Pri tollit appellantur conclusionemque ei. Ne sit consectetuer comprehensam, qui accusam consequat percipitur ne.
-
-Tale atqui omnium vel no, facilisi conclusionemque ea eam, reque ipsum quo te. Cu admodum salutatus cum, vim at aeque legendos. Verear voluptatum usu ea, vim tation audiam comprehensam id. Ex mucius viderer interpretaris nec, qui mazim volumus appetere no.
-
-Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dicant aliquam dolores. His homero utamur mediocrem et. Ei has latine fierent interpretaris, no prima tamquam suscipit est.
-            </div>`);
+        return(`<div id="theHelpPage" class="pageDiv" style="background-color: #dddddd;">
+<div class="helpTitle">Ear Training</div>
+<div>The web app uses the Bruce Arnold method of training the ear to recognize a note relative to the key.</div>
+<div class="helpTitle">Acknowledgements</div>
+<div>The piano samples were downloaded from: </div>
+<div>The audio samples were manipulated with Audacity.</div>
+<div>The font for the menu and the transport was downloaded from:</div>
+<div>This code is written in TypeScript.</div>
+</div>`);
     }
 
     static buildPagesHTML() : string {
@@ -159,7 +157,7 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
     }
 
     static buildBodyHTML() {
-        document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildPagesHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML());
+        document.body.insertAdjacentHTML('beforeend', '<div id="bodyDiv" style="margin: 0px;">' + PBUI.buildCanvasHTML() + PBUI.buildPagesHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML() + '</div>');
     }
 
     buildPages() {
