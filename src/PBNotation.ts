@@ -67,7 +67,7 @@ class PBNotation {
     onAnswered(event: CustomEvent) {
         // Called when the note being tested is answered.
         this.answerNoteCorrect = (event.detail.theTestItem as TestItem).correct;
-        this.answerNote = PBNotation.midiToQualifiedNote(event.detail.answerNote);
+        this.answerNote = PBNotation.midiToQualifiedNote(event.detail.theTestItem.answerNote);
         this.drawHoverNote(this.currentHoverNote);
     }
 
