@@ -31,7 +31,7 @@ class PBUI {
     static GUTTER = 10; // Gutter between notation and keyboard, in pixels
     static MENU_WIDTH = 50; // In pixels, the menu is on the left
     static PLAYER_HEIGHT = 50; // The transport is on the bottom
-    static SCROLL_BAR_WIDTH = 35; // Have to assume that it is there
+    static SCROLL_BAR_WIDTH = 10; // Have to assume that it is there
     static RESIZE_PAUSE = 200;  // In milliseconds
     static MP_HOME = -1;    // The Home menu page
     static MP_OPTIONS = 0;  // The Options menu page
@@ -120,7 +120,7 @@ class PBUI {
 
         this.menuListItems.forEach((element, index) => {
             if (thePage == (index - 1))
-                element.style.borderLeft = '4px solid white';
+                element.style.borderLeft = '5px solid black';
             else
                 element.style.borderLeft = 'none';
         });
@@ -141,7 +141,7 @@ class PBUI {
     }
 
     static buildHelpPageHTML(): string {
-        return(`<div id="theHelpPage" class="pageDiv centerDiv" style="background-color: #0000ff;">
+        return(`<div id="theHelpPage" class="pageDiv" style="background-color: #0000ff;">
             Lorem ipsum dolor sit amet, agam quodsi ne eam. Eam an tantas sapientem eloquentiam, ea nec exerci equidem. Cu duo soleat graeci equidem, eos cu stet iuvaret mnesarchum. Sale solum melius ius eu, ei facilisi accusamus sea. Mei zril gubergren ea, vero commune ne ius.
 
 Repudiare voluptatum liberavisse ad sit, adhuc nusquam molestie et has. Et erroribus voluptatum mei. Eu mel dolorem reprehendunt, ex alterum civibus neglegentur his. Ius eu nisl nibh platonem, doming audire mei cu, qui ad vide doming appetere. Ad unum facilis nam.
@@ -209,7 +209,7 @@ Et nostrud sanctus maluisset sed, dolor eligendi interesset ut cum. Ea cum dican
         // Calculate the notation and the piano rects
         let notationHeight = Math.floor(this.canvas.height * PBUI.NOTATION_FRACTION_OF_CANVAS); // Resize the Rects
         this.notationRect = PBUI.buildMyRect(0, 0, this.canvas.width, notationHeight);
-        this.pianoRect = PBUI.buildMyRect(0, notationHeight + PBUI.GUTTER, this.canvas.width, this.canvas.height - notationHeight - PBUI.GUTTER);
+        this.pianoRect = PBUI.buildMyRect(0, notationHeight + PBUI.GUTTER, this.canvas.width, this.canvas.height - notationHeight - (PBUI.GUTTER * 2));
 
         if (!this.notation) { // In the constructor.  Need to instantiate the classes.
             this.notation = new PBNotation(this.context, this.notationRect);
