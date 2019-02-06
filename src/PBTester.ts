@@ -128,6 +128,7 @@ class PBTester {
             theResult = true; // Test has actually started
             this.initTestResults();
             document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerStarted, {detail: {}}));
+            this.pickNextNoteToTest();
         }
         return(theResult);
     }
@@ -141,4 +142,4 @@ class PBTester {
     }
 }
 
-export {PBTester, TestItem};
+export {PBTester, TestItem, TestResults};
