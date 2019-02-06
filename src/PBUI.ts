@@ -31,7 +31,7 @@ class PBUI {
     static GUTTER = 10; // Gutter between notation and keyboard, in pixels
     static MENU_WIDTH = 50; // In pixels, the menu is on the left
     static PLAYER_HEIGHT = 60; // The transport is on the bottom
-    static SCROLL_BAR_WIDTH = 0; // Have to assume that it is there
+    static SCROLL_BAR_WIDTH = 40; // Have to assume that it is there
     static RESIZE_PAUSE = 200;  // In milliseconds
     static MP_HOME = -1;    // The Home menu page
     static MP_OPTIONS = 0;  // The Options menu page
