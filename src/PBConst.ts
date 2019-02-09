@@ -77,7 +77,8 @@ class PBConst {
     };
 
     static STORAGE = {
-        optionsPage: "optionsPage"
+        optionsPage: "optionsPage",
+        statsPage: "statsPage"
     };
 }
 
