@@ -59,7 +59,7 @@ class PBTester {
             else
                 this.results.numWrong++;
             let testItem = {
-                testNote: this.degreeBeingTested,
+                testNote: midiNote,
                 answerNote: event.detail.note,
                 correct: correctAnswer,
                 slow: false};
