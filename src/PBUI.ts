@@ -17,6 +17,7 @@ import {PBNotation} from "./PBNotation.js";
 import {PBPianoKeyboard} from "./PBPianoKeyboard.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBOptionsPage} from "./PBOptionsPage.js";
+import {PBResultsPage} from "./PBResultsPage.js";
 import {PBTester, TestItem, TestResults} from "./PBTester";
 
 interface MyRect {
@@ -40,6 +41,7 @@ class PBUI {
 
     canvas: HTMLCanvasElement; // The drawing canvas for both notation and keyboard
     options: PBOptionsPage;
+    results: PBResultsPage;
     pageContainer: HTMLDivElement;  // Contains all of the pages
     pages: HTMLDivElement[] = [];   // The individual pages
     menuListItems: HTMLLIElement[] = [];    // The list items of the menu bar
@@ -83,7 +85,7 @@ class PBUI {
 
     static buildTransportHTML(): string {
         return(`<div class="transportDiv">
-            <div id="transportResults" class="resultsDiv"></div>
+            <div id="transportStats" class="resultsDiv"></div>
             <ul>
                 <li id="transportRewind" class="toolTip">&#xf3cf<span class="toolTipText toolTipTextAbove">Rewind</span></li>
                 <li id="transportStop" class="toolTip">&#xf24f<span class="toolTipText toolTipTextAbove">Stop</span></li>
@@ -134,8 +136,8 @@ class PBUI {
         return(`<div id="theOptionsPage" class="pageDiv" style="background-color: #eeeeee;"></div>`);
     }
 
-    static buildResultsPageHTML(): string {
-        return(`<div id="theResultsPage" class="pageDiv centerDiv" style="background-color: #00ff00;">
+    static buildStatsPageHTML(): string {
+        return(`<div id="theStatsPage" class="pageDiv centerDiv" style="background-color: #00ff00;">
             This is the results page.
             </div>`);
     }
@@ -153,7 +155,7 @@ class PBUI {
     }
 
     static buildPagesHTML() : string {
-        return(`<div id="thePageContainer" class="pageContainerDiv">` + PBUI.buildOptionsPageHTML() + PBUI.buildResultsPageHTML() + PBUI.buildHelpPageHTML() + `</div>`);
+        return(`<div id="thePageContainer" class="pageContainerDiv">` + PBUI.buildOptionsPageHTML() + PBUI.buildStatsPageHTML() + PBUI.buildHelpPageHTML() + `</div>`);
     }
 
     static buildBodyHTML() {
@@ -166,7 +168,9 @@ class PBUI {
         let optionsHTML = document.getElementById("theOptionsPage") as HTMLDivElement;
         this.options = new PBOptionsPage(this.statusWindow, optionsHTML, this.tester);
         this.pages[PBUI.MP_OPTIONS] = optionsHTML;
-        this.pages[PBUI.MP_STATS]  = document.getElementById("theResultsPage") as HTMLDivElement;
+        let statsHTML = document.getElementById("theStatsPage") as HTMLDivElement;
+        this.results = new PBResultsPage(this.statusWindow, statsHTML);
+        this.pages[PBUI.MP_STATS]  = statsHTML;
         this.pages[PBUI.MP_HELP]  = document.getElementById("theHelpPage") as HTMLDivElement;
     }
 
@@ -223,7 +227,7 @@ class PBUI {
     }
 
     initTransport() {
-        this.resultsDiv = document.getElementById('transportResults') as HTMLDivElement;
+        this.resultsDiv = document.getElementById('transportStats') as HTMLDivElement;
         this.transportBuildElementArray();
         this.transportShowElements([TID.Start]);
         document.addEventListener(PBConst.EVENTS.testerStarted, () => {this.transportShowElements([TID.Stop, TID.Pause]);}, false);
