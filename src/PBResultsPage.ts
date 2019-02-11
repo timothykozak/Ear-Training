@@ -7,6 +7,7 @@
 import {TestItem, TestResults} from "./PBTester.js";
 import {PBConst} from "./PBConst.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
+import {PBResultCustomComponent} from "./PBResultCustomComponent.js";
 
 interface ResultItem {
     numTests: number,
@@ -17,25 +18,33 @@ class PBResultsPage {
     static ITEMS_PER_OCTAVE = 12;
 
     theResults: Array<ResultItem>;
+    theRCCIds: Array<PBResultCustomComponent>;
 
     constructor(public statusWindow: PBStatusWindow, public parentHTMLDiv: HTMLDivElement) {
+        customElements.define('result-component', PBResultCustomComponent);
+        this.buildHTML();
+        this.getRCCIds();
         window.addEventListener(PBConst.EVENTS.unload, () => { this.onUnload()});
         document.addEventListener(PBConst.EVENTS.testerNoteAnswered, (event: CustomEvent) => {this.onNoteAnswered(event);}, false);
         this.restoreOptions();
     }
 
-    initTheResults() {
+    initResults() {
         this.theResults = [];
         for (let index = 0; index < PBResultsPage.ITEMS_PER_OCTAVE; index++) {
             this.theResults.push({numTests: 0, numCorrect: 0});
         }
     }
 
+    clearResults() {
+        this.initResults();
+    }
+
     restoreOptions() {
         // Need to get the options from the browser.
         this.theResults = JSON.parse(localStorage.getItem(PBConst.STORAGE.statsPage));
         if (!this.theResults) {
-            this.initTheResults();
+            this.initResults();
         }
     }
 
@@ -52,6 +61,34 @@ class PBResultsPage {
             if (theTest.correct)
                 this.theResults[index].numCorrect++;
         }
+    }
+
+    buildHTML(){
+        // The HTML to build the page.
+        this.parentHTMLDiv.insertAdjacentHTML('beforeend',
+            `<div>
+                <input type="button" value="Clear Results" onclick="window.pbEarTraining.ui.results.clearResults();">
+                <result-component id="idC" x="100" y="200" label="C" ></result-component>
+                <result-component id="idD" x="140" y="200" label="D" ></result-component>
+                <result-component id="idE" x="180" y="200" label="E" ></result-component>
+                <result-component id="idF" x="220" y="200" label="F" ></result-component>
+                <result-component id="idG" x="260" y="200" label="G" ></result-component>
+                <result-component id="idA" x="300" y="200" label="A" ></result-component>
+                <result-component id="idB" x="340" y="200" label="B" ></result-component>
+                <result-component id="idC#" x="120" y="50" label="C#" backgroundColor="black" fontColor="white"></result-component>
+                <result-component id="idD#" x="160" y="50" label="D#" backgroundColor="black" fontColor="white"></result-component>
+                <result-component id="idF#" x="240" y="50" label="F#" backgroundColor="black" fontColor="white"></result-component>
+                <result-component id="idG#" x="280" y="50" label="G#" backgroundColor="black" fontColor="white"></result-component>
+                <result-component id="idA#" x="320" y="50" label="A#" backgroundColor="black" fontColor="white"></result-component>
+            </div>
+            `);
+    }
+
+    getRCCIds() {
+        // Set the key custom component ids
+        let theNames: string[] = ['idC', 'idC#', 'idD', 'idD#', 'idE', 'idF', 'idF#', 'idG', 'idG#', 'idA', 'idA#', 'idB'];
+        this.theRCCIds = [];
+        theNames.forEach((theName, index) => {this.theRCCIds[index] = document.getElementById(theName) as PBResultCustomComponent;});
     }
 
 }
