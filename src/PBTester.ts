@@ -36,7 +36,7 @@ class PBTester {
     waitingForAnswer: boolean;
     results: TestResults;
 
-    constructor(public sequencer: PBSequencer) {
+    constructor(public audioContext: AudioContext, public sequencer: PBSequencer) {
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onNotePlayed(event);}, false);
         document.addEventListener(PBConst.EVENTS.sequencerTestNotePlayed, (event: CustomEvent) => {this.onTestNotePlayed(event);}, false);
     }
@@ -121,16 +121,20 @@ class PBTester {
         this.results.testItems = [];
     }
 
-    startTest(): boolean {
-        let theResult = false;  // Return false if problem starting test
-        if (!this.sequencer.sequenceRunning && !this.testRunning && (this._degreesToTest.length > 0)) {
-            this.testRunning = true;
-            theResult = true; // Test has actually started
-            this.initTestResults();
-            document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerStarted, {detail: {}}));
-            this.pickNextNoteToTest();
-        }
-        return(theResult);
+    startTest() {
+        // Even though the audioContext is already created, Chrome suspends it
+        // until a user gesture on the page.  If this is the first start,
+        // then we need to resume the audioContext before we start the test.
+        // Otherwise, notes will be sent to the audioContext before it is ready
+        // and the beginning of the cadence will be garbled.
+        this.audioContext.resume().then( () => {
+            if (!this.sequencer.sequenceRunning && !this.testRunning && (this._degreesToTest.length > 0)) {
+                this.testRunning = true; // Test has actually started
+                this.initTestResults();
+                document.dispatchEvent(new CustomEvent(PBConst.EVENTS.testerStarted, {detail: {}}));
+                this.pickNextNoteToTest();
+            }
+        });
     }
 
     stopTest() {
