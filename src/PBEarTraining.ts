@@ -58,7 +58,7 @@ class PBEarTraining {
         // Ready to roll.  Start everything in the proper order.
         this.soundModule = new PBSounds(this.statusWindow, this.audioContext);
         this.sequencer = new PBSequencer();
-        this.tester = new PBTester(this.sequencer);
+        this.tester = new PBTester(this.audioContext, this.sequencer);
         this.characterInput = new PBCharacterInput(this.sequencer, this.tester);
         this.ui = new PBUI(this.statusWindow, this.sequencer, this.tester);
         // Register the ServiceWorker
