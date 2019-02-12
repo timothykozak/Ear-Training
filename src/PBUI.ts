@@ -137,9 +137,7 @@ class PBUI {
     }
 
     static buildStatsPageHTML(): string {
-        return(`<div id="theStatsPage" class="pageDiv centerDiv" style="background-color: #00ff00;">
-            This is the results page.
-            </div>`);
+        return(`<div id="theStatsPage" class="pageDiv" style="background-color: #eeeeee;"></div>`);
     }
 
     static buildHelpPageHTML(): string {
@@ -159,7 +157,7 @@ class PBUI {
     }
 
     static buildBodyHTML() {
-        document.body.insertAdjacentHTML('beforeend', '<div id="bodyDiv" style="margin: 0px;">' + PBUI.buildCanvasHTML() + PBUI.buildPagesHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML() + '</div>');
+        document.body.insertAdjacentHTML('beforeend', PBUI.buildCanvasHTML() + PBUI.buildPagesHTML() + PBUI.buildTransportHTML() + PBUI.buildMenuHTML());
     }
 
     buildPages() {
