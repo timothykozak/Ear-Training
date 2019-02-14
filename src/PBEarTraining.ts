@@ -1,3 +1,6 @@
+// PBEarTraining.ts
+//
+//
 //
 // This is the main program.  WebFont is instantiated in the calling
 // html and passed to this class.  All other classes are instantiated
