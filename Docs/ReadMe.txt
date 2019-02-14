@@ -27,3 +27,27 @@ The help page gives some basic information and acknowledgements.
 
 
 Will only run on Chrome with experimental canvas features enabled (chrome://flags then search for canvas).
+
+Assets:
+  The piano samples were taken from the Audacity project:
+    C:\Users\Tim\Documents\My Sounds\Piano\Iowa\Audacity\NormalizedOneOctave.aup
+  Note names have been replaced with MIDI numbers.
+
+Directions for using WebFont.load
+         https://github.com/typekit/webfontloader
+
+Free icon fonts:
+    https://speckyboy.com/free-icon-fonts/
+
+This project on GitHub
+    https://github.com/timothykozak/Ear-Training
+
+List glyphs in font
+    http://torinak.com/font/lsfont.html
+
+Service Workers
+    https://serviceworke.rs
+
+Aruvarb
+ionicons
+sounds
