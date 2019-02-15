@@ -135,16 +135,14 @@ class PBOptionsPage {
     setKCCValues() {
         // Set the values for the key custom components
         this.theKCCIds.forEach((theId, index) => {
-            let theValue = this.theOptions.noteFrequency[index].toString();
-            (theId as PBKeyCustomComponent).valueElement.value = theValue;
-            (theId as PBKeyCustomComponent).sliderElement.value = theValue;
+            theId.value = this.theOptions.noteFrequency[index];
         });
     }
 
     getKCCValues() {
         // Get the values from the key custom components and update the noteFrequency.
         this.theKCCIds.forEach((theId, index) => {
-            this.theOptions.noteFrequency[index] = parseInt((theId as PBKeyCustomComponent).valueElement.value);
+            this.theOptions.noteFrequency[index] = theId.value;
         });
     }
 }
