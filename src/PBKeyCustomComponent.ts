@@ -113,6 +113,16 @@ class PBKeyCustomComponent extends HTMLElement {
         this.wrapperElement.appendChild(this.valueElement);
         this.wrapperElement.appendChild(this.labelElement);
     }
+
+    set value(theValue: number) {
+        let theString: string = theValue.toString();
+        this.valueElement.value = theString;
+        this.sliderElement.value = theString;
+    }
+
+    get value(): number {
+        return(parseInt(this.valueElement.value));
+    }
 }
 
 export {PBKeyCustomComponent};
