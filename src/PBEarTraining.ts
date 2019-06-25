@@ -13,11 +13,13 @@ import {PBSequencer} from "./PBSequencer.js";
 import {PBCharacterInput} from "./PBCharacterInput.js";
 import {PBTester} from "./PBTester.js";
 import {PBUI} from "./PBUI.js";
+import {PBMIDI} from "./PBMIDI.js";
 
 class PBEarTraining {
     audioContext: AudioContext;
     statusWindow = new PBStatusWindow('Status Messages');
     characterInput: PBCharacterInput;
+    midi: PBMIDI;
     sequencer: PBSequencer;
     soundModule: PBSounds;
     tester: PBTester;
@@ -63,6 +65,7 @@ class PBEarTraining {
         this.sequencer = new PBSequencer();
         this.tester = new PBTester(this.audioContext, this.sequencer);
         this.characterInput = new PBCharacterInput(this.sequencer, this.tester);
+        this.midi = new PBMIDI(this.statusWindow, this.sequencer, this.tester);
         this.ui = new PBUI(this.statusWindow, this.sequencer, this.tester);
         // Register the ServiceWorker
         navigator.serviceWorker.register('./built/PBServiceWorker.js').then((registration) => {
