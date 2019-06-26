@@ -73,7 +73,10 @@ class PBConst {
             SOUND: 73,
             KEYBOARD: 73
         },
-        MIDDLE_C: 60
+        MIDDLE_C: 60,
+        NOTE_ON: 144,
+        NOTE_OFF: 128,
+        ACTIVE_SENSING: 254
     };
 
     static STORAGE = {
