@@ -52,7 +52,8 @@ class PBSequencer {
 
     playNote(theMidi: number) {
         // Play a note right now
-        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerNotePlayed, {detail: {note: theMidi, state: true, time: this.ticks, noteType: NoteType.Immediate} as SequenceItem}))
+        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerNotePlayed, {detail: {note: theMidi, state: true, time: this.ticks, noteType: NoteType.Immediate} as SequenceItem}));    // Note on
+//        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerNotePlayed, {detail: {note: theMidi, state: false, time: this.ticks + this.ticksBetweenChords, noteType: NoteType.Immediate} as SequenceItem})); // Note off
     }
 
     startSequence() {
