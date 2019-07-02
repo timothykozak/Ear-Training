@@ -24,7 +24,7 @@ class PBMIDI {
                 this.outputs = midiAccess.outputs;
 
                 for (let input of midiAccess.inputs.values()) {
-                    input.onmidimessage = this.handleMIDIMessage;
+                    input.onmidimessage = (message) => {this.handleMIDIMessage(message)};
                 }
             }).catch((error) => {
                 this.statusWindow.writeErr("MIDI is NOT available.");
@@ -51,6 +51,7 @@ class PBMIDI {
     }
 
     noteOnReceived(note: number, velocity: number) : void {
+        this.sequencer.playNote(note);
     }
 
     noteOffReceived(note: number) : void {
