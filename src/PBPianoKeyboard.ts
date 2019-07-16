@@ -131,7 +131,7 @@ class PBPianoKeyboard {
     }
 
     fillRegion(i: number, hover: boolean) {
-        if (i >= 0) { // Valid region
+        if ((i >= 0) && (i < this.keyRegions.length)) { // Valid region
             this.context.save();
             this.context.strokeStyle = "#000";
             let theKeyRegion = this.keyRegions[i];
