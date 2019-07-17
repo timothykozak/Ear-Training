@@ -100,7 +100,6 @@ class PBTester {
                 this.degreeBeingTested = theResult;
                 this._degreesToTest.splice(index, 1);   // Remove the note being tested
                 this.sequencer.cadencePlusNote(theResult + PBConst.MIDI.MIDDLE_C);
-                this.sequencer.startSequence();
                 this.waitingForAnswer = false;
             } else {
                 this.testRunning = false;
