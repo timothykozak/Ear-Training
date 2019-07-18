@@ -49,14 +49,15 @@ class PBSequencer {
                     if (item.noteType == NoteType.Testing) {
                         document.dispatchEvent(new CustomEvent(PBConst.EVENTS.sequencerTestNotePlayed, {detail: item}));
                     }
-                     this.sequence = this.sequence.filter((item) => {return(item.time != this.ticks)}); // Remove the processed note
-                    if (this.sequence.length == 0) {    // No more notes
-                        this.resetSequence();
-                    }
                 }
             });
 
-            this.ticks++;
+            this.sequence = this.sequence.filter((item) => {return(item.time != this.ticks)}); // Remove the processed notes
+            if (this.sequence.length == 0) {    // No more notes
+                this.resetSequence();
+            } else {
+                this.ticks++;
+            }
         }
     }
 
