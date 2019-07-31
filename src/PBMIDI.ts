@@ -52,6 +52,7 @@ class PBMIDI {
 
     noteOnReceived(note: number, velocity: number) : void {
         this.sequencer.playNote(note);
+        document.dispatchEvent(new CustomEvent(PBConst.EVENTS.keyboardHover, {detail: note})); // No longer hovering
     }
 
     noteOffReceived(note: number) : void {
