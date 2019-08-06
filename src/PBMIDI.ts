@@ -17,31 +17,40 @@ class PBMIDI {
     outputs: WebMidi.MIDIOutputMap = undefined;
 
     constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer, public tester: PBTester) {
-        this.available = this.checkForMIDI();
+        this.checkForMIDI();
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event)}, false);
     }
 
-    checkForMIDI(): boolean {
-        let gotMIDI = false;
+    setAvailable(value: boolean) {
+        this.available = value;
+    }
+
+    checkForMIDI() {
+        // The callbacks of a promise will never be called before the completion
+        // of the current run of the JavaScript event loop.  Therefore, the
+        // availability of MIDI is not known at the end of this function.
+        // The setAvailable method above is a good breakpoint for both the resolve
+        // and failure callbacks.
         if (navigator.requestMIDIAccess) {
-            navigator.requestMIDIAccess({sysex: true}).
-            then((midiAccess) => {
-                gotMIDI = true;
+            navigator.requestMIDIAccess({sysex: true}).then((midiAccess) => {
+                this.setAvailable(true);
                 this.statusWindow.writeMsg("MIDI is available.");
                 this.inputs = midiAccess.inputs;
                 this.outputs = midiAccess.outputs;
 
                 for (let input of midiAccess.inputs.values()) {
-                    input.onmidimessage = (message) => {this.onMIDIMessage(message)};
+                    input.onmidimessage = (message) => {
+                        this.onMIDIMessage(message)
+                    };
                 }
                 for (let output of midiAccess.outputs.values()) {
                     output = output;    // Temporary
                 }
             }).catch((error) => {
                 this.statusWindow.writeErr("MIDI is NOT available.");
+                this.setAvailable(false);
             });
         }
-        return(gotMIDI);
     }
 
     onMIDIMessage(message: WebMidi.MIDIMessageEvent) {
