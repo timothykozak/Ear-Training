@@ -9,12 +9,13 @@ import {PBConst} from "./PBConst.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
 import {PBTester} from "./PBTester.js";
 import {PBSequencer} from "./PBSequencer";
-import MIDIAccess = WebMidi.MIDIAccess;
 
 class PBMIDI {
     available: boolean = false;
-    inputs: WebMidi.MIDIInputMap = undefined;
-    outputs: WebMidi.MIDIOutputMap = undefined;
+    midiAccess: WebMidi.MIDIAccess;
+    inputs: WebMidi.MIDIInput[] = [];
+    outputs: WebMidi.MIDIOutput[] = [];
+    outputIndex: number = -1;
 
     constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer, public tester: PBTester) {
         this.checkForMIDI();
@@ -34,19 +35,20 @@ class PBMIDI {
         if (navigator.requestMIDIAccess) {
             navigator.requestMIDIAccess({sysex: true}).then((midiAccess) => {
                 this.setAvailable(true);
+                this.midiAccess = midiAccess;
                 this.statusWindow.writeMsg("MIDI is available.");
-                this.inputs = midiAccess.inputs;
-                this.outputs = midiAccess.outputs;
 
                 for (let input of midiAccess.inputs.values()) {
+                    this.inputs.push(input);
                     input.onmidimessage = (message) => {
                         this.onMIDIMessage(message)
                     };
                 }
                 for (let output of midiAccess.outputs.values()) {
-                    output = output;    // Temporary
+                    this.outputIndex = 0;   // Default to the first MIDI output
+                    this.outputs.push(output);
                 }
-            }).catch((error) => {
+            }, (error) => {
                 this.statusWindow.writeErr("MIDI is NOT available.");
                 this.setAvailable(false);
             });
@@ -65,10 +67,6 @@ class PBMIDI {
             case PBConst.MIDI.NOTE_OFF:
                 this.noteOffReceived(note);
                 break;
-            case PBConst.MIDI.ACTIVE_SENSING:
-                break;
-            default:
-                break;
         }
     }
 
@@ -82,8 +80,9 @@ class PBMIDI {
 
     onSequencer(event: CustomEvent) {
         // The sequencer has asked that a note be played.
-        if (this.available && event.detail.state) {
-            // Temporary
+        if (this.available && (this.outputIndex != -1)) {
+            let midiMsg = (event.detail.state) ? 0x90 : 0x80;   // 0x90 is note on, 0x80 is note off
+            this.outputs[this.outputIndex].send([midiMsg, event.detail.note, 0x7f]);    // 0x7f is maximum attack
         }
     }
 }
