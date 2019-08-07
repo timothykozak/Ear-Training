@@ -9,10 +9,17 @@
 // for the playing of notes, and dispatches
 // EVENTS.keyboardHover when a key is pressed.
 //
+// The first time this app is run, Chrome will ask the user
+// if MIDI can be used.  After that it should remember the
+// user's choice.
+//
+// For the MIDI spec see:
+//    https://www.w3.org/TR/webmidi/#sending-midi-messages-to-an-output-device
+// For a summary of MIDI messages see:
+//    https://www.midi.org/midi/specifications/item/table-1-summary-of-midi-message
 
 import {PBConst} from "./PBConst.js";
 import {PBStatusWindow} from "./PBStatusWindow.js";
-import {PBTester} from "./PBTester.js";
 import {PBSequencer} from "./PBSequencer";
 
 class PBMIDI {
@@ -22,7 +29,7 @@ class PBMIDI {
     outputs: WebMidi.MIDIOutput[] = [];
     outputIndex: number = -1;
 
-    constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer, public tester: PBTester) {
+    constructor(public statusWindow: PBStatusWindow, public sequencer: PBSequencer) {
         this.checkForMIDI();
         document.addEventListener(PBConst.EVENTS.sequencerNotePlayed, (event: CustomEvent) => {this.onSequencer(event)}, false);
     }
@@ -38,6 +45,7 @@ class PBMIDI {
         // The setAvailable method above is a good breakpoint for both the resolve
         // and failure callbacks.
         if (navigator.requestMIDIAccess) {
+            // Chrome requires that sysex be required
             navigator.requestMIDIAccess({sysex: true}).then((midiAccess) => {
                 this.setAvailable(true);
                 this.midiAccess = midiAccess;
