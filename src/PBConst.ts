@@ -3,19 +3,21 @@
 //
 // Constants used throughout the project
 
+import {SequenceItem} from "./PBSequencer";
+
 class PBConst {
     static EVENTS = {
-        sequencerNotePlayed: "PBSequencerNotePlayed",
-        sequencerCadenceStarted: "PBSequencerCadenceStarted",
-        sequencerTestNotePlayed: "PBSequencerTestNotePlayed",
+        sequencerNotePlayed: "PBSequencerNotePlayed",           // event.detail {SequenceItem}
+        sequencerCadenceStarted: "PBSequencerCadenceStarted",   // event.detail = noteBeingTested
+        sequencerTestNotePlayed: "PBSequencerTestNotePlayed",   // event.detail = undefined
 
-        testerStarted: "PBTesterStarted",   // event.detail {}
-        testerFinished: "PBTesterFinished", // event.detail {theResults: TestResults}
-        testerNoteAnswered: "PBTesterNoteAnswered",   // event.detail {theTestItem: TestItem, theResults: TestResults}
+        testerStarted: "PBTesterStarted",                       // event.detail = undefined
+        testerFinished: "PBTesterFinished",                     // event.detail {theResults: TestResults}
+        testerNoteAnswered: "PBTesterNoteAnswered",             // event.detail {theTestItem: TestItem, theResults: TestResults}
 
-        soundsInstrumentLoaded: "PBSoundsInstrumentLoaded",
+        soundsInstrumentLoaded: "PBSoundsInstrumentLoaded",     // event.detail = undefined
 
-        keyboardHover: "PBKeyboardHover",
+        keyboardHover: "PBKeyboardHover",                       // event.detail = note
 
         mouseLeave: "mouseleave",
         mouseMove: "mousemove",
