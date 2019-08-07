@@ -1,8 +1,13 @@
 // PBMIDI.ts
 //
-//
-//
 // This class handles all MIDI communications.
+// If WebMIDI is available, it collects all the MIDI
+// inputs and outputs.  Only note on and note off
+// messages are handled.  Messages from all MIDI inputs
+// are accepted.  Outputs are only to the first MIDI
+// output.  This class listens to EVENTS.sequencerNotePlayed
+// for the playing of notes, and dispatches
+// EVENTS.keyboardHover when a key is pressed.
 //
 
 import {PBConst} from "./PBConst.js";
@@ -61,10 +66,10 @@ class PBMIDI {
         let velocity = (message.data.length > 2) ? message.data[2] : 0; // a velocity value might not be included with a noteOff command
 
         switch (command) {
-            case PBConst.MIDI.NOTE_ON:
+            case PBConst.MIDI.MESSAGES.NOTE_ON:
                 (velocity > 0) ? this.noteOnReceived(note, velocity) : this.noteOffReceived(note);
                 break;
-            case PBConst.MIDI.NOTE_OFF:
+            case PBConst.MIDI.MESSAGES.NOTE_OFF:
                 this.noteOffReceived(note);
                 break;
         }
@@ -76,12 +81,13 @@ class PBMIDI {
     }
 
     noteOffReceived(note: number) : void {
+        // These are currently ignored.
     }
 
     onSequencer(event: CustomEvent) {
         // The sequencer has asked that a note be played.
         if (this.available && (this.outputIndex != -1)) {
-            let midiMsg = (event.detail.state) ? 0x90 : 0x80;   // 0x90 is note on, 0x80 is note off
+            let midiMsg = (event.detail.state) ? PBConst.MIDI.MESSAGES.NOTE_ON : PBConst.MIDI.MESSAGES.NOTE_OFF;   // 0x90 is note on, 0x80 is note off
             this.outputs[this.outputIndex].send([midiMsg, event.detail.note, 0x7f]);    // 0x7f is maximum attack
         }
     }
