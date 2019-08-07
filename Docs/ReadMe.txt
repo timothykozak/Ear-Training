@@ -28,15 +28,30 @@ The help page gives some basic information and acknowledgements.
 
 Will only run on Chrome with experimental canvas features enabled (chrome://flags then search for canvas).
 
-Assets:
+This project on GitHub:
+    https://github.com/timothykozak/Ear-Training
+
+Typescript:
+  https://www.typescriptlang.org/docs/handbook/classes.html
+
+Service Workers:
+  https://serviceworke.rs
+
+Directions for using WebFont.load:
+  https://github.com/typekit/webfontloader
+
+MIDI:
+  For the MIDI spec see:
+    https://www.w3.org/TR/webmidi/#sending-midi-messages-to-an-output-device
+  For a summary of MIDI messages see:
+    https://www.midi.org/midi/specifications/item/table-1-summary-of-midi-message
+
+Sounds:
   The piano samples were taken from the Audacity project:
     C:\Users\Tim\Documents\My Sounds\Piano\Iowa\Audacity\NormalizedOneOctave.aup
   Note names have been replaced with MIDI numbers.
   These samples were downloaded from:
     http://theremin.music.uiowa.edu/MISpiano.html.
-
-Directions for using WebFont.load:
-  https://github.com/typekit/webfontloader
 
 Aruvarb font:
   This was originally a free font, but is now part of a purchased package:
@@ -46,18 +61,6 @@ Free icon fonts:
   https://speckyboy.com/free-icon-fonts/
   https://ionicons.com/
 
-This project on GitHub:
-    https://github.com/timothykozak/Ear-Training
-
 List glyphs in font:
   http://torinak.com/font/lsfont.html
-
-Service Workers:
-  https://serviceworke.rs
-
-MIDI:
-  For the MIDI spec see:
-    https://www.w3.org/TR/webmidi/#sending-midi-messages-to-an-output-device
-  For a summary of MIDI messages see:
-    https://www.midi.org/midi/specifications/item/table-1-summary-of-midi-message
 
