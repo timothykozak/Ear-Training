@@ -23,13 +23,13 @@ class PBOptionsPage {
         noteFrequency: number[];
         timeToWait: number;
     };
-    theKCCIds: PBKeyCustomComponent[];  // The ids of the key custom components (KCC).
+    theKCCs: PBKeyCustomComponent[];  // The key custom components (KCC).
     isDirty: boolean;   // Changes have been made.
 
     constructor(public statusWindow: PBStatusWindow, public parentHTMLDiv: HTMLDivElement, public tester: PBTester) {
         customElements.define('key-component', PBKeyCustomComponent);
         this.buildHTML();
-        this.getKCCIds();
+        this.getKCCs();
         this.setKCConchange();
         window.addEventListener(PBConst.EVENTS.unload, () => { this.onUnload()});
         this.restoreOptions();
@@ -109,24 +109,26 @@ class PBOptionsPage {
             `);
     }
 
-    getKCCIds() {
+    getKCCs() {
         // Set the key custom component ids
         let theNames: string[] = ['idC', 'idC#', 'idD', 'idD#', 'idE', 'idF', 'idF#', 'idG', 'idG#', 'idA', 'idA#', 'idB'];
-        this.theKCCIds = [];
-        theNames.forEach((theName, index) => {this.theKCCIds[index] = document.getElementById(theName) as PBKeyCustomComponent;});
+        this.theKCCs = [];
+        theNames.forEach((theName, index) => {this.theKCCs[index] = document.getElementById(theName) as PBKeyCustomComponent;});
     }
 
     setKCConchange() {
         // Sets the onchange callbacks for the key custom components.
-        // Not sure why it necessary to do this for both the slider and value
-        // since they are tied together in the custom component.
-        this.theKCCIds.forEach((theId, index) => {
-            theId.valueElement.onchange = (event) => {
-                this.theOptions.noteFrequency[index] = parseInt(theId.valueElement.value);
+        // This is only called when the value is "committed" by the user,
+        // as opposed to any time the value is changed.  Therefore, the
+        // the valueElement and the sliderElement need to be handled
+        // separately.
+        this.theKCCs.forEach((theKCC, index) => {
+            theKCC.valueElement.onchange = (event) => {
+                this.theOptions.noteFrequency[index] = parseInt(theKCC.valueElement.value);
                 this.isDirty = true;
             };
-            theId.sliderElement.onchange = (event) => {
-                this.theOptions.noteFrequency[index] = parseInt(theId.sliderElement.value);
+            theKCC.sliderElement.onchange = (event) => {
+                this.theOptions.noteFrequency[index] = parseInt(theKCC.sliderElement.value);
                 this.isDirty = true;
             };
         })
@@ -134,15 +136,15 @@ class PBOptionsPage {
 
     setKCCValues() {
         // Set the values for the key custom components
-        this.theKCCIds.forEach((theId, index) => {
-            theId.value = this.theOptions.noteFrequency[index];
+        this.theKCCs.forEach((theKCC, index) => {
+            theKCC.value = this.theOptions.noteFrequency[index];
         });
     }
 
     getKCCValues() {
         // Get the values from the key custom components and update the noteFrequency.
-        this.theKCCIds.forEach((theId, index) => {
-            this.theOptions.noteFrequency[index] = theId.value;
+        this.theKCCs.forEach((theKCC, index) => {
+            this.theOptions.noteFrequency[index] = theKCC.value;
         });
     }
 }
