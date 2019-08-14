@@ -18,7 +18,7 @@ class PBResultsPage {
     static ITEMS_PER_OCTAVE = 12;
 
     theResults: Array<ResultItem>;
-    theRCCIds: Array<PBResultCustomComponent>;
+    theRCCs: Array<PBResultCustomComponent>;    // The results custom components.
 
     constructor(public statusWindow: PBStatusWindow, public parentHTMLDiv: HTMLDivElement) {
         customElements.define('result-component', PBResultCustomComponent);
@@ -85,10 +85,10 @@ class PBResultsPage {
     }
 
     getRCCIds() {
-        // Set the key custom component ids
+        // Get the results custom components
         let theNames: string[] = ['idC', 'idC#', 'idD', 'idD#', 'idE', 'idF', 'idF#', 'idG', 'idG#', 'idA', 'idA#', 'idB'];
-        this.theRCCIds = [];
-        theNames.forEach((theName, index) => {this.theRCCIds[index] = document.getElementById(theName) as PBResultCustomComponent;});
+        this.theRCCs = [];
+        theNames.forEach((theName, index) => {this.theRCCs[index] = document.getElementById(theName) as PBResultCustomComponent;});
     }
 
 }
